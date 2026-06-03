@@ -22,7 +22,12 @@ RESULTS_FILE = RESULTS_DIR / "single_node_results.json"
 
 def _extract_type(raw_type) -> str:
     if isinstance(raw_type, list):
-        return "STRING" if len(raw_type) == 0 else str(raw_type[0]).upper()
+        if len(raw_type) == 0:
+            return "STRING"
+        first = raw_type[0]
+        if isinstance(first, str) and first.isupper():
+            return first
+        return "STRING"
     return str(raw_type).upper()
 
 
@@ -207,4 +212,4 @@ def test_single_node(node_name, client, sdk_nodes):
 
 
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main([__file__, "-v", "-s"])
