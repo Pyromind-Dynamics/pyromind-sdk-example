@@ -2,6 +2,7 @@
 
 import json
 import re
+import sys
 import time
 from pathlib import Path
 
@@ -226,4 +227,4 @@ def test_all_nodes_match_docs():
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])
+    pytest.main([__file__, "-v", "-s"] + sys.argv[1:])

@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import sys
 import time
 from pathlib import Path
 
@@ -212,4 +213,4 @@ def test_single_node(node_name, client, sdk_nodes):
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"])
+    pytest.main([__file__, "-v", "-s"] + sys.argv[1:])
