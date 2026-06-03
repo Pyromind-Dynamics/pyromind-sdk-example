@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pytest
 from pyromind_sdk.client.models import TrainingTaskCreateRequest
-from tests.client import get_client
+
+from pyromind_sdk import PyroMindAPIClient
 
 DOCS_DIR = Path(__file__).resolve().parents[1] / "docs"
 WORKFLOW_DIR = Path(__file__).resolve().parents[1] / "workflow"
@@ -145,7 +146,7 @@ def try_run_workflow(client, node_name: str) -> dict:
 
 def test_all_nodes_match_docs():
     """Every node with docs must have matching input/output definitions."""
-    client = get_client()
+    client = PyroMindAPIClient()
     nodes = client.studio.get_node_info()
 
     assert isinstance(nodes, dict), f"Expected dict, got {type(nodes)}"

@@ -49,7 +49,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "dataset_path": "/workspace/datasets/openai/gsm8k"
+          "dataset_path": "/workspace"
         },
         "definitionMissing": false
       },

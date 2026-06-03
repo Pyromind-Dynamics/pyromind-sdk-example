@@ -10,7 +10,7 @@ Provides an automated testing framework to verify SDK node behavior against docu
 ├── docs/          # Node definitions, I/O specs, and command examples
 ├── workflow/      # Workflow definition files
 ├── imgs/          # Flow charts, architecture diagrams, etc.
-├── tests/         # Automated test suite
+├── tests/         # Automated test suite (pytest)
 └── main.py        # Entry point
 ```
 
@@ -22,9 +22,9 @@ The test framework is document-driven and supports three modes:
 
 Pass an `sk` (API Key) to read all system nodes via the SDK, then automatically compare each node's input/output against the definitions in `docs/`.
 
-### 2. Single Node Test
+### 2. Single / Specific Node Test
 
-Specify a node name to test it in isolation for quick troubleshooting.
+Use `test_single_node.py` with `-k` filter or `PYROMIND_NODES` env var to test specific nodes in isolation for quick troubleshooting.
 
 ### 3. Command Parsing Test
 
@@ -54,10 +54,12 @@ export PYROMIND_CLUSTER=us-west-2
 # Full node validation — compare all system nodes against docs
 python tests/test_node_doc_consistency.py
 
-# Single node tests
-python tests/node/LoadDataset/test_load_dataset.py
-python tests/node/LoadImage/test_load_image.py
-........
+# Single / specific node tests (pytest parameterized, use -k to filter)
+pytest tests/test_single_node.py -k "LoadImage"
+pytest tests/test_single_node.py -k "LoadImage or LoadDataset"
+
+# Or via environment variable
+PYROMIND_NODES="LoadImage" pytest tests/test_single_node.py
 ```
 
 ## Usage
