@@ -1,7 +1,6 @@
 # LoadImage 节点
 
-![alt text](imgs/LoadImage/LoadImage.png) 
-
+![alt text](/imgs/LoadImage/LoadImage.png) 
 
 ## 2.2.1 功能概述
 
@@ -20,3 +19,52 @@
 | 参数            | 数据类型 | 描述 |
 |-----------------|----------|------|
 | image_file_path | STRING   | 图片在工作区中的完整路径，格式为 `/workspace/{所选图片路径}`。供下游节点（如 RL 训练、Rollout 等）读取图片内容使用。当前无路径存在性校验。 |
+
+## 2.2.4 Workflow JSON 定义
+
+完整 workflow 定义见 [`workflow/LoadImage/LoadImage.json`](../../workflow/LoadImage/LoadImage.json)。
+
+## 2.2.5 运行 Workflow
+
+```bash
+python main.py workflow/LoadImage/LoadImage.json [options]
+```
+
+| 选项 | 默认值 | 说明 |
+|------|--------|------|
+| `--name` | `LoadImageTest` | 任务名称 |
+| `--output` | `tests/test_output/` | 输出结果文件 |
+| `--poll-interval` | 5 | 轮询间隔（秒） |
+| `--timeout` | 600 | 最大等待时间（秒） |
+| `--pretty` | false | 美化 JSON 输出 |
+| `--max-retries` | 0 | API 请求最大重试次数 |
+| `-h, --help` | - | 显示帮助信息 |
+
+```bash
+python main.py workflow/LoadImage/LoadImage.json --pretty
+```
+
+输出示例：
+
+```json
+{
+  "task_id": "4340",
+  "task_name": "LoadImageTest",
+  "status": "success",
+  "nodes": [
+    {
+      "node_name": "#1",
+      "node_id": 17729,
+      "start_at": "2026-06-04 03:48:51",
+      "end_at": "2026-06-04 03:49:03",
+      "duration": "0:00:12",
+      "input": {
+        "image": "image_cache/1.png"
+      },
+      "output": {
+        "image_file_path": "/workspace/image_cache/1.png"
+      }
+    }
+  ]
+}
+```

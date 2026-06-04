@@ -11,7 +11,46 @@ Provides an automated testing framework to verify SDK node behavior against docu
 ├── workflow/      # Workflow definition files
 ├── imgs/          # Flow charts, architecture diagrams, etc.
 ├── tests/         # Automated test suite (pytest)
-└── main.py        # Entry point
+└── main.py        # CLI: run workflow JSON, wait, export node I/O
+```
+
+## CLI (`main.py`)
+
+Submit a workflow JSON file, wait for completion, and export each node's input and output.
+
+```bash
+python main.py <workflow.json> [options]
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `workflow` | Path to workflow JSON file (required) |
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--name` | workflow file name | Task name |
+| `--output` | `tests/test_output/<name>_result.json` | Output results file |
+| `--poll-interval` | 5 | Poll interval in seconds |
+| `--timeout` | 600 | Max wait time in seconds |
+| `--pretty` | false | Pretty-print JSON output |
+| `--max-retries` | 0 | Max retries for API requests |
+| `-h, --help` | - | Show help message |
+
+### Examples
+
+```bash
+# Basic usage
+python main.py workflow/LoadImage/LoadImage.json --pretty
+
+# Custom name and output path
+python main.py workflow/LoadDataset/LoadDataset.json --name my-test --output result.json --pretty
+
+# Adjust polling
+python main.py workflow/LoadImage/LoadImage.json --poll-interval 3 --timeout 300
 ```
 
 ## Test Modes (`tests/`)
@@ -62,20 +101,4 @@ pytest tests/test_single_node.py -k "LoadImage or LoadDataset"
 PYROMIND_NODES="LoadImage" pytest tests/test_single_node.py
 ```
 
-## Usage
 
-```python
-from pyromind_sdk import PyroMindAPIClient
-
-client = PyroMindAPIClient()  # reads PYROMIND_API_KEY automatically
-
-# Get all system nodes
-nodes = client.studio.get_node_info()
-
-# Run a workflow with a node
-from pyromind_sdk.client.models import WorkflowRunRequest
-resp = client.studio.run_with_params(WorkflowRunRequest(
-    workflow_name="my_workflow",
-    primitive_node_map={"dataset_path": "/path/to/data"}
-))
-```

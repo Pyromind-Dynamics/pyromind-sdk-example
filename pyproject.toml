@@ -4,5 +4,11 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "pytest>=9.0.3",
-    "pyromind-sdk",
+    "pyromind-sdk>=0.1.0",
+    "requests",
 ]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
