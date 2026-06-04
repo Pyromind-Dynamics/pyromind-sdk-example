@@ -22,7 +22,7 @@ Submit a workflow JSON file via the SDK CLI, wait for completion, and export eac
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-pyromind run <workflow.json> [options]
+python -m pyromind_sdk.test_run_workflow_cli <workflow.json> [options]
 ```
 
 ### Options
@@ -40,8 +40,8 @@ pyromind run <workflow.json> [options]
 ### Examples
 
 ```bash
-pyromind run workflow/LoadDataset/LoadDataset.json --pretty
-pyromind run workflow/LoadImage/LoadImage.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
 ```
 
 ## Test Modes (`tests/`)

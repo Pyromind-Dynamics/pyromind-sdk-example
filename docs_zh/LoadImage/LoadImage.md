@@ -28,7 +28,7 @@
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-pyromind run workflow/LoadImage/LoadImage.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -42,7 +42,7 @@ pyromind run workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-pyromind run workflow/LoadImage/LoadImage.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
 ```
 
 输出示例：

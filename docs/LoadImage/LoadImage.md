@@ -28,7 +28,7 @@ See [`workflow/LoadImage/LoadImage.json`](../../workflow/LoadImage/LoadImage.jso
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-pyromind run workflow/LoadImage/LoadImage.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json [options]
 ```
 
 | Option | Default | Description |
@@ -42,7 +42,7 @@ pyromind run workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | Show help message |
 
 ```bash
-pyromind run workflow/LoadImage/LoadImage.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
 ```
 
 Example output:

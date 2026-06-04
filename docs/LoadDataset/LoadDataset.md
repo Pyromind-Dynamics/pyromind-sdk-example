@@ -30,7 +30,7 @@ See [`workflow/LoadDataset/LoadDataset.json`](../../workflow/LoadDataset/LoadDat
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-pyromind run workflow/LoadDataset/LoadDataset.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json [options]
 ```
 
 | Option | Default | Description |
@@ -44,7 +44,7 @@ pyromind run workflow/LoadDataset/LoadDataset.json [options]
 | `-h, --help` | - | Show help message |
 
 ```bash
-pyromind run workflow/LoadDataset/LoadDataset.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json --pretty
 ```
 
 Example output:
