@@ -29,7 +29,8 @@
 ## 2.1.5 运行 Workflow
 
 ```bash
-python main.py workflow/LoadDataset/LoadDataset.json [options]
+export PYROMIND_API_KEY=<your-api-key>
+python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -43,7 +44,7 @@ python main.py workflow/LoadDataset/LoadDataset.json [options]
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python main.py workflow/LoadDataset/LoadDataset.json --pretty
+python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json --pretty
 ```
 
 输出示例：
@@ -55,8 +56,10 @@ python main.py workflow/LoadDataset/LoadDataset.json --pretty
   "status": "success",
   "nodes": [
     {
-      "node_name": "#1",
+      "node_key": "#1",
       "node_id": 17777,
+      "node_type": "LoadDataset",
+      "label": "Load Dataset",
       "start_at": "2026-06-04 05:44:25",
       "end_at": "2026-06-04 05:44:36",
       "duration": "0:00:11",
@@ -65,7 +68,8 @@ python main.py workflow/LoadDataset/LoadDataset.json --pretty
       },
       "output": {
         "dataset_path": "/workspace"
-      }
+      },
+      "raw": {}
     }
   ]
 }

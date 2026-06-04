@@ -3,4 +3,6 @@ __pycache__/
 .idea/
 .pytest_cache/
 .venv/
-
+*.egg-info/
+.DS_Store
+/sop.md

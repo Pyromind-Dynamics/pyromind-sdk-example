@@ -1,15 +1,11 @@
 """Full Node Validation: compare SDK node definitions against docs and run workflows."""
-
 import json
 import re
 import sys
-import time
 from pathlib import Path
 
-import pytest
-from pyromind_sdk.client.models import TrainingTaskCreateRequest
-
 from pyromind_sdk import PyroMindAPIClient
+from pyromind_sdk.client.models import TrainingTaskCreateRequest
 
 DOCS_DIR = Path(__file__).resolve().parents[1] / "docs"
 WORKFLOW_DIR = Path(__file__).resolve().parents[1] / "workflow"
@@ -104,58 +100,42 @@ def try_run_workflow(client, node_name: str) -> dict:
         return result
 
     try:
-        resp = client.studio.create(TrainingTaskCreateRequest(
-            name=f"test_{node_name}",
-            workflow=workflow_data,
-        ))
-        if not resp or not resp.task_id:
-            result["status"] = "error"
-            result["message"] = "create task returned no task_id"
-            return result
+        result_data = client.studio.create_and_wait(
+            TrainingTaskCreateRequest(
+                name=f"test_{node_name}",
+                workflow=workflow_data,
+            ),
+            timeout=300,
+            check_interval=3,
+        )
+        task_id = result_data["task_id"]
+        status = result_data["status"]
+        result["task_id"] = task_id
+        result["status"] = status
+        if status == "success":
+            result["message"] = "workflow succeeded"
+        elif status == "timeout":
+            result["message"] = "timed out after 300s"
+        else:
+            result["message"] = f"workflow ended with status={status}"
+        return result
     except Exception as e:
         err_msg = str(e)
         if "not found" in err_msg.lower():
             return result
         result["status"] = "error"
-        result["message"] = f"workflow create failed — {e}"
+        result["message"] = f"workflow create/poll failed — {e}"
         return result
 
-    task_id = resp.task_id
-    result["task_id"] = task_id
-    poll_interval = 3
-    timeout = 300
-    deadline = time.time() + timeout
 
-    while time.time() < deadline:
-        try:
-            job = client.studio.get_job(task_id)
-            status = getattr(job, "status", "").lower()
-            result["status"] = status
-            if status in ("completed", "succeeded"):
-                result["message"] = "workflow succeeded"
-                return result
-            if status in ("failed", "error", "cancelled", "stopped"):
-                result["message"] = f"workflow ended with status={status}"
-                return result
-            if status in ("running", "pending", ""):
-                time.sleep(poll_interval)
-                continue
-        except Exception as e:
-            result["status"] = "error"
-            result["message"] = f"poll task {task_id} failed — {e}"
-            return result
-
-    result["status"] = "timeout"
-    result["message"] = f"timed out after {timeout}s"
-    return result
-
-
-def test_all_nodes_match_docs():
+def run_all():
     """Every node with docs must have matching input/output definitions."""
     client = PyroMindAPIClient()
     nodes = client.studio.get_node_info()
 
-    assert isinstance(nodes, dict), f"Expected dict, got {type(nodes)}"
+    if not isinstance(nodes, dict):
+        print(f"Error: Expected dict from get_node_info(), got {type(nodes)}", file=sys.stderr)
+        sys.exit(1)
 
     missing_docs = []
     mismatches = []
@@ -203,11 +183,9 @@ def test_all_nodes_match_docs():
         if any(c["status"] == "failed" for c in node_result["validation"]["checks"]):
             node_result["validation"]["status"] = "failed"
 
-        # run workflow for this node
         node_result["workflow"] = try_run_workflow(client, node_name)
         node_results.append(node_result)
 
-    # write per-node results to file
     with open(RESULTS_FILE, "w") as f:
         json.dump(node_results, f, indent=2)
     print(f"\n[INFO] Results saved to {RESULTS_FILE}")
@@ -223,8 +201,13 @@ def test_all_nodes_match_docs():
             print(f"  - {r['node']}: {wf['message']} (task_id={wf['task_id']})")
 
     if mismatches:
-        pytest.fail("Type mismatches:\n" + "\n".join(f"  - {m}" for m in mismatches))
+        print("\nType mismatches:", file=sys.stderr)
+        for m in mismatches:
+            print(f"  - {m}", file=sys.stderr)
+        sys.exit(1)
+
+    print("\nAll nodes validated successfully.")
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"] + sys.argv[1:])
+    run_all()

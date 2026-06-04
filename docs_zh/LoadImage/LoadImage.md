@@ -27,7 +27,8 @@
 ## 2.2.5 运行 Workflow
 
 ```bash
-python main.py workflow/LoadImage/LoadImage.json [options]
+export PYROMIND_API_KEY=<your-api-key>
+python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -41,7 +42,7 @@ python main.py workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python main.py workflow/LoadImage/LoadImage.json --pretty
+python tests/test_workflow.py workflow/LoadImage/LoadImage.json --pretty
 ```
 
 输出示例：
@@ -53,8 +54,10 @@ python main.py workflow/LoadImage/LoadImage.json --pretty
   "status": "success",
   "nodes": [
     {
-      "node_name": "#1",
+      "node_key": "#1",
       "node_id": 17729,
+      "node_type": "LoadImage",
+      "label": "Load Image",
       "start_at": "2026-06-04 03:48:51",
       "end_at": "2026-06-04 03:49:03",
       "duration": "0:00:12",
@@ -63,7 +66,8 @@ python main.py workflow/LoadImage/LoadImage.json --pretty
       },
       "output": {
         "image_file_path": "/workspace/image_cache/1.png"
-      }
+      },
+      "raw": {}
     }
   ]
 }

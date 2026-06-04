@@ -1,16 +1,13 @@
-"""Validate and run workflows for specific nodes (use -k to filter)."""
-
+"""Validate and run workflows for specific nodes."""
+import argparse
 import json
 import os
 import re
 import sys
-import time
 from pathlib import Path
 
-import pytest
-from pyromind_sdk.client.models import TrainingTaskCreateRequest
-
 from pyromind_sdk import PyroMindAPIClient
+from pyromind_sdk.client.models import TrainingTaskCreateRequest
 
 NODES = ["LoadImage", "LoadDataset"]
 
@@ -101,50 +98,32 @@ def try_run_workflow(client, node_name: str) -> dict:
         return result
 
     try:
-        resp = client.studio.create(TrainingTaskCreateRequest(
-            name=f"test_{node_name}",
-            workflow=workflow_data,
-        ))
-        if not resp or not resp.task_id:
-            result["status"] = "error"
-            result["message"] = "create task returned no task_id"
-            return result
+        result_data = client.studio.create_and_wait(
+            TrainingTaskCreateRequest(
+                name=f"test_{node_name}",
+                workflow=workflow_data,
+            ),
+            timeout=300,
+            check_interval=3,
+        )
+        task_id = result_data["task_id"]
+        status = result_data["status"]
+        result["task_id"] = task_id
+        result["status"] = status
+        if status == "success":
+            result["message"] = "workflow succeeded"
+        elif status == "timeout":
+            result["message"] = "timed out after 300s"
+        else:
+            result["message"] = f"workflow ended with status={status}"
+        return result
     except Exception as e:
         err_msg = str(e)
         if "not found" in err_msg.lower():
             return result
         result["status"] = "error"
-        result["message"] = f"workflow create failed — {e}"
+        result["message"] = f"workflow create/poll failed — {e}"
         return result
-
-    task_id = resp.task_id
-    result["task_id"] = task_id
-    poll_interval = 3
-    timeout = 300
-    deadline = time.time() + timeout
-
-    while time.time() < deadline:
-        try:
-            job = client.studio.get_job(task_id)
-            status = getattr(job, "status", "").lower()
-            result["status"] = status
-            if status in ("completed", "succeeded"):
-                result["message"] = "workflow succeeded"
-                return result
-            if status in ("failed", "error", "cancelled", "stopped"):
-                result["message"] = f"workflow ended with status={status}"
-                return result
-            if status in ("running", "pending", ""):
-                time.sleep(poll_interval)
-                continue
-        except Exception as e:
-            result["status"] = "error"
-            result["message"] = f"poll task {task_id} failed — {e}"
-            return result
-
-    result["status"] = "timeout"
-    result["message"] = f"timed out after {timeout}s"
-    return result
 
 
 def get_nodes() -> list[str]:
@@ -154,28 +133,22 @@ def get_nodes() -> list[str]:
     return NODES
 
 
-@pytest.fixture(scope="session")
-def client():
-    return PyroMindAPIClient()
-
-
-@pytest.fixture(scope="session")
-def sdk_nodes(client):
-    return client.studio.get_node_info()
-
-
-@pytest.mark.parametrize("node_name", get_nodes())
-def test_single_node(node_name, client, sdk_nodes):
-    assert isinstance(sdk_nodes, dict), f"Expected dict, got {type(sdk_nodes)}"
+def validate_node(node_name: str, client, sdk_nodes):
+    if not isinstance(sdk_nodes, dict):
+        print(f"Error: Expected dict, got {type(sdk_nodes)}", file=sys.stderr)
+        return False
 
     info = sdk_nodes.get(node_name)
-    assert info is not None, f"Node '{node_name}' not found in SDK"
+    if info is None:
+        print(f"Error: Node '{node_name}' not found in SDK", file=sys.stderr)
+        return False
 
     spec = extract_node_spec_from_docs(node_name)
     mismatches = []
 
     if spec is None:
-        pytest.skip(f"No docs for node '{node_name}'")
+        print(f"  [SKIP] No docs for node '{node_name}'")
+        return None
 
     sdk_inputs = build_sdk_inputs(info)
     sdk_outputs = build_sdk_outputs(info)
@@ -197,20 +170,72 @@ def test_single_node(node_name, client, sdk_nodes):
             mismatches.append(f"output.{param}: in docs but missing from SDK")
 
     if mismatches:
-        pytest.fail(f"Type mismatches for '{node_name}':\n" + "\n".join(f"  - {m}" for m in mismatches))
+        print(f"\n  Type mismatches for '{node_name}':")
+        for m in mismatches:
+            print(f"    - {m}")
+        return False
 
-    # run workflow
-    wf_result = try_run_workflow(client, node_name)
+    return True
 
-    # append to results file
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Validate node docs and run workflows for specific nodes."
+    )
+    parser.add_argument("--node", "-k", type=str, default=None,
+                        help="Filter nodes by name (supports 'LoadImage or LoadDataset' syntax)")
+    parser.add_argument("--verbose", "-v", action="store_true",
+                        help="Verbose output")
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    client = PyroMindAPIClient()
+    sdk_nodes = client.studio.get_node_info()
+
+    all_nodes = get_nodes()
+    if args.node:
+        filters = [n.strip() for n in args.node.replace("or", ",").split(",") if n.strip()]
+        nodes_to_test = [n for n in all_nodes if any(f == n for f in filters)]
+    else:
+        nodes_to_test = all_nodes
+
+    if not nodes_to_test:
+        print("No nodes to test.", file=sys.stderr)
+        sys.exit(1)
+
     results = []
-    if RESULTS_FILE.exists():
-        with open(RESULTS_FILE) as f:
-            results = json.load(f)
-    results.append({"node": node_name, "validation": "passed", "workflow": wf_result})
+    passed = 0
+    failed = 0
+    skipped = 0
+
+    for node_name in nodes_to_test:
+        print(f"\n=== {node_name} ===")
+        valid = validate_node(node_name, client, sdk_nodes)
+
+        if valid is None:
+            skipped += 1
+            wf_result = {"status": "skipped", "message": "no docs"}
+        elif valid:
+            passed += 1
+            wf_result = try_run_workflow(client, node_name)
+        else:
+            failed += 1
+            wf_result = try_run_workflow(client, node_name)
+
+        print(f"  Workflow: {wf_result['status']} — {wf_result.get('message', '')}")
+        results.append({"node": node_name, "validation": "passed" if valid else ("skipped" if valid is None else "failed"), "workflow": wf_result})
+
     with open(RESULTS_FILE, "w") as f:
         json.dump(results, f, indent=2)
+    print(f"\nDone: {passed} passed, {failed} failed, {skipped} skipped")
+    print(f"Results saved to {RESULTS_FILE}")
+
+    if failed:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s"] + sys.argv[1:])
+    main()

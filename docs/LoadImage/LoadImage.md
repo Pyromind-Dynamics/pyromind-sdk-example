@@ -27,7 +27,8 @@ See [`workflow/LoadImage/LoadImage.json`](../../workflow/LoadImage/LoadImage.jso
 ## 2.2.5 Running the Workflow
 
 ```bash
-python main.py workflow/LoadImage/LoadImage.json [options]
+export PYROMIND_API_KEY=<your-api-key>
+python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
 ```
 
 | Option | Default | Description |
@@ -41,7 +42,7 @@ python main.py workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | Show help message |
 
 ```bash
-python main.py workflow/LoadImage/LoadImage.json --pretty
+python tests/test_workflow.py workflow/LoadImage/LoadImage.json --pretty
 ```
 
 Example output:
@@ -53,8 +54,10 @@ Example output:
   "status": "success",
   "nodes": [
     {
-      "node_name": "#1",
+      "node_key": "#1",
       "node_id": 17729,
+      "node_type": "LoadImage",
+      "label": "Load Image",
       "start_at": "2026-06-04 03:48:51",
       "end_at": "2026-06-04 03:49:03",
       "duration": "0:00:12",
@@ -63,7 +66,8 @@ Example output:
       },
       "output": {
         "image_file_path": "/workspace/image_cache/1.png"
-      }
+      },
+      "raw": {}
     }
   ]
 }
