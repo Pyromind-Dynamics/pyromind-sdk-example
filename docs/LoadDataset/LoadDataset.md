@@ -30,13 +30,13 @@ See [`workflow/LoadDataset/LoadDataset.json`](../../workflow/LoadDataset/LoadDat
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json [options]
+pyromind run workflow/LoadDataset/LoadDataset.json [options]
 ```
 
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--name` | `loadDatasetTest` | Task name |
-| `--output` | `tests/test_output/` | Output results file |
+| `--output` | - | Output results file |
 | `--poll-interval` | 5 | Poll interval in seconds |
 | `--timeout` | 600 | Max wait time in seconds |
 | `--pretty` | false | Pretty-print JSON output |
@@ -44,7 +44,7 @@ python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json [options]
 | `-h, --help` | - | Show help message |
 
 ```bash
-python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json --pretty
+pyromind run workflow/LoadDataset/LoadDataset.json --pretty
 ```
 
 Example output:

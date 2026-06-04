@@ -28,13 +28,13 @@
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
+pyromind run workflow/LoadImage/LoadImage.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
 |------|--------|------|
 | `--name` | `LoadImageTest` | 任务名称 |
-| `--output` | `tests/test_output/` | 输出结果文件 |
+| `--output` | - | 输出结果文件 |
 | `--poll-interval` | 5 | 轮询间隔（秒） |
 | `--timeout` | 600 | 最大等待时间（秒） |
 | `--pretty` | false | 美化 JSON 输出 |
@@ -42,7 +42,7 @@ python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python tests/test_workflow.py workflow/LoadImage/LoadImage.json --pretty
+pyromind run workflow/LoadImage/LoadImage.json --pretty
 ```
 
 输出示例：

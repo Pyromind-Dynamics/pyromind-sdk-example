@@ -30,13 +30,13 @@
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json [options]
+pyromind run workflow/LoadDataset/LoadDataset.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
 |------|--------|------|
 | `--name` | `loadDatasetTest` | 任务名称 |
-| `--output` | `tests/test_output/` | 输出结果文件 |
+| `--output` | - | 输出结果文件 |
 | `--poll-interval` | 5 | 轮询间隔（秒） |
 | `--timeout` | 600 | 最大等待时间（秒） |
 | `--pretty` | false | 美化 JSON 输出 |
@@ -44,7 +44,7 @@ python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json [options]
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json --pretty
+pyromind run workflow/LoadDataset/LoadDataset.json --pretty
 ```
 
 输出示例：

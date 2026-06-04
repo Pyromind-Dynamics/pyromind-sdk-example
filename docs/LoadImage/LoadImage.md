@@ -28,13 +28,13 @@ See [`workflow/LoadImage/LoadImage.json`](../../workflow/LoadImage/LoadImage.jso
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
+pyromind run workflow/LoadImage/LoadImage.json [options]
 ```
 
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--name` | `LoadImageTest` | Task name |
-| `--output` | `tests/test_output/` | Output results file |
+| `--output` | - | Output results file |
 | `--poll-interval` | 5 | Poll interval in seconds |
 | `--timeout` | 600 | Max wait time in seconds |
 | `--pretty` | false | Pretty-print JSON output |
@@ -42,7 +42,7 @@ python tests/test_workflow.py workflow/LoadImage/LoadImage.json [options]
 | `-h, --help` | - | Show help message |
 
 ```bash
-python tests/test_workflow.py workflow/LoadImage/LoadImage.json --pretty
+pyromind run workflow/LoadImage/LoadImage.json --pretty
 ```
 
 Example output:

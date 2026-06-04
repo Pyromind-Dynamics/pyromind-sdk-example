@@ -11,37 +11,38 @@ Provides an automated testing framework to verify SDK node behavior against docu
 ├── workflow/          # Workflow definition files
 ├── imgs/              # Flow charts, architecture diagrams, etc.
 ├── tests/             # Automated test suite
-│   ├── test_workflow.py   # Run workflow JSON, wait, export node I/O
-│   ├── test_single_node.py
-│   └── test_node_doc_consistency.py
+│   ├── test_node_doc_consistency.py  # 全量节点校验
+│   ├── test_single_node.py           # 单节点测试
+│   └── test_output/                  # 测试结果输出
 ```
 
-## Workflow Test (`test_workflow.py`)
+## Workflow Test
 
-Submit a workflow JSON file via the SDK, wait for completion, and export each node's input and output.
+Submit a workflow JSON file via the SDK CLI, wait for completion, and export each node's input and output.
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python tests/test_workflow.py <workflow.json>
+pyromind run <workflow.json> [options]
 ```
 
-### Arguments
+### Options
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `workflow.json` | `workflow/LoadDataset/LoadDataset.json` | Path to workflow JSON file (relative to project root) |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--name` | from JSON | Task name |
+| `--output` | - | Output results file |
+| `--poll-interval` | 5 | Poll interval in seconds |
+| `--timeout` | 600 | Max wait time in seconds |
+| `--pretty` | false | Pretty-print JSON output |
+| `--max-retries` | 0 | Max retries for API requests |
+| `-h, --help` | - | Show help message |
 
 ### Examples
 
 ```bash
-# Run LoadDataset workflow
-python tests/test_workflow.py workflow/LoadDataset/LoadDataset.json
-
-# Run LoadImage workflow
-python tests/test_workflow.py workflow/LoadImage/LoadImage.json
+pyromind run workflow/LoadDataset/LoadDataset.json --pretty
+pyromind run workflow/LoadImage/LoadImage.json --pretty
 ```
-
-Results are saved to `tests/test_output/<name>_result.json`.
 
 ## Test Modes (`tests/`)
 
