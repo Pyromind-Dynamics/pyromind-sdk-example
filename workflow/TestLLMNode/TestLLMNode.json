@@ -1,0 +1,94 @@
+{
+  "id": "fdbe1308-83af-41ec-a435-f377241b88e3",
+  "name": "testllm",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1063.1074168797952,
+        "y": 316.1381074168799
+      },
+      "data": {
+        "label": "LLM Test",
+        "nodeType": "TestLLMNode",
+        "nodeDefinition": {
+          "name": "TestLLMNode",
+          "input": {
+            "required": {
+              "endpoint": [
+                "STRING",
+                {
+                  "default": "http://localhost:30000"
+                }
+              ],
+              "prompt": [
+                "STRING",
+                {
+                  "default": "Hello, how are you?"
+                }
+              ],
+              "max_tokens": [
+                "INT",
+                {
+                  "default": 100,
+                  "min": 1,
+                  "max": 4096
+                }
+              ],
+              "temperature": [
+                "FLOAT",
+                {
+                  "default": 0.7,
+                  "min": 0,
+                  "max": 2
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "result"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 1436,
+          "node_type": "system",
+          "created_at": "2026-06-03T04:55:45.365888+00:00",
+          "updated_at": "2026-06-03T04:55:45.365888+00:00",
+          "version": 1,
+          "display_name": "LLM Test",
+          "description": "\n    Test Sglang Node：测试 sglang endpoint 的节点\n    ",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "endpoint": "http://localhost:30000",
+          "prompt": "Hello, how are you?",
+          "max_tokens": 100,
+          "temperature": 0.7
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 196
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 53.94117647058829,
+    "y": 214.49294117647054,
+    "zoom": 0.92
+  },
+  "timestamp": "2026-06-05T09:28:20.409Z"
+}
