@@ -10,9 +10,9 @@ Supported formats: `.jpg`, `.jpeg`, `.png`, `.gif`, `.bmp`, `.tiff`, `.webp`, `.
 
 ## 2.2.2 Input
 
-| Parameter | Data Type | Description |
-|-----------|-----------|-------------|
-| image     | STRING (enum) | Image file selected from the dynamic list of `/workspace/image_cache/`. Supports `image_upload` extension (allows users to upload new images). Default: first image path in the list. |
+| Parameter | Data Type | Required | Description |
+|-----------|-----------|----------|-------------|
+| image     | STRING (enum) | Yes      | Image file selected from the dynamic list of `/workspace/image_cache/`. Supports `image_upload` extension (allows users to upload new images). Default: first image path in the list. |
 
 ## 2.2.3 Output
 

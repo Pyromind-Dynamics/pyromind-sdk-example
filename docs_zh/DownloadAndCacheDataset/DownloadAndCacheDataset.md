@@ -1,0 +1,41 @@
+# Download Dataset 节点
+
+![alt text](/imgs/DownloadAndCacheDataset/DownloadAndCacheDataset.png)  
+
+## {{section}} 功能概述
+
+下载并缓存数据集
+
+## {{section}} 输入类型
+
+| 参数 | 数据类型 | 必填 | 描述 |
+|------|---------|------|------|
+| dataset_name | STRING | 是 | 字符串。默认值：`openai/gsm8k` |
+| cache_dir | PATH | 是 | 文件系统路径。默认值：`/workspace/datasets/openai/gsm8k` |
+| download_source | STRING | 是 | 字符串。默认值：`huggingface` Options: huggingface, modelscope |
+## {{section}} 输出类型
+
+| 参数 | 数据类型 | 描述 |
+|------|---------|------|
+| dataset_path | STRING | 字符串 |
+
+## {{section}} Workflow JSON 定义
+
+完整 workflow 定义见 [`workflow/DownloadAndCacheDataset/DownloadAndCacheDataset.json`](../../workflow/DownloadAndCacheDataset/DownloadAndCacheDataset.json)。
+
+## {{section}} 运行 Workflow
+
+```bash
+export PYROMIND_API_KEY=<your-api-key>
+python -m pyromind_sdk.test_run_workflow_cli workflow/DownloadAndCacheDataset/DownloadAndCacheDataset.json [options]
+```
+
+| 选项 | 默认值 | 说明 |
+|------|--------|------|
+| `--name` | `downloadAndCacheDataset` | 任务名称 |
+| `--output` | - | 输出结果文件 |
+| `--poll-interval` | 5 | 轮询间隔（秒） |
+| `--timeout` | 600 | 最大等待时间（秒） |
+| `--pretty` | false | 美化 JSON 输出 |
+| `--max-retries` | 0 | API 请求最大重试次数 |
+| `-h, --help` | - | 显示帮助信息 |

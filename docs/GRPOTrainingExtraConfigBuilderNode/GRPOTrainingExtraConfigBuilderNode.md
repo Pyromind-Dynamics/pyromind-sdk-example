@@ -1,0 +1,45 @@
+# GRPO Training Extra Config Builder Node
+
+![alt text](/imgs/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.png)  
+
+## {{section}} Overview
+
+Build grpo_extra_config YAML (GRPO-only training fields; use with shared training_config + ModelTrainGRPONode).
+
+## {{section}} Input
+
+| Parameter | Data Type | Required | Description |
+|-----------|-----------|----------|-------------|
+| max_steps | INT | No | Integer value. Default: `200` |
+| num_generations | INT | No | Integer value. Default: `8` |
+| max_prompt_length | INT | No | Integer value. Default: `2048` |
+| max_completion_length | INT | No | Integer value. Default: `2048` |
+| temperature | FLOAT | No | Floating point number. Default: `0.7` |
+| enable_chord | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
+| enable_hint | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
+## {{section}} Output
+
+| Parameter | Data Type | Description |
+|-----------|-----------|-------------|
+| grpo_extra_config | STRING | String value |
+
+## {{section}} Workflow JSON Definition
+
+See [`workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json`](../../workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json) for the full workflow definition.
+
+## {{section}} Running the Workflow
+
+```bash
+export PYROMIND_API_KEY=<your-api-key>
+python -m pyromind_sdk.test_run_workflow_cli workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json [options]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--name` | `gRPOTrainingExtraConfigBuilderNode` | Task name |
+| `--output` | - | Output results file |
+| `--poll-interval` | 5 | Poll interval in seconds |
+| `--timeout` | 600 | Max wait time in seconds |
+| `--pretty` | false | Pretty-print JSON output |
+| `--max-retries` | 0 | Max retries for API requests |
+| `-h, --help` | - | Show help message |
