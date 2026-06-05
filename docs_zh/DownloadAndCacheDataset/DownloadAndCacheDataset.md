@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/DownloadAndCacheDataset/DownloadAndCacheDataset.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 下载并缓存数据集
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | dataset_name | STRING | 是 | 字符串。默认值：`openai/gsm8k` |
 | cache_dir | PATH | 是 | 文件系统路径。默认值：`/workspace/datasets/openai/gsm8k` |
 | download_source | STRING | 是 | 字符串。默认值：`huggingface` Options: huggingface, modelscope |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | dataset_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/DownloadAndCacheDataset/DownloadAndCacheDataset.json`](../../workflow/DownloadAndCacheDataset/DownloadAndCacheDataset.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

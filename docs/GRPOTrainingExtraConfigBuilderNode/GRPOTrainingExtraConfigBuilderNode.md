@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build grpo_extra_config YAML (GRPO-only training fields; use with shared training_config + ModelTrainGRPONode).
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -17,17 +17,17 @@ Build grpo_extra_config YAML (GRPO-only training fields; use with shared trainin
 | temperature | FLOAT | No | Floating point number. Default: `0.7` |
 | enable_chord | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | enable_hint | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | grpo_extra_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json`](../../workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

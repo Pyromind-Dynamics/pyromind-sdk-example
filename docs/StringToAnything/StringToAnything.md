@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/StringToAnything/StringToAnything.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 
 > **TODO**: Add overview description
 
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | input_string | STRING | Yes | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | anything | * | Any type |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/StringToAnything/StringToAnything.json`](../../workflow/StringToAnything/StringToAnything.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Build reward config YAML from up to five reward item YAML strings and normalize flag.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -16,17 +16,17 @@ Build reward config YAML from up to five reward item YAML strings and normalize 
 | reward_item_4 | STRING | 否 | 字符串。默认值：- |
 | reward_item_5 | STRING | 否 | 字符串。默认值：- |
 | normalize | BOOLEAN | 否 | 布尔值。默认值：`False` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | reward_config | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json`](../../workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

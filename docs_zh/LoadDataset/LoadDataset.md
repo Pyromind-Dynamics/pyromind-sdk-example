@@ -2,7 +2,7 @@
 
 ![alt text](/imgs/LoadDataset/loadDataset.png)  
 
-## 2.1.1 功能概述
+## 1.1 功能概述
 
 接收数据集路径，验证其可访问性，并透传路径。
 
@@ -10,23 +10,23 @@
 - **存在性验证**：通过 bash 命令检查数据集目录是否存在，确保路径有效
 - **传递输出**：将验证后的数据集路径传递给下游节点，供训练流程使用
 
-## 2.1.2 输入类型
+## 1.2 输入类型
 
 | 参数         | 数据类型 | 必填 | 描述                                                           |
 | ------------ | -------- | ---- | -------------------------------------------------------------- |
 | source_dir | PATH     | 是   | 需要加载的数据集文件或目录路径。默认值：`/workspace/datasets/openai/gsm8k` |
 
-## 2.1.3 输出类型
+## 1.3 输出类型
 
 | 参数         | 数据类型 | 描述                                                           |
 | ------------ | -------- | -------------------------------------------------------------- |
 | dataset_path | STRING   | 验证通过的数据集路径（与输入相同），供下游节点使用。若路径不存在则输出 `Dataset path not found` |
 
-## 2.1.4 Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/LoadDataset/LoadDataset.json`](../../workflow/LoadDataset/LoadDataset.json)。
 
-## 2.1.5 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

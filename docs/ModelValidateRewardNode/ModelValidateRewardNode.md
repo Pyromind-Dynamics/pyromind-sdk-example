@@ -2,29 +2,29 @@
 
 ![alt text](/imgs/ModelValidateRewardNode/ModelValidateRewardNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Validate reward composition and score aggregation.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | reward_items | STRING | Yes | String value. Default: - |
 | normalize | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | completions | STRING | No | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | status | STRING | String value |
 | scores | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelValidateRewardNode/ModelValidateRewardNode.json`](../../workflow/ModelValidateRewardNode/ModelValidateRewardNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DataPreprocessMergeNode/DataPreprocessMergeNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Merge reasoning/category/prompts into training data.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -23,17 +23,17 @@ Merge reasoning/category/prompts into training data.
 | copy_columns | STRING | No | String value. Default: - |
 | label_column | STRING | No | String value. Default: `component_type` |
 | gt_column | STRING | No | String value. Default: `text` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | result_output_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/DataPreprocessMergeNode/DataPreprocessMergeNode.json`](../../workflow/DataPreprocessMergeNode/DataPreprocessMergeNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

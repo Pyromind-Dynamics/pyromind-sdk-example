@@ -2,12 +2,12 @@
 
 ![alt text](/imgs/ModelTrainGRPONode/ModelTrainGRPONode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 GRPO training aligned with SFT-style YAML: dataset_config, training_config (shared with SFT),
 grpo_extra_config (GRPO-only), model_config, reward_config. Returns output directory.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -22,17 +22,17 @@ grpo_extra_config (GRPO-only), model_config, reward_config. Returns output direc
 | grpo_extra_config | STRING | 否 | 字符串。默认值：- |
 | wandb_config | WANDB_CONFIG | 否 | W&B 配置 YAML。默认值：- |
 | thinking_as_input_ratio | FLOAT | 否 | 浮点数。默认值：`0.0` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | model_output_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelTrainGRPONode/ModelTrainGRPONode.json`](../../workflow/ModelTrainGRPONode/ModelTrainGRPONode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

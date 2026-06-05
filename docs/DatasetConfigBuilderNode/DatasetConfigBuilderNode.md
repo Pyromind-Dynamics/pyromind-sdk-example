@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DatasetConfigBuilderNode/DatasetConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build dataset config YAML string for SFT/GRPO.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -23,17 +23,17 @@ Build dataset config YAML string for SFT/GRPO.
 | dpo_collator_entry | STRING | No | String value. Default: - |
 | grpo_collator_entry | STRING | No | String value. Default: - |
 | max_seq_length | INT | No | Integer value. Default: `4096` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | dataset_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json`](../../workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,27 +2,27 @@
 
 ![alt text](/imgs/AccelerateConfigBuilderNode/AccelerateConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build accelerate_config YAML string for accelerate launch.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | zero_stage | INT | No | Integer value. Default: `2` |
 | gpu_count | INT | No | Integer value. Default: `4` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | accelerate_config | ACCELERATE_CONFIG | Accelerate configuration YAML |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/AccelerateConfigBuilderNode/AccelerateConfigBuilderNode.json`](../../workflow/AccelerateConfigBuilderNode/AccelerateConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

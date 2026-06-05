@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/DownloadAndCacheModel/DownloadAndCacheModel.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 下载并缓存数据集
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | modelname | STRING | 是 | 字符串。默认值：`Qwen/Qwen2.5-1.5B-Instruct` |
 | cache_dir | STRING | 是 | 字符串。默认值：`/workspace/models/Qwen/Qwen2.5-1.5B-Instruct` |
 | download_source | STRING | 是 | 字符串。默认值：`huggingface` Options: huggingface, modelscope |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | model_path | MODEL | 模型引用 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/DownloadAndCacheModel/DownloadAndCacheModel.json`](../../workflow/DownloadAndCacheModel/DownloadAndCacheModel.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

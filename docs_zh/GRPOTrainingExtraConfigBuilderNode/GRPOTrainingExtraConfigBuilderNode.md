@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Build grpo_extra_config YAML (GRPO-only training fields; use with shared training_config + ModelTrainGRPONode).
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -17,17 +17,17 @@ Build grpo_extra_config YAML (GRPO-only training fields; use with shared trainin
 | temperature | FLOAT | 否 | 浮点数。默认值：`0.7` |
 | enable_chord | BOOLEAN | 否 | 布尔值。默认值：`False` |
 | enable_hint | BOOLEAN | 否 | 布尔值。默认值：`False` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | grpo_extra_config | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json`](../../workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

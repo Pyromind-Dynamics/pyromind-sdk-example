@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/WandbConfigBuilderNode/WandbConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build wandb_config YAML string for W&B training runtime env.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | wandb_api_key | STRING | No | String value. Default: - |
 | wandb_project | STRING | No | String value. Default: - |
 | wandb_run_group | STRING | No | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | wandb_config | WANDB_CONFIG | W&B configuration YAML |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json`](../../workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

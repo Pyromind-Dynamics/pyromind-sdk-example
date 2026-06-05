@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DataPreprocessLabelNode/DataPreprocessLabelNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Run data_preprocess label pipeline and emit output path.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -22,17 +22,17 @@ Run data_preprocess label pipeline and emit output path.
 | thinking | BOOLEAN | 否 | 布尔值。默认值：`False` |
 | limit | INT | 否 | 整数。默认值：`0` |
 | concurrency | INT | 否 | 整数。默认值：`1` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | result_output_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/DataPreprocessLabelNode/DataPreprocessLabelNode.json`](../../workflow/DataPreprocessLabelNode/DataPreprocessLabelNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

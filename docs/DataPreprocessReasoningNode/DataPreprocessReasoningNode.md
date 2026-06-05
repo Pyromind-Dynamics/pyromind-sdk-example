@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DataPreprocessReasoningNode/DataPreprocessReasoningNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Run data_preprocess reasoning pipeline and emit output path.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -25,17 +25,17 @@ Run data_preprocess reasoning pipeline and emit output path.
 | concurrency | INT | No | Integer value. Default: `1` |
 | gt_column | STRING | No | String value. Default: `text` |
 | num_variations | INT | No | Integer value. Default: `1` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | reasoning_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/DataPreprocessReasoningNode/DataPreprocessReasoningNode.json`](../../workflow/DataPreprocessReasoningNode/DataPreprocessReasoningNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

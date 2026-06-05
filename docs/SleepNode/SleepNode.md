@@ -2,27 +2,27 @@
 
 ![alt text](/imgs/SleepNode/SleepNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Sleep 节点：持续睡眠用于调试
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | duration | INT | Yes | Integer value. Default: `10` |
 | interval | INT | Yes | Integer value. Default: `2` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | status | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/SleepNode/SleepNode.json`](../../workflow/SleepNode/SleepNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

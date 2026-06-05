@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelTrainDPONode/ModelTrainDPONode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Run DPO training and return output directory.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -19,17 +19,17 @@ Run DPO training and return output directory.
 | gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 | thinking_as_input_ratio | FLOAT | No | Floating point number. Default: `0.0` |
 | wandb_config | WANDB_CONFIG | No | W&B configuration YAML. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | model_output_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelTrainDPONode/ModelTrainDPONode.json`](../../workflow/ModelTrainDPONode/ModelTrainDPONode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

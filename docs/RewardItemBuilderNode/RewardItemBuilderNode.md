@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -14,17 +14,17 @@ Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwar
 | name | STRING | No | String value. Default: - |
 | kwargs | STRING | No | String value. Default: - |
 | weight | FLOAT | No | Floating point number. Default: `1.0` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | reward_item | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/RewardItemBuilderNode/RewardItemBuilderNode.json`](../../workflow/RewardItemBuilderNode/RewardItemBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

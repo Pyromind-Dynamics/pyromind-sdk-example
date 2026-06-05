@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/TestLLMNode/TestLLMNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Test Sglang Node：测试 sglang endpoint 的节点
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -14,17 +14,17 @@ Test Sglang Node：测试 sglang endpoint 的节点
 | prompt | STRING | 是 | 字符串。默认值：`Hello, how are you?` |
 | max_tokens | INT | 是 | 整数。默认值：`100` |
 | temperature | FLOAT | 是 | 浮点数。默认值：`0.7` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | result | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/TestLLMNode/TestLLMNode.json`](../../workflow/TestLLMNode/TestLLMNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

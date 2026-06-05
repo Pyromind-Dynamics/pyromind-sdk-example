@@ -2,7 +2,7 @@
 
 ![alt text](/imgs/ShowInfoNode/ShowInfoNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Show Info 节点：获取上一个节点的执行结果，并发送到middleware pod
     
@@ -15,22 +15,22 @@ Show Info 节点：获取上一个节点的执行结果，并发送到middleware
     - 这样可以跨namespace访问（workflow在用户namespace，middleware在default namespace）
     - 直接发送POST请求到：http://k8s-sandbox-middleware-service.default.svc.cluster.local:80/api/v1/show-info
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | previous_output | * | 是 | 任意类型。默认值：- |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | status | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ShowInfoNode/ShowInfoNode.json`](../../workflow/ShowInfoNode/ShowInfoNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelValidateDataloaderNode/ModelValidateDataloaderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Validate dataloader configuration and sample readability.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -17,18 +17,18 @@ Validate dataloader configuration and sample readability.
 | target_field | STRING | No | String value. Default: `text` |
 | messages_field | STRING | No | String value. Default: `messages` |
 | component_type_field | STRING | No | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | status | STRING | String value |
 | metrics | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelValidateDataloaderNode/ModelValidateDataloaderNode.json`](../../workflow/ModelValidateDataloaderNode/ModelValidateDataloaderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

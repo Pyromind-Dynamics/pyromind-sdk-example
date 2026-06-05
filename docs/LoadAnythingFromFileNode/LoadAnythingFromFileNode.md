@@ -2,17 +2,17 @@
 
 ![alt text](/imgs/LoadAnythingFromFileNode/LoadAnythingFromFileNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Load content from a file path.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | file_path | STRING | Yes | String value. Default: - |
 | encoding | STRING | No | String value. Default: `utf-8` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
@@ -20,11 +20,11 @@ Load content from a file path.
 | content | * | Any type |
 | read_bytes | INT | Integer value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json`](../../workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

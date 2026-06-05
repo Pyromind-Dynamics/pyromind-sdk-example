@@ -2,26 +2,26 @@
 
 ![alt text](/imgs/LoadModel/LoadModel.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 加载基础模型用于RL训练
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | model_path | STRING | 是 | 字符串。默认值：`path/to/model` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | model | MODEL | 模型引用 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/LoadModel/LoadModel.json`](../../workflow/LoadModel/LoadModel.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Validate GRPO dataloader configuration, reward config, and rollout behavior.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -17,18 +17,18 @@ Validate GRPO dataloader configuration, reward config, and rollout behavior.
 | verbose | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | preview_html_path | STRING | No | String value. Default: - |
 | reward_config | STRING | No | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | metrics_json | STRING | String value |
 | output_preview_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.json`](../../workflow/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

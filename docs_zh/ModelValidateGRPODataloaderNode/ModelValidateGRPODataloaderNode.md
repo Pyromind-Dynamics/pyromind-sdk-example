@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Validate GRPO dataloader configuration, reward config, and rollout behavior.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -17,18 +17,18 @@ Validate GRPO dataloader configuration, reward config, and rollout behavior.
 | verbose | BOOLEAN | 否 | 布尔值。默认值：`False` |
 | preview_html_path | STRING | 否 | 字符串。默认值：- |
 | reward_config | STRING | 否 | 字符串。默认值：- |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | metrics_json | STRING | 字符串 |
 | output_preview_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.json`](../../workflow/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

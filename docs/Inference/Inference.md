@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/Inference/Inference.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 RL推理配置
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -15,17 +15,17 @@ RL推理配置
 | gpu_count | INT | Yes | Integer value. Default: `1` |
 | gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 | environment | ENV | No | Environment variable name. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | endpoint | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/Inference/Inference.json`](../../workflow/Inference/Inference.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

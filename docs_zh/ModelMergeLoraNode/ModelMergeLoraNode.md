@@ -2,13 +2,13 @@
 
 ![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor
 to a standalone directory. Base model id/path may be omitted if adapter_config.json
 contains base_model_name_or_path.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -18,17 +18,17 @@ contains base_model_name_or_path.
 | gpu_product | STRING | 是 | 字符串。默认值：`NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 | model_name | STRING | 否 | 字符串。默认值：- |
 | model_type | STRING | 否 | 字符串。默认值：`auto` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | merged_model_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelMergeLoraNode/ModelMergeLoraNode.json`](../../workflow/ModelMergeLoraNode/ModelMergeLoraNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

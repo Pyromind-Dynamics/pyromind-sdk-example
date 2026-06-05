@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build reward config YAML from up to five reward item YAML strings and normalize flag.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -16,17 +16,17 @@ Build reward config YAML from up to five reward item YAML strings and normalize 
 | reward_item_4 | STRING | No | String value. Default: - |
 | reward_item_5 | STRING | No | String value. Default: - |
 | normalize | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | reward_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json`](../../workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

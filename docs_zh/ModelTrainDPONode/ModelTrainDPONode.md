@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelTrainDPONode/ModelTrainDPONode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Run DPO training and return output directory.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -19,17 +19,17 @@ Run DPO training and return output directory.
 | gpu_product | STRING | 是 | 字符串。默认值：`NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 | thinking_as_input_ratio | FLOAT | 否 | 浮点数。默认值：`0.0` |
 | wandb_config | WANDB_CONFIG | 否 | W&B 配置 YAML。默认值：- |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | model_output_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelTrainDPONode/ModelTrainDPONode.json`](../../workflow/ModelTrainDPONode/ModelTrainDPONode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

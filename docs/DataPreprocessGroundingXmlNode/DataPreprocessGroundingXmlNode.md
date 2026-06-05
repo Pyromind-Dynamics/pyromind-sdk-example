@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DataPreprocessGroundingXmlNode/DataPreprocessGroundingXmlNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Run data_preprocess grounding-xml pipeline and emit output path.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -19,17 +19,17 @@ Run data_preprocess grounding-xml pipeline and emit output path.
 | max_tokens | INT | No | Integer value. Default: `2048` |
 | thinking | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | concurrency | INT | No | Integer value. Default: `8` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | result_output_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/DataPreprocessGroundingXmlNode/DataPreprocessGroundingXmlNode.json`](../../workflow/DataPreprocessGroundingXmlNode/DataPreprocessGroundingXmlNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

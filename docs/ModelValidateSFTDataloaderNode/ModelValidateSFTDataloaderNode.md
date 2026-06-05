@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/ModelValidateSFTDataloaderNode/ModelValidateSFTDataloaderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Validate SFT dataloader configuration and collator entry.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -15,18 +15,18 @@ Validate SFT dataloader configuration and collator entry.
 | limit | INT | No | Integer value. Default: `0` |
 | verbose | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | preview_html_path | STRING | No | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | metrics_yaml | STRING | String value |
 | output_preview_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelValidateSFTDataloaderNode/ModelValidateSFTDataloaderNode.json`](../../workflow/ModelValidateSFTDataloaderNode/ModelValidateSFTDataloaderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

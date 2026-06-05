@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO training_config inputs.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -19,17 +19,17 @@ Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO t
 | resume_from_checkpoint | STRING | No | String value. Default: - |
 | max_grad_norm | FLOAT | No | Floating point number. Default: `0.5` |
 | lr_scheduler_type | STRING | No | String value. Default: `constant` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | training_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.json`](../../workflow/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

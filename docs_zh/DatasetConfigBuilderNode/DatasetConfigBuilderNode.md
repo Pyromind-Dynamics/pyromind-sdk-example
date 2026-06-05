@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/DatasetConfigBuilderNode/DatasetConfigBuilderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Build dataset config YAML string for SFT/GRPO.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -23,17 +23,17 @@ Build dataset config YAML string for SFT/GRPO.
 | dpo_collator_entry | STRING | 否 | 字符串。默认值：- |
 | grpo_collator_entry | STRING | 否 | 字符串。默认值：- |
 | max_seq_length | INT | 否 | 整数。默认值：`4096` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | dataset_config | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json`](../../workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

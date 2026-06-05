@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO training_config inputs.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -19,17 +19,17 @@ Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO t
 | resume_from_checkpoint | STRING | 否 | 字符串。默认值：- |
 | max_grad_norm | FLOAT | 否 | 浮点数。默认值：`0.5` |
 | lr_scheduler_type | STRING | 否 | 字符串。默认值：`constant` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | training_config | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.json`](../../workflow/SFTTrainingConfigBuilderNode/SFTTrainingConfigBuilderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

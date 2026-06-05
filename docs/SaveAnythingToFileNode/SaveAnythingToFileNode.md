@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Save any provided content to a file path.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -14,18 +14,18 @@ Save any provided content to a file path.
 | content | * | No | Any type. Default: - |
 | append | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
 | ensure_parent | BOOLEAN | No | Boolean flag (true/false). Default: `True` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | saved_file_path | STRING | String value |
 | written_bytes | INT | Integer value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json`](../../workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

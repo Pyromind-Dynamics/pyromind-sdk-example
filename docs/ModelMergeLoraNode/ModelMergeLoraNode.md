@@ -2,13 +2,13 @@
 
 ![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor
 to a standalone directory. Base model id/path may be omitted if adapter_config.json
 contains base_model_name_or_path.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -18,17 +18,17 @@ contains base_model_name_or_path.
 | gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 | model_name | STRING | No | String value. Default: - |
 | model_type | STRING | No | String value. Default: `auto` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | merged_model_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelMergeLoraNode/ModelMergeLoraNode.json`](../../workflow/ModelMergeLoraNode/ModelMergeLoraNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

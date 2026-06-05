@@ -2,27 +2,27 @@
 
 ![alt text](/imgs/PathConversionNode/PathConversionNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 路径转换节点：将路径从 /workspace 转换为 /target-workspace，从 /root 转换为 /target-root
     这是一个内部节点，用于处理 CUSTOMER_INPUTS 中的动态输入路径转换
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | input_path | STRING | 是 | 字符串。默认值：- |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | output_path | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/PathConversionNode/PathConversionNode.json`](../../workflow/PathConversionNode/PathConversionNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

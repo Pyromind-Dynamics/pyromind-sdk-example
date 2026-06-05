@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/SFTModelConfigBuilderNode/SFTModelConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build SFT model config YAML string.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -14,17 +14,17 @@ Build SFT model config YAML string.
 | model_type | STRING | No | String value. Default: `auto` |
 | lora_rank | INT | No | Integer value. Default: `8` |
 | full_finetune | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | model_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/SFTModelConfigBuilderNode/SFTModelConfigBuilderNode.json`](../../workflow/SFTModelConfigBuilderNode/SFTModelConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

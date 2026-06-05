@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/CheckUrlNode/CheckUrlNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Check URL 节点：检查URL是否可用
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | url | STRING | Yes | String value. Default: `http://localhost:3000` |
 | max_retries | INT | Yes | Integer value. Default: `30` |
 | retry_interval | INT | Yes | Integer value. Default: `2` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | endpoint | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/CheckUrlNode/CheckUrlNode.json`](../../workflow/CheckUrlNode/CheckUrlNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

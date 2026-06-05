@@ -2,28 +2,28 @@
 
 ![alt text](/imgs/PreviewImageEx/PreviewImageEx.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 
 > **TODO**: Add overview description
 
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | image_file_path | STRING | Yes | String value. Default: - |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | image_path | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/PreviewImageEx/PreviewImageEx.json`](../../workflow/PreviewImageEx/PreviewImageEx.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

@@ -2,17 +2,17 @@
 
 ![alt text](/imgs/LoadAnythingFromFileNode/LoadAnythingFromFileNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Load content from a file path.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | file_path | STRING | 是 | 字符串。默认值：- |
 | encoding | STRING | 否 | 字符串。默认值：`utf-8` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
@@ -20,11 +20,11 @@ Load content from a file path.
 | content | * | 任意类型 |
 | read_bytes | INT | 整数 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json`](../../workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

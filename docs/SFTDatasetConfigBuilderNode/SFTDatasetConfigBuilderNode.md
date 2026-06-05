@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/SFTDatasetConfigBuilderNode/SFTDatasetConfigBuilderNode.png)  
 
-## {{section}} Overview
+## 1.1 Overview
 
 Build SFT dataset config YAML string.
 
-## {{section}} Input
+## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
@@ -20,17 +20,17 @@ Build SFT dataset config YAML string.
 | system_prompt_field | STRING | No | String value. Default: - |
 | collator_entry | STRING | No | String value. Default: `train.sft_collator:make_collate_fn` |
 | max_seq_length | INT | No | Integer value. Default: `4096` |
-## {{section}} Output
+## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | dataset_config | STRING | String value |
 
-## {{section}} Workflow JSON Definition
+## 1.4 Workflow JSON Definition
 
 See [`workflow/SFTDatasetConfigBuilderNode/SFTDatasetConfigBuilderNode.json`](../../workflow/SFTDatasetConfigBuilderNode/SFTDatasetConfigBuilderNode.json) for the full workflow definition.
 
-## {{section}} Running the Workflow
+## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>

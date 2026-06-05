@@ -2,11 +2,11 @@
 
 ![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)  
 
-## {{section}} 功能概述
+## 1.1 功能概述
 
 Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.
 
-## {{section}} 输入类型
+## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
@@ -14,17 +14,17 @@ Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwar
 | name | STRING | 否 | 字符串。默认值：- |
 | kwargs | STRING | 否 | 字符串。默认值：- |
 | weight | FLOAT | 否 | 浮点数。默认值：`1.0` |
-## {{section}} 输出类型
+## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | reward_item | STRING | 字符串 |
 
-## {{section}} Workflow JSON 定义
+## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/RewardItemBuilderNode/RewardItemBuilderNode.json`](../../workflow/RewardItemBuilderNode/RewardItemBuilderNode.json)。
 
-## {{section}} 运行 Workflow
+## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
