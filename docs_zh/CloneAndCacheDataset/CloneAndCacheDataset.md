@@ -10,13 +10,13 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| dataset | STRING | 是 | 字符串。默认值：- Options: OpenGVLab/ScaleCUA-Data, Writer/omniact, agibot-world/AgiBotWorld-Alpha-327, agibot-world/AgiBotWorld-Alpha-327-Extract, agibot-world/AgiBotWorld-Alpha-CtrlWorld-327, agibot-world/AgiBotWorld-Alpha-Lerobot-327, agibot-world/AgiBotWorld-Alpha-Openpi-327, cadene/droid_1.0.1, gui-360/gui-excel, gui-360/processed_data, henryhe0123/PC-Agent-E, openai/gsm8k, ritzzai/GUI-R1, xlangai/aguvis-stage1, xlangai/aguvis-stage2, zonghanHZH/UGround-V1-8k |
-| target_path | STRING | 是 | 字符串。默认值：`/workspace/datasets/` Options: /workspace/datasets/ |
+| dataset | STRING | 是 | 要克隆的官方预置数据集标识，格式为 组织名/数据集名（如 openai/gsm8k）。需从平台支持的预设列表中选择，可选项如下: OpenGVLab/ScaleCUA-Data, Writer/omniact, agibot-world/AgiBotWorld-Alpha-327, agibot-world/AgiBotWorld-Alpha-327-Extract, agibot-world/AgiBotWorld-Alpha-CtrlWorld-327, agibot-world/AgiBotWorld-Alpha-Lerobot-327, agibot-world/AgiBotWorld-Alpha-Openpi-327, cadene/droid_1.0.1, gui-360/gui-excel, gui-360/processed_data, henryhe0123/PC-Agent-E, openai/gsm8k, ritzzai/GUI-R1, xlangai/aguvis-stage1, xlangai/aguvis-stage2, zonghanHZH/UGround-V1-8k |
+| target_path | STRING | 是 | 克隆后的数据集存放目录。默认值：`/workspace/datasets/` Options: /workspace/datasets/ |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| dataset_path | STRING | 字符串 |
+| dataset_path | STRING | 克隆完成后的数据集路径 |
 
 ## 1.4 Workflow JSON 定义
 
@@ -38,3 +38,34 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheDataset/Clone
 | `--pretty` | false | 美化 JSON 输出 |
 | `--max-retries` | 0 | API 请求最大重试次数 |
 | `-h, --help` | - | 显示帮助信息 |
+
+
+输出示例：
+
+```json
+{
+  "task_id": "4794",
+  "task_name": "cloneandcachedataset",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#2",
+      "node_id": 18630,
+      "node_type": "CloneAndCacheDataset",
+      "label": "",
+      "start_at": "2026-06-08 09:17:33",
+      "end_at": "2026-06-08 09:17:39",
+      "duration": "0:00:06",
+      "input": {
+        "dataset": "openai/gsm8k",
+        "target_path": "/workspace/datasets/"
+      },
+      "output": {
+        "dataset_path": "/workspace/datasets/openai/gsm8k"
+      },
+      "raw": {}
+    }
+  ]
+}
+```
