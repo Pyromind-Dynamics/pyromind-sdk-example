@@ -4,19 +4,19 @@
 
 ## 1.1 Overview
 
-克隆数据集
+Clone a dataset.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| dataset | STRING | Yes | String value. Default: - Options: OpenGVLab/ScaleCUA-Data, Writer/omniact, agibot-world/AgiBotWorld-Alpha-327, agibot-world/AgiBotWorld-Alpha-327-Extract, agibot-world/AgiBotWorld-Alpha-CtrlWorld-327, agibot-world/AgiBotWorld-Alpha-Lerobot-327, agibot-world/AgiBotWorld-Alpha-Openpi-327, cadene/droid_1.0.1, gui-360/gui-excel, gui-360/processed_data, henryhe0123/PC-Agent-E, openai/gsm8k, ritzzai/GUI-R1, xlangai/aguvis-stage1, xlangai/aguvis-stage2, zonghanHZH/UGround-V1-8k |
-| target_path | STRING | Yes | String value. Default: `/workspace/datasets/` Options: /workspace/datasets/ |
+| dataset | STRING | Yes | Identifier of the official pre-cached dataset to clone, in `org/dataset` format (e.g. `openai/gsm8k`). Must be selected from the platform-supported preset list. Available options: OpenGVLab/ScaleCUA-Data, Writer/omniact, agibot-world/AgiBotWorld-Alpha-327, agibot-world/AgiBotWorld-Alpha-327-Extract, agibot-world/AgiBotWorld-Alpha-CtrlWorld-327, agibot-world/AgiBotWorld-Alpha-Lerobot-327, agibot-world/AgiBotWorld-Alpha-Openpi-327, cadene/droid_1.0.1, gui-360/gui-excel, gui-360/processed_data, henryhe0123/PC-Agent-E, openai/gsm8k, ritzzai/GUI-R1, xlangai/aguvis-stage1, xlangai/aguvis-stage2, zonghanHZH/UGround-V1-8k |
+| target_path | STRING | Yes | Destination directory for the cloned dataset. Default: `/workspace/datasets/` Options: /workspace/datasets/ |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| dataset_path | STRING | String value |
+| dataset_path | STRING | Local path to the cloned dataset |
 
 ## 1.4 Workflow JSON Definition
 
