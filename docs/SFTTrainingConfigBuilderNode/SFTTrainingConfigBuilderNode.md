@@ -49,3 +49,40 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/SFTTrainingConfigBuilderNo
 | `--pretty` | false | Pretty-print JSON output |
 | `--max-retries` | 0 | Max retries for API requests |
 | `-h, --help` | - | Show help message |
+
+Example output:
+
+```json
+{
+  "task_id": "4795",
+  "task_name": "sfttrainingconfigbuildernode",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#1",
+      "node_id": 18631,
+      "node_type": "SFTTrainingConfigBuilderNode",
+      "label": "",
+      "start_at": "2026-06-08 09:20:52",
+      "end_at": "2026-06-08 09:21:03",
+      "duration": "0:00:11",
+      "input": {
+        "eval_steps": 500,
+        "num_epochs": 20,
+        "batch_size": 2,
+        "grad_accum": 8,
+        "learning_rate": 0.0001,
+        "seed": 42,
+        "resume_from_checkpoint": "",
+        "max_grad_norm": 0.5,
+        "lr_scheduler_type": "constant"
+      },
+      "output": {
+        "training_config": "eval_steps: 500\nnum_epochs: 20.0\nbatch_size: 2\ngrad_accum: 8\nlearning_rate: 0.0001\nseed: 42\nmax_grad_norm: 0.5\nlr_scheduler_type: constant"
+      },
+      "raw": {}
+    }
+  ]
+}
+```

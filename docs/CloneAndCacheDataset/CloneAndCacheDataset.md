@@ -38,3 +38,33 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheDataset/Clone
 | `--pretty` | false | Pretty-print JSON output |
 | `--max-retries` | 0 | Max retries for API requests |
 | `-h, --help` | - | Show help message |
+
+Example output:
+
+```json
+{
+  "task_id": "4794",
+  "task_name": "cloneandcachedataset",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#2",
+      "node_id": 18630,
+      "node_type": "CloneAndCacheDataset",
+      "label": "",
+      "start_at": "2026-06-08 09:17:33",
+      "end_at": "2026-06-08 09:17:39",
+      "duration": "0:00:06",
+      "input": {
+        "dataset": "openai/gsm8k",
+        "target_path": "/workspace/datasets/"
+      },
+      "output": {
+        "dataset_path": "/workspace/datasets/openai/gsm8k"
+      },
+      "raw": {}
+    }
+  ]
+}
+```
