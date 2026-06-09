@@ -1,0 +1,124 @@
+{
+  "id": "25375694-a284-425a-b823-18e3bffeee9d",
+  "name": "SFTTrainingConfigBuilderNode",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 992.9411764705883,
+        "y": 478.8235294117647
+      },
+      "data": {
+        "display_name": "Training Config Builder",
+        "nodeType": "SFTTrainingConfigBuilderNode",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "eval_steps": [
+                "INT",
+                {
+                  "default": 500
+                }
+              ],
+              "num_epochs": [
+                "FLOAT",
+                {
+                  "default": 20
+                }
+              ],
+              "batch_size": [
+                "INT",
+                {
+                  "default": 2
+                }
+              ],
+              "grad_accum": [
+                "INT",
+                {
+                  "default": 8
+                }
+              ],
+              "learning_rate": [
+                "FLOAT",
+                {
+                  "default": 0.0001
+                }
+              ],
+              "seed": [
+                "INT",
+                {
+                  "default": 42
+                }
+              ],
+              "resume_from_checkpoint": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "max_grad_norm": [
+                "FLOAT",
+                {
+                  "default": 0.5
+                }
+              ],
+              "lr_scheduler_type": [
+                "STRING",
+                {
+                  "default": "constant"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "training_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 344,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:26:27",
+          "updated_at": "2026-05-27 11:26:27",
+          "version": 1,
+          "description": "Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO training_config inputs.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "eval_steps": 500,
+          "num_epochs": 20,
+          "batch_size": 2,
+          "grad_accum": 8,
+          "learning_rate": 0.0001,
+          "seed": 42,
+          "resume_from_checkpoint": "",
+          "max_grad_norm": 0.5,
+          "lr_scheduler_type": "constant"
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 336
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-08T08:26:43.557Z"
+}

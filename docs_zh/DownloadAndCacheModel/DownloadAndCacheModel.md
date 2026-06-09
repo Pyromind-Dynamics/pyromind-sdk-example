@@ -4,15 +4,15 @@
 
 ## 1.1 功能概述
 
-下载并缓存数据集
+下载大模型资源
 
 ## 1.2 输入类型
 
-| 参数 | 数据类型 | 必填 | 描述 |
-|------|---------|------|------|
-| modelname | STRING | 是 | 字符串。默认值：`Qwen/Qwen2.5-1.5B-Instruct` |
-| cache_dir | STRING | 是 | 字符串。默认值：`/workspace/models/Qwen/Qwen2.5-1.5B-Instruct` |
-| download_source | STRING | 是 | 字符串。默认值：`huggingface` Options: huggingface, modelscope |
+| 参数 | 数据类型 | 必填 | 描述                                                    |
+|------|---------|------|-------------------------------------------------------|
+| modelname | STRING | 是 | 模型资源路径  默认值 : `Qwen/Qwen2.5-1.5B-Instruct`                           |
+| cache_dir | STRING | 是 | 目标文件夹。  默认值 : `/workspace/models/Qwen/Qwen2.5-1.5B-Instruct`                                                |
+| download_source | STRING | 是 | 下载源。默认值：`huggingface` Options: huggingface, modelscope |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
@@ -39,3 +39,35 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/DownloadAndCacheModel/Down
 | `--pretty` | false | 美化 JSON 输出 |
 | `--max-retries` | 0 | API 请求最大重试次数 |
 | `-h, --help` | - | 显示帮助信息 |
+
+
+输出示例：
+
+```json
+{
+  "task_id": "4808",
+  "task_name": "unsaved-workflow",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#1",
+      "node_id": 18650,
+      "node_type": "DownloadAndCacheModel",
+      "label": "",
+      "start_at": "2026-06-08 11:17:53",
+      "end_at": "2026-06-08 11:23:22",
+      "duration": "0:05:29",
+      "input": {
+        "modelname": "Qwen/Qwen2.5-1.5B-Instruct",
+        "cache_dir": "/workspace/models/Qwen/Qwen2.5-1.5B-Instruct",
+        "download_source": "modelscope"
+      },
+      "output": {
+        "model_path": "/workspace/models/Qwen/Qwen2.5-1.5B-Instruct"
+      },
+      "raw": {}
+    }
+  ]
+}
+```
