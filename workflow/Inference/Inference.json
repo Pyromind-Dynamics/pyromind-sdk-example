@@ -1,0 +1,184 @@
+{
+  "id": "6eef53f2-9018-4082-bf2f-4ed742b397a8",
+  "name": "start-inference-sglang",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1329.4117467543658,
+        "y": 618.8316973517923
+      },
+      "data": {
+        "label": "Inference (SGlang)",
+        "nodeType": "Inference",
+        "nodeDefinition": {
+          "name": "Inference",
+          "input": {
+            "required": {
+              "model_path": [
+                "MODEL"
+              ],
+              "port": [
+                "INT",
+                {
+                  "default": 3000,
+                  "min": 1,
+                  "max": 8000
+                }
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 1,
+                  "min": 1,
+                  "max": 8
+                }
+              ],
+              "gpu_product": [
+                "STRING",
+                {
+                  "default": "NVIDIA-H100-NVL",
+                  "enum": [
+                    "NVIDIA-H100-NVL",
+                    "NVIDIA-L40S",
+                    "NVIDIA-H200",
+                    "NVIDIA-B200",
+                    "NVIDIA-H100-80GB-HBM3"
+                  ]
+                }
+              ]
+            },
+            "optional": {
+              "environment": [
+                "ENV"
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "endpoint"
+          ],
+          "category": "inference",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 181,
+          "node_type": "system",
+          "created_at": "2026-04-20T05:35:00.663794+00:00",
+          "updated_at": "2026-04-20T05:35:00.663794+00:00",
+          "version": 1,
+          "display_name": "Inference (SGlang)",
+          "description": "RL推理配置",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "model_path": "",
+          "port": 3000,
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-L40S",
+          "environment": ""
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 196
+      },
+      "style": {
+        "width": 300
+      }
+    },
+    {
+      "id": "2",
+      "type": "default",
+      "position": {
+        "x": 891.2764687218603,
+        "y": 487.44182049832
+      },
+      "data": {
+        "label": "Load Model",
+        "nodeType": "LoadModel",
+        "nodeDefinition": {
+          "name": "LoadModel",
+          "input": {
+            "required": {
+              "model_path": [
+                "STRING",
+                {
+                  "default": "path/to/model"
+                }
+              ]
+            }
+          },
+          "output": [
+            "MODEL"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "model"
+          ],
+          "category": "models",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 1557,
+          "node_type": "system",
+          "created_at": "2026-06-05T06:53:18.790407+00:00",
+          "updated_at": "2026-06-05T06:53:18.790407+00:00",
+          "version": 1,
+          "display_name": "Load Model",
+          "description": "加载基础模型用于RL训练",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "model_path": "/workspace/models/Qwen/Qwen2.5-1.5B-Instruct/"
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 112
+      },
+      "style": {
+        "width": 300
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "2",
+      "sourceHandle": "model",
+      "target": "1",
+      "targetHandle": "model_path",
+      "animated": false,
+      "style": {
+        "stroke": "#8b5cf6",
+        "strokeWidth": 2,
+        "color": "#8b5cf6"
+      },
+      "type": "default",
+      "data": {
+        "connectionType": "MODEL"
+      },
+      "id": "xy-edge__2model-1model_path"
+    }
+  ],
+  "viewport": {
+    "x": -486.5573779715626,
+    "y": -287.71070521974957,
+    "zoom": 1.252291729768092
+  },
+  "timestamp": "2026-06-08T09:57:01.204Z"
+}

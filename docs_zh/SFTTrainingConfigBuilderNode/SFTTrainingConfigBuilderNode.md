@@ -4,26 +4,30 @@
 
 ## 1.1 功能概述
 
-Build shared training_config YAML (BaseTrainingConfig fields) for SFT and GRPO training_config inputs.
+将 SFT/GRPO 共用的训练超参组装为 `training_config` YAML 字符串，供下游训练节点使用。
+
+- **超参收集**：接收学习率、batch 大小、训练轮数、梯度累积等可选训练参数
+- **配置生成**：按 `BaseTrainingConfig` 字段结构序列化为 YAML 字符串
+- **下游对接**：输出 `training_config`，可连接 `ModelTrainSFTNode` 或 `ModelTrainGRPONode`（GRPO 还需额外配置 `grpo_extra_config`）
 
 ## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| eval_steps | INT | 否 | 整数。默认值：`500` |
-| num_epochs | FLOAT | 否 | 浮点数。默认值：`20` |
-| batch_size | INT | 否 | 整数。默认值：`2` |
-| grad_accum | INT | 否 | 整数。默认值：`8` |
-| learning_rate | FLOAT | 否 | 浮点数。默认值：`0.0001` |
-| seed | INT | 否 | 整数。默认值：`42` |
-| resume_from_checkpoint | STRING | 否 | 字符串。默认值：- |
-| max_grad_norm | FLOAT | 否 | 浮点数。默认值：`0.5` |
-| lr_scheduler_type | STRING | 否 | 字符串。默认值：`constant` |
+| eval_steps | INT | 否 | 每隔多少训练步执行一次验证/评估。默认值：`500` |
+| num_epochs | INT | 否 | 训练总轮数（epoch）。默认值：`20` |
+| batch_size | INT | 否 | 每个设备上的训练 batch 大小。默认值：`2` |
+| grad_accum | INT | 否 | 梯度累积步数；有效 batch ≈ batch_size × grad_accum × GPU 数。默认值：`8` |
+| learning_rate | FLOAT | 否 | 优化器学习率。默认值：`0.0001` |
+| seed | INT | 否 | 随机种子，用于复现训练结果。默认值：`42` |
+| resume_from_checkpoint | STRING | 否 | 从指定 checkpoint 路径恢复训练；留空表示从头训练。默认值：- |
+| max_grad_norm | FLOAT | 否 | 梯度裁剪的最大范数，用于稳定训练。默认值：`0.5` |
+| lr_scheduler_type | STRING | 否 | 学习率调度器类型（如 constant、cosine 等）。默认值：`constant` |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| training_config | STRING | 字符串 |
+| training_config | STRING | 训练配置 YAML 字符串（BaseTrainingConfig 字段），可传给 ModelTrainSFTNode 或 ModelTrainGRPONode 的 training_config 输入 |
 
 ## 1.4 Workflow JSON 定义
 
@@ -45,3 +49,40 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/SFTTrainingConfigBuilderNo
 | `--pretty` | false | 美化 JSON 输出 |
 | `--max-retries` | 0 | API 请求最大重试次数 |
 | `-h, --help` | - | 显示帮助信息 |
+
+输出示例：
+
+```json
+{
+  "task_id": "4795",
+  "task_name": "sfttrainingconfigbuildernode",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#1",
+      "node_id": 18631,
+      "node_type": "SFTTrainingConfigBuilderNode",
+      "label": "",
+      "start_at": "2026-06-08 09:20:52",
+      "end_at": "2026-06-08 09:21:03",
+      "duration": "0:00:11",
+      "input": {
+        "eval_steps": 500,
+        "num_epochs": 20,
+        "batch_size": 2,
+        "grad_accum": 8,
+        "learning_rate": 0.0001,
+        "seed": 42,
+        "resume_from_checkpoint": "",
+        "max_grad_norm": 0.5,
+        "lr_scheduler_type": "constant"
+      },
+      "output": {
+        "training_config": "eval_steps: 500\nnum_epochs: 20.0\nbatch_size: 2\ngrad_accum: 8\nlearning_rate: 0.0001\nseed: 42\nmax_grad_norm: 0.5\nlr_scheduler_type: constant"
+      },
+      "raw": {}
+    }
+  ]
+}
+```
