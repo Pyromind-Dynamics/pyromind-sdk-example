@@ -4,29 +4,29 @@
 
 ## 1.1 Overview
 
-克隆模型
+Clones a model from pre-stored templates in the pyromind environment into the workspace cache. Models are already available in the environment, so cloning is very fast. The cloned model can be used by downstream training or inference nodes.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| model | STRING | Yes | String value. Default: - Options: Qwen/Qwen3-0.6B, Qwen/Qwen3-1.7B, Qwen/Qwen3-14B, Qwen/Qwen3-235B-A22B-FP8, Qwen/Qwen3-32B, Qwen/Qwen3-32B-FP8, Qwen/Qwen3-4B, Qwen/Qwen3-8B, Qwen/Qwen3-VL-235B-A22B-Instruct, Qwen/Qwen3-VL-32B-Instruct, Qwen/Qwen3-VL-4B-Instruct, openai/clip-vit-base-patch32, openpi/big_vision, openpi/pi05_base, pretrained/gui-ck900-lora, stabilityai/stable-video-diffusion-img2vid |
-| target_path | STRING | Yes | String value. Default: `/workspace/models/` Options: /workspace/models/ |
+| model | STRING | Yes | Model identifier. Select from the dynamic list of available model templates in the pyromind environment (e.g., `Qwen/Qwen3-0.6B`, `Qwen/Qwen3-8B`). The list is loaded from the template directory at runtime. |
+| target_path | STRING | Yes | Target directory in workspace to clone the model into. Default: `/workspace/models/` Options: /workspace/models/ |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_path | MODEL | Model reference |
+| model_path | MODEL | Reference to the cloned model in workspace cache, passable to downstream training or inference nodes that accept a model input. |
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/CloneAndCacheModel/CloneAndCacheModel.json`](../../workflow/CloneAndCacheModel/CloneAndCacheModel.json) for the full workflow definition.
+See [`workflow/CloneModel/CloneModel.json`](../../workflow/CloneModel/CloneModel.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheModel/CloneAndCacheModel.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/CloneModel/CloneModel.json [options]
 ```
 
 | Option | Default | Description |
@@ -38,3 +38,37 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheModel/CloneAn
 | `--pretty` | false | Pretty-print JSON output |
 | `--max-retries` | 0 | Max retries for API requests |
 | `-h, --help` | - | Show help message |
+
+```bash
+python -m pyromind_sdk.test_run_workflow_cli workflow/CloneModel/CloneModel.json --pretty
+```
+
+Example output:
+
+```json
+{
+  "task_id": "4879",
+  "task_name": "clonemodel",
+  "status": "success",
+  "error_message": null,
+  "nodes": [
+    {
+      "node_key": "#1",
+      "node_id": 18889,
+      "node_type": "CloneAndCacheModel",
+      "label": "",
+      "start_at": "2026-06-09 03:32:14",
+      "end_at": "2026-06-09 03:32:23",
+      "duration": "0:00:09",
+      "input": {
+        "model": "Qwen/Qwen3-1.7B",
+        "target_path": "/workspace/models/"
+      },
+      "output": {
+        "model_path": "/workspace/models/Qwen/Qwen3-1.7B"
+      },
+      "raw": {}
+    }
+  ]
+}
+```
