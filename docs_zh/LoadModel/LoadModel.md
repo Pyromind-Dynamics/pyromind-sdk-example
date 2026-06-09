@@ -1,6 +1,6 @@
 # Load Model 节点
 
-![alt text](imgs/LoadModel/LoadModel.png)
+![alt text](/imgs/LoadModel/LoadModel.png)
 
 ## 1.1 功能概述
 
@@ -20,7 +20,7 @@
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/LoadModel/LoadModel.json`](workflow/LoadModel/LoadModel.json)。
+完整 workflow 定义见 [`workflow/LoadModel/LoadModel.json`](../../workflow/LoadModel/LoadModel.json)。
 
 示例配置：
 ```json

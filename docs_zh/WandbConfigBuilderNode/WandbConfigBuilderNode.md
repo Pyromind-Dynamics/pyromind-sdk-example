@@ -1,6 +1,6 @@
 # Wandb Config Builder 节点
 
-![alt text](imgs/WandbConfigBuilderNode/WandbConfigBuilderNode.png)
+![alt text](/imgs/WandbConfigBuilderNode/WandbConfigBuilderNode.png)
 
 ## 1.1 功能概述
 
@@ -22,7 +22,7 @@
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json`](workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json)。
+完整 workflow 定义见 [`workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json`](../../workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json)。
 
 示例配置：
 ```json

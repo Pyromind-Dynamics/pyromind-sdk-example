@@ -1,6 +1,6 @@
 # Load Model Node
 
-![alt text](imgs/LoadModel/LoadModel.png)
+![alt text](/imgs/LoadModel/LoadModel.png)
 
 ## 1.1 Overview
 
@@ -20,7 +20,7 @@ Loads a base model for RL training. This node loads a pretrained model from a sp
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/LoadModel/LoadModel.json`](workflow/LoadModel/LoadModel.json) for the full workflow definition.
+See [`workflow/LoadModel/LoadModel.json`](../../workflow/LoadModel/LoadModel.json) for the full workflow definition.
 
 Example configuration:
 ```json

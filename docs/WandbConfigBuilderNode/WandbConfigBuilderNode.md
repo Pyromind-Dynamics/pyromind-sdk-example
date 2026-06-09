@@ -1,6 +1,6 @@
 # Wandb Config Builder Node
 
-![alt text](imgs/WandbConfigBuilderNode/WandbConfigBuilderNode.png)
+![alt text](/imgs/WandbConfigBuilderNode/WandbConfigBuilderNode.png)
 
 ## 1.1 Overview
 
@@ -22,7 +22,7 @@ Builds a `wandb_config` YAML string for W&B (Weights & Biases) training runtime 
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json`](workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json) for the full workflow definition.
+See [`workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json`](../../workflow/WandbConfigBuilderNode/WandbConfigBuilderNode.json) for the full workflow definition.
 
 Example configuration:
 ```json
