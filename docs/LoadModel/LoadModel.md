@@ -16,7 +16,7 @@ Loads a base model for RL training. This node loads a pretrained model from a sp
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model | MODEL | Loaded model reference for downstream nodes |
+| model | STRING | Loaded model reference for downstream nodes |
 
 ## 1.4 Workflow JSON Definition
 

@@ -1,0 +1,83 @@
+{
+  "id": "0589988b-18fd-44cd-89bc-b6b1a8ea5283",
+  "name": "wandb",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 416.4705882352942,
+        "y": 163.52941176470588
+      },
+      "data": {
+        "display_name": "Wandb Config Builder",
+        "nodeType": "WandbConfigBuilderNode",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "wandb_api_key": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "wandb_project": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "wandb_run_group": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            }
+          },
+          "output": [
+            "WANDB_CONFIG"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "wandb_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 327,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-05-27 11:03:07",
+          "version": 1,
+          "description": "Build wandb_config YAML string for W&B training runtime env.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "wandb_api_key": "",
+          "wandb_project": "test-01",
+          "wandb_run_group": "daskdas"
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 168
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -610.3286438270459,
+    "y": -224.15397699558878,
+    "zoom": 1.93587239833595
+  },
+  "timestamp": "2026-06-09T09:16:57.843Z"
+}
