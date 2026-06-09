@@ -18,10 +18,10 @@ GPU node example using accelerate launch mode
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| gpu_info | STRING | 字符串 |
-| execution_result | STRING | 字符串 |
-| execution_output | STRING | 字符串 |
-| message_output | STRING | 字符串 |
+| gpu_info | STRING | 字符串。默认值：`NVIDIA H100 NVL` |
+| execution_result | STRING | 字符串。默认值：`ode executed successfully`|
+| execution_output | STRING | 字符串。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
+| message_output | STRING | 字符串。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`  |
 
 ## 1.4 Workflow JSON 定义
 
