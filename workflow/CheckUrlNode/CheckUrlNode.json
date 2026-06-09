@@ -1,1 +1,86 @@
-
+{
+  "id": "cbb1fab3-d75d-4d6a-885f-a812d57698f9",
+  "name": "check url",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 492.94117647058823,
+        "y": 328.2352941176471
+      },
+      "data": {
+        "display_name": "URL Check",
+        "nodeType": "CheckUrlNode",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "url": [
+                "STRING",
+                {
+                  "default": "http://localhost:3000"
+                }
+              ],
+              "max_retries": [
+                "INT",
+                {
+                  "default": 30,
+                  "min": 1,
+                  "max": 300
+                }
+              ],
+              "retry_interval": [
+                "INT",
+                {
+                  "default": 2,
+                  "min": 1,
+                  "max": 60
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "endpoint"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 1435,
+          "node_type": "system",
+          "created_at": "2026-06-03T04:55:45.357148+00:00",
+          "updated_at": "2026-06-03T04:55:45.357148+00:00",
+          "version": 1,
+          "description": "\n    Check URL 节点：检查URL是否可用\n    ",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "url": "https://pre-console.pyromind.ai",
+          "max_retries": 30,
+          "retry_interval": 2
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 168
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-09T03:00:31.655Z"
+}
