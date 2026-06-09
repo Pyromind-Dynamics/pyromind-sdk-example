@@ -8,17 +8,19 @@ Run data_preprocess grounding-xml pipeline and emit output path.
 
 ## 1.2 输入类型
 
-| 参数 | 数据类型 | 必填 | 描述 |
-|------|---------|------|------|
-| image_dir | STRING | 是 | 字符串。默认值：- |
-| output_dir | STRING | 是 | 字符串。默认值：- |
-| api_base | STRING | 是 | 字符串。默认值：- |
-| model | STRING | 是 | 字符串。默认值：- |
-| api_key | STRING | 是 | 字符串。默认值：- |
-| system_prompt | STRING | 否 | 字符串。默认值：- |
-| max_tokens | INT | 否 | 整数。默认值：`2048` |
-| thinking | BOOLEAN | 否 | 布尔值。默认值：`False` |
-| concurrency | INT | 否 | 整数。默认值：`8` |
+| 参数 | 数据类型    | 必填 | 描述                                                                                                                         |
+|------|---------|----|----------------------------------------------------------------------------------------------------------------------------|
+| accelerate_config | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| wandb_config | STRING    | 否  | YAML mapping格式，wandb参数示例：<br/> WANDB_API_KEY: ********<br/>WANDB_PROJECT: [Your Project]<br/>WANDB_RUN_GROUP: [Your Group] |
+| image_dir | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| output_dir | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| api_base | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| model | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| api_key | STRING  | 是  | 字符串。默认值：-                                                                                                                  |
+| system_prompt | STRING  | 否  | 字符串。默认值：-                                                                                                                  |
+| max_tokens | INT     | 否  | 整数。默认值：`2048`                                                                                                              |
+| thinking | BOOLEAN | 否  | 布尔值。默认值：`False`                                                                                                            |
+| concurrency | INT     | 否  | 整数。默认值：`8`                                                                                                                 |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |

@@ -8,17 +8,22 @@ Run data_preprocess grounding-xml pipeline and emit output path.
 
 ## 1.2 Input
 
-| Parameter | Data Type | Required | Description |
-|-----------|-----------|----------|-------------|
-| image_dir | STRING | Yes | String value. Default: - |
-| output_dir | STRING | Yes | String value. Default: - |
-| api_base | STRING | Yes | String value. Default: - |
-| model | STRING | Yes | String value. Default: - |
-| api_key | STRING | Yes | String value. Default: - |
-| system_prompt | STRING | No | String value. Default: - |
-| max_tokens | INT | No | Integer value. Default: `2048` |
-| thinking | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| concurrency | INT | No | Integer value. Default: `8` |
+| Parameter         | Data Type | Required | Description |
+|-------------------|-----------|----------|-------------|
+| accelerate_config | json    | Yes | String value. Default: - |
+| wandb_config      | json      | No | String value. Default: - |
+| image_dir         | STRING    | Yes | String value. Default: - |
+| output_dir        | STRING    | Yes | String value. Default: - |
+| api_base          | STRING    | Yes | String value. Default: - |
+| model             | STRING    | Yes | String value. Default: - |
+| api_key           | STRING    | Yes | String value. Default: - |
+| system_prompt     | STRING    | No | String value. Default: - |
+| max_tokens        | INT       | No | Integer value. Default: `2048` |
+| thinking          | BOOLEAN   | No | Boolean flag (true/false). Default: `False` |
+| concurrency       | INT       | No | Integer value. Default: `8` |
+
+
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
