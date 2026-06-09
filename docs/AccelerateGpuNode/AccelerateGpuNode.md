@@ -4,24 +4,25 @@
 
 ## 1.1 Overview
 
-GPU node example using accelerate launch mode
+The AccelerateGpuNode is a core node used to execute Accelerate framework configuration tasks within a specified GPU hardware environment. This node receives custom messages, Accelerate YAML configuration files, and GPU resource requirement parameters. It completes initialization and execution in the underlying environment, ultimately returning detailed hardware information, execution status, and runtime logs to provide environment validation and execution feedback for subsequent distributed training or inference tasks.
+
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| message | STRING | Yes | String value. Default: `Accelerate GPU Node executed successfully` |
+| message | STRING | Yes | Custom execution prompt message. Default: `Accelerate GPU Node executed successfully` |
 | accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate configuration YAML. Default: - |
-| gpu_count | INT | Yes | Integer value. Default: `1` |
-| gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
+| gpu_count | INT | Yes | The number of GPUs requested for allocation, integer type.. Default: `1` |
+| gpu_product | STRING | Yes | The specified GPU hardware model. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| gpu_info | STRING | String value. Default：`NVIDIA H100 NVL`|
-| execution_result | STRING | String value. Default: `Code executed successfully`|
-| execution_output | STRING | String value. Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
-| message_output | STRING | String value. Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`|
+| gpu_info | STRING | Information about the actual GPU hardware model allocated. Default：`NVIDIA H100 NVL`|
+| execution_result | STRING | The final execution result status identifier of the task. Default: `Code executed successfully`|
+| execution_output | STRING | Detailed execution log output (e.g., CUDA status, GPU count, and model). Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
+| message_output | STRING | Comprehensive message output(e.g., CUDA status, GPU count, and model). Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`|
 
 ## 1.4 Workflow JSON Definition
 
