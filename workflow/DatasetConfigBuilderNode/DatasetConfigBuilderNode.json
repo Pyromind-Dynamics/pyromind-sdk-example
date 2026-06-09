@@ -1,0 +1,151 @@
+{
+  "id": "af528c0b-6d98-4a49-86aa-6d0a878c2f98",
+  "name": "test-trainData",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 488.8258751095956,
+        "y": -58.76628464872138
+      },
+      "data": {
+        "display_name": "Dataset Config Builder",
+        "nodeType": "DatasetConfigBuilderNode",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "train_data_path": [
+                "STRING"
+              ]
+            },
+            "optional": {
+              "val_data_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "dataloader_kind": [
+                "STRING",
+                {
+                  "default": "vision"
+                }
+              ],
+              "image_field": [
+                "STRING",
+                {
+                  "default": "image_path"
+                }
+              ],
+              "assistant_response_field": [
+                "STRING",
+                {
+                  "default": "gt"
+                }
+              ],
+              "rejected_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "messages_field": [
+                "STRING",
+                {
+                  "default": "messages"
+                }
+              ],
+              "user_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "system_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "sft_collator_entry": [
+                "STRING",
+                {
+                  "default": "train.sft_collator:make_collate_fn"
+                }
+              ],
+              "dpo_collator_entry": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "grpo_collator_entry": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "max_seq_length": [
+                "INT",
+                {
+                  "default": 4096
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "dataset_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 352,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-05-27 11:03:07",
+          "version": 1,
+          "description": "Build dataset config YAML string for SFT/GRPO.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "train_data_path": "/workspace/datasets/openai/gsm8k/",
+          "val_data_path": "",
+          "dataloader_kind": "vision",
+          "image_field": "image_path",
+          "assistant_response_field": "gt",
+          "rejected_field": "",
+          "messages_field": "messages",
+          "user_prompt_field": "",
+          "system_prompt_field": "",
+          "sft_collator_entry": "train.sft_collator:make_collate_fn",
+          "dpo_collator_entry": "",
+          "grpo_collator_entry": "",
+          "max_seq_length": 4096
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 448
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -150.38528219578484,
+    "y": 119.88571293898528,
+    "zoom": 1.5147199076884932
+  },
+  "timestamp": "2026-06-09T09:29:30.972Z"
+}
