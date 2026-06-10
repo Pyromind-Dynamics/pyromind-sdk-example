@@ -1,0 +1,88 @@
+{
+  "id": "0b7186ce-1491-4dcc-87fc-7c1f1c075112",
+  "name": "Unsaved Workflow",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 701.4861914819581,
+        "y": 372.1152378514865
+      },
+      "data": {
+        "label": "Download Dataset",
+        "nodeType": "DownloadAndCacheDataset",
+        "nodeDefinition": {
+          "name": "DownloadAndCacheDataset",
+          "input": {
+            "required": {
+              "dataset_name": [
+                "STRING",
+                {
+                  "default": "openai/gsm8k"
+                }
+              ],
+              "cache_dir": [
+                "PATH",
+                {
+                  "default": "/workspace/datasets/openai/gsm8k"
+                }
+              ],
+              "download_source": [
+                "STRING",
+                {
+                  "default": "huggingface",
+                  "enum": [
+                    "huggingface",
+                    "modelscope"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "dataset_path"
+          ],
+          "category": "datasets",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 406,
+          "node_type": "system",
+          "created_at": "2026-05-07T03:47:03.549461+00:00",
+          "updated_at": "2026-05-07T03:47:03.549461+00:00",
+          "version": 1,
+          "display_name": "Download Dataset",
+          "description": "下载并缓存数据集",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "dataset_name": "openai/gsm8k",
+          "cache_dir": "/workspace/datasets/openai/gsm8k",
+          "download_source": "huggingface"
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 168
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -93.0653573682755,
+    "y": -109.71659523054143,
+    "zoom": 1.3187221196955914
+  },
+  "timestamp": "2026-06-08T03:36:30.753Z"
+}

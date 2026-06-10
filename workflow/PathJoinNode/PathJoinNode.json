@@ -1,0 +1,83 @@
+{
+  "id": "0b7186ce-1491-4dcc-87fc-7c1f1c075112",
+  "name": "Unsaved Workflow",
+  "nodes": [
+    {
+      "id": "2",
+      "type": "default",
+      "position": {
+        "x": 751.4833759590795,
+        "y": 427.93861892583124
+      },
+      "data": {
+        "label": "Join Path",
+        "nodeType": "PathJoinNode",
+        "nodeDefinition": {
+          "name": "PathJoinNode",
+          "input": {
+            "required": {
+              "base_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "subpath": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {
+              "environment": [
+                "ENV"
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "joined_path"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 177,
+          "node_type": "system",
+          "created_at": "2026-04-20T03:45:12.093232+00:00",
+          "updated_at": "2026-04-20T03:45:12.093232+00:00",
+          "version": 1,
+          "display_name": "Join Path",
+          "description": "",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "base_path": "/workspace/",
+          "subpath": "models",
+          "environment": ""
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 140
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -632.9667519181589,
+    "y": -397.87723785166236,
+    "zoom": 2
+  },
+  "timestamp": "2026-06-08T03:03:40.753Z"
+}
