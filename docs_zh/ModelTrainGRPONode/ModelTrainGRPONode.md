@@ -37,7 +37,7 @@ GRPO 的主训练节点，采用与 SFT 风格对齐的 YAML 配置：包含 dat
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/ModelTrainGRPONode/ModelTrainGRPONode.json`](/workflow/ModelTrainGRPONode/ModelTrainGRPONode.json)。
+完整 workflow 定义见 [`workflow/ModelTrainGRPONode/ModelTrainGRPONode.json`](../../workflow/ModelTrainGRPONode/ModelTrainGRPONode.json)。
 
 ## 1.5 运行 Workflow
 

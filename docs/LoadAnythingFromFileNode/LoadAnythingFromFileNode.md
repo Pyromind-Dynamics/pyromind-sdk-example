@@ -1,6 +1,6 @@
 # Load Anything From File Node
 
-![alt text](/imgs/LoadAnythingFromFile/LoadAnythingFromFile.png)
+![alt text](/imgs/LoadAnythingFromFileNode/LoadAnythingFromFileNode.png)
 
 ## 1.1 Overview
 
@@ -22,13 +22,13 @@ Reads a text file from the specified workspace path and outputs its content, res
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/LoadAnythingFromFile/LoadAnythingFromFile.json`](../../workflow/LoadAnythingFromFile/LoadAnythingFromFile.json) for the full workflow definition.
+See [`workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json`](../../workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadAnythingFromFile.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json [options]
 ```
 
 | Option | Default | Description |
@@ -42,7 +42,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadA
 | `-h, --help` | - | Show help message |
 
 ```bash
-python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadAnythingFromFile.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json --pretty
 ```
 
 Example output:

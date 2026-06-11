@@ -48,7 +48,7 @@ mixed_precision: bf16
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
 | gpu_info | STRING | 实际分配到的 GPU 硬件型号信息。默认值：`NVIDIA H100 NVL` |
-| execution_result | STRING | 任务的最终执行结果状态标识。默认值：`ode executed successfully`|
+| execution_result | STRING | 任务的最终执行结果状态标识。默认值：`Code executed successfully`|
 | execution_output | STRING | 详细的执行日志输出（如 CUDA 状态、GPU 数量及型号）。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
 | message_output | STRING | 综合消息输出（如 CUDA 状态、GPU 数量及型号）。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`  |
 

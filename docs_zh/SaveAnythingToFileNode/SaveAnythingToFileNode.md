@@ -22,13 +22,13 @@ Save any provided content to a file path.
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/SaveAnythingToFile/SaveAnythingToFile.json`](../../workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json)。
+完整 workflow 定义见 [`workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json`](../../workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json)。
 
 ## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/SaveAnythingToFile/SaveAnythingToFile.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json --pretty
 ```
 
 | 选项 | 默认值 | 说明 |

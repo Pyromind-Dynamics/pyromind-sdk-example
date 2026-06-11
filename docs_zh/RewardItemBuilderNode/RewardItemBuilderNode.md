@@ -1,6 +1,6 @@
 # Reward Item Builder 节点
 
-![alt text](/imgs/RewardItemBuilder/RewardItemBuilder.png)  
+![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)  
 
 ## 1.1 功能概述
 
@@ -22,13 +22,13 @@
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/RewardItemBuilder/RewardItemBuilder.json`](../../workflow/RewardItemBuilder/RewardItemBuilder.json)。
+完整 workflow 定义见 [`workflow/RewardItemBuilderNode/RewardItemBuilderNode.json`](../../workflow/RewardItemBuilderNode/RewardItemBuilderNode.json)。
 
 ## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardItemBuilder.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilderNode/RewardItemBuilderNode.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -42,7 +42,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardIt
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardItemBuilder.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilderNode/RewardItemBuilderNode.json --pretty
 ```
 
 输出示例：

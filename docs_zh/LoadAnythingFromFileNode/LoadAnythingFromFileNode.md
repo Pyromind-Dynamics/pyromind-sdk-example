@@ -1,6 +1,6 @@
 # Load Anything From File 节点
 
-![alt text](/imgs/LoadAnythingFromFile/LoadAnythingFromFile.png)
+![alt text](/imgs/LoadAnythingFromFileNode/LoadAnythingFromFileNode.png)
 
 ## 1.1 功能概述
 
@@ -21,13 +21,13 @@
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/LoadAnythingFromFile/LoadAnythingFromFile.json`](../../workflow/LoadAnythingFromFile/LoadAnythingFromFile.json)。
+完整 workflow 定义见 [`workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json`](../../workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json)。
 
 ## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadAnythingFromFile.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -41,7 +41,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadA
 | `-h, --help` | - | 显示帮助信息 |
 
 ```bash
-python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFile/LoadAnythingFromFile.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/LoadAnythingFromFileNode/LoadAnythingFromFileNode.json --pretty
 ```
 
 输出示例：

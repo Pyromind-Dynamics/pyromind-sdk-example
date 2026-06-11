@@ -32,7 +32,7 @@ Builds a dataset configuration YAML string for SFT/GRPO training. This node is u
 
 ## 1.4 Workflow JSON Definition
 
-See [`DatasetConfigBuilderNode.json`](../../workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json) for the full workflow definition.
+See [`workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json`](../../workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json) for the full workflow definition.
 
 Example configuration:
 ```json

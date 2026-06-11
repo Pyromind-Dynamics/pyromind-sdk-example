@@ -26,7 +26,7 @@
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/Inference/Inference.json`](/workflow/Inference/Inference.json)。
+完整 workflow 定义见 [`workflow/Inference/Inference.json`](../../workflow/Inference/Inference.json)。
 
 ## 1.5 运行 Workflow
 

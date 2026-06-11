@@ -1,6 +1,6 @@
 # Reward Item Builder Node
 
-![alt text](/imgs/RewardItemBuilder/RewardItemBuilder.png)  
+![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)  
 
 ## 1.1 Overview
 
@@ -22,13 +22,13 @@ Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwar
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/RewardItemBuilder/RewardItemBuilder.json`](../../workflow/RewardItemBuilder/RewardItemBuilder.json) for the full workflow definition.
+See [`workflow/RewardItemBuilderNode/RewardItemBuilderNode.json`](../../workflow/RewardItemBuilderNode/RewardItemBuilderNode.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardItemBuilder.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilderNode/RewardItemBuilderNode.json [options]
 ```
 
 | Option | Default | Description |
@@ -42,7 +42,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardIt
 | `-h, --help` | - | Show help message |
 
 ```bash
-python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilder/RewardItemBuilder.json  --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/RewardItemBuilderNode/RewardItemBuilderNode.json  --pretty
 ```
 
 Example output:

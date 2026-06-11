@@ -24,13 +24,13 @@ Build reward config YAML from up to five reward item YAML strings and normalize 
 
 ## 1.4 Workflow JSON 定义
 
-完整 workflow 定义见 [`workflow/RewardConfigBuilder/RewardConfigBuilder.json`](../../workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json)。
+完整 workflow 定义见 [`workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json`](../../workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json)。
 
 ## 1.5 运行 Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/RewardConfigBuilder/RewardConfigBuilder.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/RewardConfigBuilderNode/RewardConfigBuilderNode.json --pretty
 ```
 
 | 选项 | 默认值 | 说明 |

@@ -33,7 +33,7 @@ The main training node for GRPO, using SFT-aligned YAML configuration: includes 
 
 ## 1.4 Workflow JSON Definition
 
-See  [`workflow/ModelTrainGRPONode/ModelTrainGRPONode.json`](/workflow/ModelTrainGRPONode/ModelTrainGRPONode.json) for the full workflow definition.
+See  [`workflow/ModelTrainGRPONode/ModelTrainGRPONode.json`](../../workflow/ModelTrainGRPONode/ModelTrainGRPONode.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 

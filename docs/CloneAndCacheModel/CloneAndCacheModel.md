@@ -20,13 +20,13 @@ Clones a model from pre-stored templates in the pyromind environment into the wo
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/CloneModel/CloneModel.json`](../../workflow/CloneModel/CloneModel.json) for the full workflow definition.
+See [`workflow/CloneAndCacheModel/CloneAndCacheModel.json`](../../workflow/CloneAndCacheModel/CloneAndCacheModel.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/CloneModel/CloneModel.json [options]
+python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheModel/CloneAndCacheModel.json [options]
 ```
 
 | Option | Default | Description |
@@ -40,7 +40,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/CloneModel/CloneModel.json
 | `-h, --help` | - | Show help message |
 
 ```bash
-python -m pyromind_sdk.test_run_workflow_cli workflow/CloneModel/CloneModel.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/CloneAndCacheModel/CloneAndCacheModel.json --pretty
 ```
 
 Example output:

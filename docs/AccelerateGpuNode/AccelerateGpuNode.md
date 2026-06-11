@@ -48,7 +48,7 @@ mixed_precision: bf16
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| gpu_info | STRING | Information about the actual GPU hardware model allocated. Default：`NVIDIA H100 NVL`|
+| gpu_info | STRING | Information about the actual GPU hardware model allocated. Default: `NVIDIA H100 NVL`|
 | execution_result | STRING | The final execution result status identifier of the task. Default: `Code executed successfully`|
 | execution_output | STRING | Detailed execution log output (e.g., CUDA status, GPU count, and model). Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
 | message_output | STRING | Comprehensive message output(e.g., CUDA status, GPU count, and model). Default: `Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`|

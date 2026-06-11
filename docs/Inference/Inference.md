@@ -26,7 +26,7 @@ Based on the provided parameters, this node starts an inference service that con
 
 ## 1.4 Workflow JSON Definition
 
-See [`workflow/Inference/Inference.json`](/workflow/Inference/Inference.json) for the full workflow definition.
+See [`workflow/Inference/Inference.json`](../../workflow/Inference/Inference.json) for the full workflow definition.
 
 ## 1.5 Running the Workflow
 
