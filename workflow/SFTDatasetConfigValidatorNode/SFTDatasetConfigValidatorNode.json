@@ -1,0 +1,455 @@
+{
+    "id": "73fe0dd3-be3a-47a8-828d-c13706e6bfc8",
+    "name": "Unsaved Workflow",
+    "nodes": [
+      {
+        "id": "2",
+        "type": "default",
+        "position": {
+          "x": 677.9560165213954,
+          "y": 201.91706144942202
+        },
+        "data": {
+          "label": "Dataset Config Builder",
+          "nodeType": "DatasetConfigBuilderNode",
+          "nodeDefinition": {
+            "name": "DatasetConfigBuilderNode",
+            "input": {
+              "required": {
+                "train_data_path": [
+                  "STRING"
+                ]
+              },
+              "optional": {
+                "val_data_path": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "dataloader_kind": [
+                  "STRING",
+                  {
+                    "default": "vision",
+                    "enum": [
+                      "vision",
+                      "text_only",
+                      "messages"
+                    ]
+                  }
+                ],
+                "image_field": [
+                  "STRING",
+                  {
+                    "default": "image_path"
+                  }
+                ],
+                "assistant_response_field": [
+                  "STRING",
+                  {
+                    "default": "gt"
+                  }
+                ],
+                "rejected_field": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "messages_field": [
+                  "STRING",
+                  {
+                    "default": "messages"
+                  }
+                ],
+                "user_prompt_field": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "system_prompt_field": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "sft_collator_entry": [
+                  "STRING",
+                  {
+                    "default": "train.sft_collator:make_collate_fn"
+                  }
+                ],
+                "dpo_collator_entry": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "grpo_collator_entry": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "max_seq_length": [
+                  "INT",
+                  {
+                    "default": 4096
+                  }
+                ]
+              }
+            },
+            "output": [
+              "STRING"
+            ],
+            "output_is_list": [
+              false
+            ],
+            "output_name": [
+              "dataset_config"
+            ],
+            "category": "",
+            "output_node": false,
+            "experimental": false,
+            "deprecated": false,
+            "python_module": "custom_nodes",
+            "id": 352,
+            "node_type": "user",
+            "created_at": "2026-04-29T10:09:27.995318+00:00",
+            "updated_at": "2026-06-11T07:45:48.866305+00:00",
+            "version": 65,
+            "display_name": "Dataset Config Builder",
+            "description": "Build dataset config YAML string for SFT/GRPO.",
+            "is_enabled": true,
+            "metanode_deleted": false
+          },
+          "config": {
+            "train_data_path": "",
+            "val_data_path": "",
+            "dataloader_kind": "vision",
+            "image_field": "image_path",
+            "assistant_response_field": "gt",
+            "rejected_field": "",
+            "messages_field": "messages",
+            "user_prompt_field": "user_prompt",
+            "system_prompt_field": "system_prompt",
+            "sft_collator_entry": "train.sft_collator:make_collate_fn",
+            "dpo_collator_entry": "",
+            "grpo_collator_entry": "",
+            "max_seq_length": 4096
+          },
+          "definitionMissing": false
+        },
+        "measured": {
+          "width": 300,
+          "height": 448
+        },
+        "properties": {}
+      },
+      {
+        "id": "3",
+        "type": "default",
+        "position": {
+          "x": 358.28914097000074,
+          "y": 273.1938147202374
+        },
+        "data": {
+          "label": "Clone Dataset",
+          "nodeType": "CloneAndCacheDataset",
+          "nodeDefinition": {
+            "name": "CloneAndCacheDataset",
+            "input": {
+              "required": {
+                "dataset": [
+                  "STRING",
+                  {
+                    "skip_enum": true,
+                    "enum": [
+                      "OpenGVLab/ScaleCUA-Data",
+                      "Writer/omniact",
+                      "agibot-world/AgiBotWorld-Alpha-327",
+                      "agibot-world/AgiBotWorld-Alpha-327-Extract",
+                      "agibot-world/AgiBotWorld-Alpha-CtrlWorld-327",
+                      "agibot-world/AgiBotWorld-Alpha-Lerobot-327",
+                      "agibot-world/AgiBotWorld-Alpha-Openpi-327",
+                      "cadene/droid_1.0.1",
+                      "gui-360/gui-excel",
+                      "gui-360/processed_data",
+                      "henryhe0123/PC-Agent-E",
+                      "openai/gsm8k",
+                      "pyromind/alpaca-gpt4-llm-demo",
+                      "pyromind/geometry-vqa-vlm-demo",
+                      "ritzzai/GUI-R1",
+                      "xlangai/aguvis-stage1",
+                      "xlangai/aguvis-stage2",
+                      "zonghanHZH/UGround-V1-8k"
+                    ]
+                  }
+                ],
+                "target_path": [
+                  "STRING",
+                  {
+                    "default": "/workspace/datasets/",
+                    "enum": [
+                      "/workspace/datasets/"
+                    ]
+                  }
+                ]
+              }
+            },
+            "output": [
+              "STRING"
+            ],
+            "output_is_list": [
+              false
+            ],
+            "output_name": [
+              "dataset_path"
+            ],
+            "category": "datasets",
+            "output_node": false,
+            "experimental": false,
+            "deprecated": false,
+            "python_module": "test_nodes",
+            "id": 188,
+            "node_type": "system",
+            "created_at": "2026-04-21T06:20:41.199439+00:00",
+            "updated_at": "2026-04-23T07:18:07.962530+00:00",
+            "version": 3,
+            "display_name": "Clone Dataset",
+            "description": "克隆数据集",
+            "is_enabled": true,
+            "metanode_deleted": false
+          },
+          "config": {
+            "dataset": "pyromind/geometry-vqa-vlm-demo",
+            "target_path": "/workspace/datasets/"
+          },
+          "definitionMissing": false
+        },
+        "measured": {
+          "width": 300,
+          "height": 140
+        },
+        "properties": {}
+      },
+      {
+        "id": "4",
+        "type": "default",
+        "position": {
+          "x": 355.68484884500907,
+          "y": 443.33953850600244
+        },
+        "data": {
+          "label": "Join Path",
+          "nodeType": "PathJoinNode",
+          "nodeDefinition": {
+            "name": "PathJoinNode",
+            "input": {
+              "required": {
+                "base_path": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ],
+                "subpath": [
+                  "STRING",
+                  {
+                    "default": ""
+                  }
+                ]
+              },
+              "optional": {
+                "environment": [
+                  "ENV"
+                ]
+              }
+            },
+            "output": [
+              "STRING"
+            ],
+            "output_is_list": [
+              false
+            ],
+            "output_name": [
+              "joined_path"
+            ],
+            "category": "utils",
+            "output_node": false,
+            "experimental": false,
+            "deprecated": false,
+            "python_module": "test_nodes",
+            "id": 203,
+            "node_type": "system",
+            "created_at": "2026-04-21T06:22:57.792019+00:00",
+            "updated_at": "2026-04-21T06:22:57.792019+00:00",
+            "version": 1,
+            "display_name": "Join Path",
+            "description": "",
+            "is_enabled": true,
+            "metanode_deleted": false
+          },
+          "config": {
+            "base_path": "",
+            "subpath": "multimodal-open-r1-train.jsonl",
+            "environment": ""
+          },
+          "definitionMissing": false
+        },
+        "measured": {
+          "width": 300,
+          "height": 140
+        },
+        "properties": {}
+      },
+      {
+        "id": "5",
+        "type": "default",
+        "position": {
+          "x": 998.7258317593007,
+          "y": 274.8071041249721
+        },
+        "data": {
+          "label": "SFT Dataset Config Validator",
+          "nodeType": "ModelSFTDatasetConfigValidatorNode",
+          "nodeDefinition": {
+            "name": "ModelSFTDatasetConfigValidatorNode",
+            "input": {
+              "required": {
+                "dataset_config": [
+                  "STRING"
+                ]
+              },
+              "optional": {
+                "check_reasoning": [
+                  "BOOLEAN",
+                  {
+                    "default": false
+                  }
+                ],
+                "limit": [
+                  "INT",
+                  {
+                    "default": 0
+                  }
+                ],
+                "verbose": [
+                  "BOOLEAN",
+                  {
+                    "default": false
+                  }
+                ],
+                "preview_html_path": [
+                  "STRING",
+                  {
+                    "default": "/workspace/datasets/preview.html"
+                  }
+                ]
+              }
+            },
+            "output": [
+              "STRING",
+              "STRING"
+            ],
+            "output_is_list": [
+              false,
+              false
+            ],
+            "output_name": [
+              "metrics_yaml",
+              "output_preview_path"
+            ],
+            "category": "",
+            "output_node": false,
+            "experimental": false,
+            "deprecated": false,
+            "python_module": "test_nodes",
+            "id": 1924,
+            "node_type": "share",
+            "created_at": "2026-06-11 07:42:35",
+            "updated_at": "2026-06-11 07:42:35",
+            "version": 1,
+            "display_name": "SFT Dataset Config Validator",
+            "description": "Validates SFT dataset configuration and generates data preview.",
+            "is_enabled": true,
+            "metanode_deleted": false
+          },
+          "config": {
+            "dataset_config": "",
+            "check_reasoning": false,
+            "limit": 0,
+            "verbose": false,
+            "preview_html_path": "/workspace/datasets/preview.html"
+          },
+          "definitionMissing": false
+        },
+        "measured": {
+          "width": 300,
+          "height": 252
+        },
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "animated": false,
+        "style": {
+          "stroke": "#22c55e",
+          "strokeWidth": 2,
+          "color": "#22c55e"
+        },
+        "type": "default",
+        "source": "3",
+        "sourceHandle": "dataset_path",
+        "target": "4",
+        "targetHandle": "base_path",
+        "data": {
+          "connectionType": "STRING"
+        },
+        "id": "xy-edge__3dataset_path-4base_path"
+      },
+      {
+        "animated": false,
+        "style": {
+          "stroke": "#22c55e",
+          "strokeWidth": 2,
+          "color": "#22c55e"
+        },
+        "type": "default",
+        "source": "4",
+        "sourceHandle": "joined_path",
+        "target": "2",
+        "targetHandle": "train_data_path",
+        "data": {
+          "connectionType": "STRING"
+        },
+        "id": "xy-edge__4joined_path-2train_data_path"
+      },
+      {
+        "animated": true,
+        "style": {
+          "stroke": "#22c55e",
+          "strokeWidth": 2,
+          "color": "#22c55e",
+          "strokeDasharray": "6 4"
+        },
+        "type": "default",
+        "source": "2",
+        "sourceHandle": "dataset_config",
+        "target": "5",
+        "targetHandle": "dataset_config",
+        "data": {
+          "connectionType": "STRING"
+        },
+        "id": "xy-edge__2dataset_config-5dataset_config"
+      }
+    ],
+    "viewport": {
+      "x": -221.97297777635094,
+      "y": -84.50082225022108,
+      "zoom": 0.8460509890766446
+    },
+    "timestamp": "2026-06-11T08:14:59.325Z"
+  }
