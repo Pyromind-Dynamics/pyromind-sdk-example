@@ -1,16 +1,18 @@
 {
-  "id": "c8be0b7e-81fe-4e95-9f1c-461968f4b4da",
-  "name": "Unsaved Workflow",
+  "id": "63b8940c-44a5-4b93-bfbb-8ee9ba2d8170",
+  "name": "AccelerateGPUNode",
   "nodes": [
     {
       "id": "1",
       "type": "default",
       "position": {
-        "x": 341.4122162852708,
-        "y": 121.1367854553917
+        "x": 914.1176470588236,
+        "y": 285.88235294117646
       },
       "data": {
+        "display_name": "Accelerate GPU Node",
         "nodeType": "AccelerateGpuNode",
+        "libraryNodeId": "340",
         "nodeDefinition": {
           "input": {
             "required": {
@@ -72,8 +74,8 @@
           "python_module": "test_nodes",
           "id": 340,
           "node_type": "share",
-          "created_at": "2026-06-05 06:07:51",
-          "updated_at": "2026-06-05 06:07:51",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-05-27 11:03:07",
           "version": 1,
           "description": "GPU node example using accelerate launch mode",
           "is_enabled": true,
@@ -86,24 +88,23 @@
           "gpu_product": "NVIDIA-H100-NVL"
         },
         "definitionMissing": false,
-        "display_name": "Accelerate GPU Node"
+        "width": 300
       },
-      "measured": {
-        "width": 300,
-        "height": 252
-      },
-      "properties": {}
+      "style": {
+        "width": 300
+      }
     },
     {
       "id": "2",
       "type": "default",
       "position": {
-        "x": -64.02256632342483,
-        "y": 58.006350672783036
+        "x": 482.3529411764704,
+        "y": 338.82352941176464
       },
       "data": {
         "display_name": "Accelerate Config Builder",
         "nodeType": "AccelerateConfigBuilderNode",
+        "libraryNodeId": "322",
         "nodeDefinition": {
           "input": {
             "required": {},
@@ -131,31 +132,30 @@
           "output_name": [
             "accelerate_config"
           ],
-          "category": "",
+          "category": "system",
           "output_node": false,
           "experimental": false,
           "deprecated": false,
           "python_module": "test_nodes",
           "id": 322,
           "node_type": "share",
-          "created_at": "2026-06-05 06:07:51",
-          "updated_at": "2026-06-05 06:07:51",
-          "version": 1,
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-06-09T08:09:59.875453+00:00",
+          "version": 2,
           "description": "Build accelerate_config YAML string for accelerate launch.",
           "is_enabled": true,
           "metanode_deleted": false
         },
         "config": {
-          "zero_stage": 1,
-          "gpu_count": 1
+          "zero_stage": 2,
+          "gpu_count": 4
         },
-        "definitionMissing": false
+        "definitionMissing": false,
+        "width": 300
       },
-      "measured": {
-        "width": 300,
-        "height": 140
-      },
-      "properties": {}
+      "style": {
+        "width": 300
+      }
     }
   ],
   "edges": [
@@ -178,9 +178,9 @@
     }
   ],
   "viewport": {
-    "x": 144.90076101755085,
-    "y": 74.63415738103961,
-    "zoom": 0.92
+    "x": 1.1368683772161603e-13,
+    "y": 0,
+    "zoom": 0.85
   },
-  "timestamp": "2026-06-09T06:01:55.473Z"
+  "timestamp": "2026-06-11T02:03:35.731Z"
 }
