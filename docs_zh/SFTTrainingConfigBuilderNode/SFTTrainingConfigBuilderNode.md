@@ -15,7 +15,7 @@
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | eval_steps | INT | 否 | 每隔多少训练步执行一次验证/评估。默认值：`500` |
-| num_epochs | INT | 否 | 训练总轮数（epoch）。默认值：`20` |
+| num_epochs | FLOAT | 否 | 训练总轮数（epoch）。默认值：`20` |
 | batch_size | INT | 否 | 每个设备上的训练 batch 大小。默认值：`2` |
 | grad_accum | INT | 否 | 梯度累积步数；有效 batch ≈ batch_size × grad_accum × GPU 数。默认值：`8` |
 | learning_rate | FLOAT | 否 | 优化器学习率。默认值：`0.0001` |

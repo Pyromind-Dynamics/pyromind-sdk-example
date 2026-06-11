@@ -15,7 +15,7 @@ Assembles shared SFT/GRPO training hyperparameters into a `training_config` YAML
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | eval_steps | INT | No | Run validation/evaluation every N training steps. Default: `500` |
-| num_epochs | INT | No | Total number of training epochs. Default: `20` |
+| num_epochs | FLOAT | No | Total number of training epochs. Default: `20` |
 | batch_size | INT | No | Training batch size per device. Default: `2` |
 | grad_accum | INT | No | Gradient accumulation steps; effective batch ≈ batch_size × grad_accum × number of GPUs. Default: `8` |
 | learning_rate | FLOAT | No | Optimizer learning rate. Default: `0.0001` |
