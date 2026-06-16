@@ -1,6 +1,6 @@
 # Prompt Augmentation Node
 
-![alt text](/imgs/DataPreprocessPromptExpandNode/DataPreprocessPromptExpandNode.png)  
+![alt text](/imgs/DataPreprocessPromptExpandNode/DataPreprocessPromptExpandNode.png)
 
 ## 1.1 Overview
 
@@ -10,25 +10,26 @@ Run data_preprocess prompt-expand pipeline and emit output path.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| input_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| api_base | STRING | Yes | String value. Default: - |
-| model | STRING | Yes | String value. Default: - |
-| api_key | STRING | Yes | String value. Default: - |
-| user_prompt | STRING | No | String value. Default: - |
-| user_prompt_column | STRING | No | String value. Default: - |
-| format_lang | STRING | No | String value. Default: `en` |
-| system_prompt | STRING | No | String value. Default: - |
-| max_tokens | INT | No | Integer value. Default: `1024` |
-| thinking | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| limit | INT | No | Integer value. Default: `0` |
-| concurrency | INT | No | Integer value. Default: `1` |
-| num_variations | INT | No | Integer value. Default: `1` |
+| input_path | STRING | Yes | Input path |
+| output_path | STRING | Yes | Output directory or file path |
+| user_prompt | STRING | No | User prompt |
+| user_prompt_column | STRING | No | User prompt column. Default: empty string |
+| format_lang | STRING | No | Format lang. Default: `en` |
+| api_base | STRING | Yes | Api base |
+| model | STRING | Yes | Model |
+| api_key | STRING | Yes | Api key |
+| system_prompt | STRING | No | System prompt. Default: empty string |
+| max_tokens | INT | No | Maximum tokens per API completion. Default: `1024` |
+| thinking | BOOLEAN | No | Thinking. Default: false |
+| limit | INT | No | Max samples for validation preview (0 = no limit). Default: `0` |
+| concurrency | INT | No | Concurrency. Default: `1` |
+| num_variations | INT | No | Num variations. Default: `1` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| augmentation_path | STRING | String value |
+| augmentation_path | STRING | Prompt expansion output path |
 
 ## 1.4 Workflow JSON Definition
 

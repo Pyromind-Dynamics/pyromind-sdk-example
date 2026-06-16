@@ -1,6 +1,6 @@
 # Validate GRPO Dataloader Node
 
-![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)  
+![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)
 
 ## 1.1 Overview
 
@@ -10,19 +10,20 @@ Validate GRPO dataloader configuration, reward config, and rollout behavior.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| dataset_config | STRING | Yes | String value. Default: - |
-| rollout_size | INT | No | Integer value. Default: `3` |
-| check_reasoning | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| limit | INT | No | Integer value. Default: `0` |
-| verbose | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| preview_html_path | STRING | No | String value. Default: - |
-| reward_config | STRING | No | String value. Default: - |
+| dataset_config | STRING | Yes | Assembled dataset configuration YAML string |
+| rollout_size | INT | No | Rollout size. Default: `3` |
+| check_reasoning | BOOLEAN | No | Validate reasoning fields in the dataset. Default: false |
+| limit | INT | No | Max samples for validation preview (0 = no limit). Default: `0` |
+| verbose | BOOLEAN | No | Print detailed validation logs. Default: false |
+| preview_html_path | STRING | No | HTML preview output path. Default: empty string |
+| reward_config | STRING | No | Reward config YAML from Reward Config Builder. Default: empty string |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| metrics_json | STRING | String value |
-| output_preview_path | STRING | String value |
+| metrics_json | STRING | Validation metrics JSON string |
+| output_preview_path | STRING | Generated HTML preview file path |
 
 ## 1.4 Workflow JSON Definition
 

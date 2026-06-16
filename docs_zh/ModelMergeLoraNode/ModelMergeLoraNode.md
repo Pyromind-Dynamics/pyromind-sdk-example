@@ -1,28 +1,25 @@
 # Merge LoRA 节点
 
-![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)  
+![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)
 
 ## 1.1 功能概述
 
-Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor
-to a standalone directory. Base model id/path may be omitted if adapter_config.json
-contains base_model_name_or_path.
+Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_name_or_path.
 
 ## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| lora_path | STRING | 是 | 字符串。默认值：- |
-| output_path | STRING | 是 | 字符串。默认值：- |
-| gpu_count | INT | 是 | 整数。默认值：`1` |
-| gpu_product | STRING | 是 | 字符串。默认值：`NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-| model_name | STRING | 否 | 字符串。默认值：- |
-| model_type | STRING | 否 | 字符串。默认值：`auto` |
+| lora_path | STRING | 是 | Lora path |
+| output_path | STRING | 是 | 输出目录或文件路径 |
+| model_name | STRING | 否 | HuggingFace 模型名或本地路径。默认值：空字符串 |
+| model_type | STRING | 否 | 模型架构类型（`auto`、`qwen3vl`、`qwen3.5`）。默认值：`auto` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| merged_model_path | STRING | 字符串 |
+| merged_model_path | STRING | 合并后全量模型路径 |
 
 ## 1.4 Workflow JSON 定义
 

@@ -1,28 +1,25 @@
 # Merge LoRA Node
 
-![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)  
+![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)
 
 ## 1.1 Overview
 
-Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor
-to a standalone directory. Base model id/path may be omitted if adapter_config.json
-contains base_model_name_or_path.
+Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_name_or_path.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| lora_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| gpu_count | INT | Yes | Integer value. Default: `1` |
-| gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-| model_name | STRING | No | String value. Default: - |
-| model_type | STRING | No | String value. Default: `auto` |
+| lora_path | STRING | Yes | Lora path |
+| output_path | STRING | Yes | Output directory or file path |
+| model_name | STRING | No | HuggingFace model name or local path. Default: empty string |
+| model_type | STRING | No | Model architecture type (`auto`, `qwen3vl`, `qwen3.5`). Default: `auto` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| merged_model_path | STRING | String value |
+| merged_model_path | STRING | Path to merged full-weight model |
 
 ## 1.4 Workflow JSON Definition
 

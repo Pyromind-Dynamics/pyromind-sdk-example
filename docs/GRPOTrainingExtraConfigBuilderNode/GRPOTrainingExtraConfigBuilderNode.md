@@ -1,6 +1,6 @@
 # GRPO Training Extra Config Builder Node
 
-![alt text](/imgs/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.png)  
+![alt text](/imgs/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.png)
 
 ## 1.1 Overview
 
@@ -10,18 +10,19 @@ Build grpo_extra_config YAML (GRPO-only training fields; use with shared trainin
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| max_steps | INT | No | Integer value. Default: `200` |
-| num_generations | INT | No | Integer value. Default: `8` |
-| max_prompt_length | INT | No | Integer value. Default: `2048` |
-| max_completion_length | INT | No | Integer value. Default: `2048` |
-| temperature | FLOAT | No | Floating point number. Default: `0.7` |
-| enable_chord | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| enable_hint | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
+| max_steps | INT | No | Maximum training steps (GRPO extra). Default: `200` |
+| num_generations | INT | No | Generations per prompt (GRPO extra). Default: `8` |
+| max_prompt_length | INT | No | Maximum prompt length (GRPO extra). Default: `2048` |
+| max_completion_length | INT | No | Maximum completion length (GRPO extra). Default: `2048` |
+| temperature | FLOAT | No | Sampling temperature. Default: `0.7` |
+| enable_chord | BOOLEAN | No | Enable CHORD algorithm (GRPO extra). Default: false |
+| enable_hint | BOOLEAN | No | Enable hint mode (GRPO extra). Default: false |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| grpo_extra_config | STRING | String value |
+| grpo_extra_config | STRING | GRPO-only extra training config YAML |
 
 ## 1.4 Workflow JSON Definition
 
