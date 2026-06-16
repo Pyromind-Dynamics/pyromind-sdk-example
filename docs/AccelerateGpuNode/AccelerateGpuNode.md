@@ -11,6 +11,9 @@ GPU node example using accelerate launch mode
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | message | STRING | Yes | Message |
+| gpu_count | INT | Yes | Number of GPUs |
+| gpu_product | STRING | Yes | GPU product type |
+| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate configuration |
 
 ## 1.3 Output
 

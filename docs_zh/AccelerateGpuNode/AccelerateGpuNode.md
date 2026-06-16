@@ -11,6 +11,9 @@ GPU node example using accelerate launch mode
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | message | STRING | 是 | Message |
+| gpu_count | INT | 是 | GPU 数量 |
+| gpu_product | STRING | 是 | GPU 产品类型 |
+| accelerate_config | ACCELERATE_CONFIG | 是 | Accelerate 配置 |
 
 ## 1.3 输出类型
 

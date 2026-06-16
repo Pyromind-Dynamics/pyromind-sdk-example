@@ -14,6 +14,9 @@ Run SFT training and return output directory.
 | dataset_config | STRING | 是 | 已组装的数据集配置 YAML 字符串 |
 | training_config | STRING | 是 | 训练配置 YAML 字符串（`BaseTrainingConfig` 字段） |
 | model_config | STRING | 是 | 模型配置 YAML 字符串 |
+| accelerate_config | ACCELERATE_CONFIG | 是 | Accelerate 配置 |
+| gpu_count | INT | 是 | GPU 数量 |
+| gpu_product | STRING | 是 | GPU 产品类型 |
 | lora_config | STRING | 否 | 来自 Lora Config Builder 的 LoRA 配置 YAML |
 | wandb_config | WANDB_CONFIG | 否 | W&B 配置对象 |
 | thinking_as_input_ratio | FLOAT | 否 | 将思维链内容作为输入的比例。默认值：`0.0` |

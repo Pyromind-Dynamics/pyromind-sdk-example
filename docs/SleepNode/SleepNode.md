@@ -11,12 +11,12 @@ Sleep 节点：持续睡眠用于调试
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | duration | INT | Yes | Integer value. Default: `10` |
-| interval | INT | Yes | Integer value. Default: `2` |
+| origin | * | No | Origin source |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| status | STRING | String value |
+| source | * | Source output |
 
 ## 1.4 Workflow JSON Definition
 
