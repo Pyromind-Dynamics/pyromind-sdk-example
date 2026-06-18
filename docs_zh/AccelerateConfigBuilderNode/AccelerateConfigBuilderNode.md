@@ -11,6 +11,7 @@ Build accelerate_config YAML string for accelerate launch.
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | zero_stage | INT | 否 | DeepSpeed ZeRO stage。默认值：`2` |
+| gpu_count | INT | 否 | Gpu count。默认值：`4` |
 
 ## 1.3 输出类型
 

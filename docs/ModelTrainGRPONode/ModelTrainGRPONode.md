@@ -17,9 +17,6 @@ GRPO training aligned with SFT-style YAML: dataset_config, training_config (shar
 | model_config | STRING | Yes | Model config YAML string |
 | lora_config | STRING | No | LoRA config YAML string from Lora Config Builder |
 | reward_config | STRING | Yes | Reward config YAML from Reward Config Builder |
-| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate configuration |
-| gpu_count | INT | Yes | Number of GPUs |
-| gpu_product | STRING | Yes | GPU product type |
 | wandb_config | WANDB_CONFIG | No | W&B configuration object |
 | thinking_as_input_ratio | FLOAT | No | Ratio of chain-of-thought content included as input. Default: `0.0` |
 

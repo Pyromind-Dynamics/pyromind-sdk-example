@@ -12,7 +12,7 @@ Builds the `dataset_kind_config` YAML fragment for vision datasets (image + text
 |-----------|-----------|----------|-------------|
 | system_prompt_field | STRING | No | System prompt field name. Default: empty string |
 | user_prompt_field | STRING | No | User prompt field name. Default: empty string |
-| image_field | STRING | Yes | Image field name |
+| image_field | STRING | No | Image field name. Default: empty string |
 | assistant_response_field | STRING | No | Assistant response / ground-truth field name. Default: `gt` |
 | rejected_field | STRING | No | Rejected response / messages field name. Default: `rejected_answer` |
 

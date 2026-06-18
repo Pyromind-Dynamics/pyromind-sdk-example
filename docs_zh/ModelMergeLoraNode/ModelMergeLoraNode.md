@@ -14,8 +14,6 @@ Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + pr
 | output_path | STRING | 是 | 输出目录或文件路径 |
 | model_name | STRING | 否 | HuggingFace 模型名或本地路径。默认值：空字符串 |
 | model_type | STRING | 否 | 模型架构类型（`auto`、`qwen3vl`、`qwen3.5`）。默认值：`auto` |
-| gpu_count | INT | 是 | GPU 数量 |
-| gpu_product | STRING | 是 | GPU 产品类型 |
 
 ## 1.3 输出类型
 
