@@ -1,6 +1,6 @@
 # Save Anything To File 节点
 
-![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)  
+![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)
 
 ## 1.1 功能概述
 
@@ -8,17 +8,19 @@ Save any provided content to a file path.
 
 ## 1.2 输入类型
 
-| 参数 | 数据类型 | 必填 | 描述                  |
-|------|---------|----|---------------------|
-| file_path | STRING | 是  | 文件路径。默认值：-          |
-| append | BOOLEAN | 是  | 内容追加。默认值：`False`    |
-| ensure_parent | BOOLEAN | 是  | 创建文件路径目录。默认值：`True` |
+| 参数 | 数据类型 | 必填 | 描述 |
+|------|---------|------|------|
+| file_path | STRING | 是 | 加载或保存的文件路径 |
+| content | * | 否 | 已加载文件内容。默认值：空字符串 |
+| append | BOOLEAN | 否 | Append。默认值：false |
+| ensure_parent | BOOLEAN | 否 | Ensure parent。默认值：true |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| saved_file_path | STRING | 字符串 |
-| written_bytes | INT | 整数 |
+| saved_file_path | STRING | 已保存文件路径 |
+| written_bytes | INT | 写入字节数 |
 
 ## 1.4 Workflow JSON 定义
 
@@ -28,7 +30,7 @@ Save any provided content to a file path.
 
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
-python -m pyromind_sdk.test_run_workflow_cli workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json --pretty
+python -m pyromind_sdk.test_run_workflow_cli workflow/SaveAnythingToFileNode/SaveAnythingToFileNode.json [options]
 ```
 
 | 选项 | 默认值 | 说明 |
@@ -40,55 +42,3 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/SaveAnythingToFileNode/Sav
 | `--pretty` | false | 美化 JSON 输出 |
 | `--max-retries` | 0 | API 请求最大重试次数 |
 | `-h, --help` | - | 显示帮助信息 |
-
-
-输出示例：
-
-```json
-{
-  "task_id": "4818",
-  "task_name": "unsaved-workflow",
-  "status": "success",
-  "error_message": null,
-  "nodes": [
-    {
-      "node_key": "#1",
-      "node_id": 18673,
-      "node_type": "SaveAnythingToFileNode",
-      "label": "",
-      "start_at": "2026-06-08 11:51:59",
-      "end_at": "2026-06-08 11:52:24",
-      "duration": "0:00:25",
-      "input": {
-        "file_path": "/workspace/py/test.py",
-        "content": "",
-        "append": true,
-        "ensure_parent": true
-      },
-      "output": {
-        "saved_file_path": "/workspace/py/test.py",
-        "written_bytes": "32"
-      },
-      "raw": {}
-    },
-    {
-      "node_key": "#2",
-      "node_id": 18672,
-      "node_type": "LoadDataset",
-      "label": "",
-      "start_at": "2026-06-08 11:51:28",
-      "end_at": "2026-06-08 11:51:49",
-      "duration": "0:00:21",
-      "input": {
-        "source_dir": "/workspace/datasets/openai/gsm8k"
-      },
-      "output": {
-        "dataset_path": "/workspace/datasets/openai/gsm8k"
-      },
-      "raw": {}
-    }
-  ]
-}
-
-
-```

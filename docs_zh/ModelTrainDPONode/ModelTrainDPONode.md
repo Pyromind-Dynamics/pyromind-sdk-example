@@ -1,6 +1,6 @@
 # DPO Training 节点
 
-![alt text](/imgs/ModelTrainDPONode/ModelTrainDPONode.png)  
+![alt text](/imgs/ModelTrainDPONode/ModelTrainDPONode.png)
 
 ## 1.1 功能概述
 
@@ -10,20 +10,22 @@ Run DPO training and return output directory.
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| output_path | STRING | 是 | 字符串。默认值：- |
-| dataset_config | STRING | 是 | 字符串。默认值：- |
-| training_config | STRING | 是 | 字符串。默认值：- |
-| model_config | STRING | 是 | 字符串。默认值：- |
-| accelerate_config | ACCELERATE_CONFIG | 是 | Accelerate 配置 YAML。默认值：- |
-| gpu_count | INT | 是 | 整数。默认值：`1` |
-| gpu_product | STRING | 是 | 字符串。默认值：`NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-| thinking_as_input_ratio | FLOAT | 否 | 浮点数。默认值：`0.0` |
-| wandb_config | WANDB_CONFIG | 否 | W&B 配置 YAML。默认值：- |
+| output_path | STRING | 是 | 输出目录或文件路径 |
+| dataset_config | STRING | 是 | 已组装的数据集配置 YAML 字符串 |
+| training_config | STRING | 是 | 训练配置 YAML 字符串（`BaseTrainingConfig` 字段） |
+| model_config | STRING | 是 | 模型配置 YAML 字符串 |
+| accelerate_config | ACCELERATE_CONFIG | 是 | Accelerate 配置 |
+| gpu_count | INT | 是 | GPU 数量 |
+| gpu_product | STRING | 是 | GPU 产品类型 |
+| lora_config | STRING | 否 | 来自 Lora Config Builder 的 LoRA 配置 YAML |
+| wandb_config | WANDB_CONFIG | 否 | W&B 配置对象 |
+| thinking_as_input_ratio | FLOAT | 否 | 将思维链内容作为输入的比例。默认值：`0.0` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| model_output_path | STRING | 字符串 |
+| model_output_path | STRING | 训练输出模型目录 |
 
 ## 1.4 Workflow JSON 定义
 

@@ -1,6 +1,6 @@
 # Validate Reward 节点
 
-![alt text](/imgs/ModelValidateRewardNode/ModelValidateRewardNode.png)  
+![alt text](/imgs/ModelValidateRewardNode/ModelValidateRewardNode.png)
 
 ## 1.1 功能概述
 
@@ -10,15 +10,15 @@ Validate reward composition and score aggregation.
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| reward_items | STRING | 是 | 字符串。默认值：- |
-| normalize | BOOLEAN | 否 | 布尔值。默认值：`False` |
-| completions | STRING | 否 | 字符串。默认值：- |
+| reward_config | STRING | 是 | 来自 Reward Config Builder 的奖励配置 YAML |
+| completions | STRING | 否 | 用于奖励校验的可选 completions JSON。默认值：空字符串 |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| status | STRING | 字符串 |
-| scores | STRING | 字符串 |
+| status | STRING | 校验状态字符串 |
+| scores | STRING | 校验得分的 YAML/JSON 字符串 |
 
 ## 1.4 Workflow JSON 定义
 

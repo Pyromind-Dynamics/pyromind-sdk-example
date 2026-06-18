@@ -16,7 +16,7 @@ Clones a model from pre-stored templates in the pyromind environment into the wo
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_path | MODEL | Reference to the cloned model in workspace cache, passable to downstream training or inference nodes that accept a model input. |
+| model_path | STRING | Reference to the cloned model in workspace cache, passable to downstream training or inference nodes that accept a model input. |
 
 ## 1.4 Workflow JSON Definition
 
