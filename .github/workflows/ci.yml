@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  basic:
+    name: Basic checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create virtual environment
+        run: uv venv --python 3.12
+
+      - name: Install dependencies
+        run: uv pip install -e .
+
+      - name: Compile Python files
+        run: uv run --no-sync python -m compileall tests nodes
+
+      - name: Validate workflow JSON files
+        run: |
+          uv run --no-sync python - <<'PY'
+          import json
+          from pathlib import Path
+
+          workflow_files = sorted(Path("workflow").glob("*/*.json"))
+          for path in workflow_files:
+              json.loads(path.read_text())
+
+          print(f"Validated {len(workflow_files)} workflow JSON files.")
+          PY
+
+  pyromind-smoke:
+    name: PyroMind workflow smoke tests
+    needs: basic
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
+
+    env:
+      PYROMIND_API_KEY: ${{ secrets.PYROMIND_API_KEY }}
+      PYROMIND_BASE_URL: ${{ secrets.PYROMIND_BASE_URL }}
+      PYROMIND_CLUSTER: ${{ secrets.PYROMIND_CLUSTER }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create virtual environment
+        run: uv venv --python 3.12
+
+      - name: Install dependencies
+        run: uv pip install -e .
+
+      - name: Check PyroMind secrets
+        run: |
+          if [[ -z "${PYROMIND_API_KEY}" || -z "${PYROMIND_BASE_URL}" || -z "${PYROMIND_CLUSTER}" ]]; then
+            echo "RUN_PYROMIND_SMOKE=false" >> "${GITHUB_ENV}"
+            echo "::notice::Skipping PyroMind smoke tests because one or more PYROMIND_* secrets are missing."
+          else
+            echo "RUN_PYROMIND_SMOKE=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Run LoadDataset workflow
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json --pretty
+
+      - name: Run LoadImage workflow
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
