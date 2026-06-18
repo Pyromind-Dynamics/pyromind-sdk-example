@@ -17,7 +17,7 @@
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| model_path | MODEL | 模型引用 |
+| model_path | STRING | 模型引用 |
 
 ## 1.4 Workflow JSON 定义
 

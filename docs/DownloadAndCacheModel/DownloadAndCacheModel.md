@@ -17,7 +17,7 @@
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_path | MODEL | Model reference |
+| model_path | STRING | Model reference |
 
 ## 1.4 Workflow JSON Definition
 

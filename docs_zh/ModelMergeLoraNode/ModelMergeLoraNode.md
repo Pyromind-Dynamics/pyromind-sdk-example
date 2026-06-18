@@ -4,7 +4,7 @@
 
 ## 1.1 功能概述
 
-Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_name_or_path.
+Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_path_or_path.
 
 ## 1.2 输入类型
 
@@ -12,7 +12,7 @@ Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + pr
 |------|---------|------|------|
 | lora_path | STRING | 是 | Lora path |
 | output_path | STRING | 是 | 输出目录或文件路径 |
-| model_name | STRING | 否 | HuggingFace 模型名或本地路径。默认值：空字符串 |
+| model_path | STRING | 否 | HuggingFace 模型名或本地路径。默认值：空字符串 |
 | model_type | STRING | 否 | 模型架构类型（`auto`、`qwen3vl`、`qwen3.5`）。默认值：`auto` |
 
 ## 1.3 输出类型
