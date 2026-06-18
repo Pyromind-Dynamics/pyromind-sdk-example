@@ -1,4 +1,5 @@
 """Full Node Validation: compare SDK node definitions against docs and run workflows."""
+import argparse
 import json
 import re
 import sys
@@ -128,8 +129,23 @@ def try_run_workflow(client, node_name: str) -> dict:
         return result
 
 
-def run_all():
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Compare SDK node definitions against docs and optionally run workflows.",
+    )
+    parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        help="Only validate doc input/output types against SDK; do not run workflows.",
+    )
+    return parser.parse_args()
+
+
+def run_all(validate_only: bool = False):
     """Every node with docs must have matching input/output definitions."""
+    if validate_only:
+        print("[INFO] Validate-only mode: skipping workflow execution.", flush=True)
+
     client = PyroMindAPIClient()
     nodes = client.studio.get_node_info()
 
@@ -183,7 +199,15 @@ def run_all():
         if any(c["status"] == "failed" for c in node_result["validation"]["checks"]):
             node_result["validation"]["status"] = "failed"
 
-        node_result["workflow"] = try_run_workflow(client, node_name)
+        if validate_only:
+            node_result["workflow"] = {
+                "node": node_name,
+                "status": "skipped",
+                "task_id": None,
+                "message": "skipped (--validate-only)",
+            }
+        else:
+            node_result["workflow"] = try_run_workflow(client, node_name)
         node_results.append(node_result)
 
     with open(RESULTS_FILE, "w") as f:
@@ -210,4 +234,4 @@ def run_all():
 
 
 if __name__ == "__main__":
-    run_all()
+    run_all(validate_only=parse_args().validate_only)
