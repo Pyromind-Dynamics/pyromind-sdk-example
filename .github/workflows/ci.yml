@@ -9,8 +9,24 @@ permissions:
   contents: read
 
 jobs:
+  notify-start:
+    name: Notify Feishu start
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: started
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py
+
   basic:
     name: Basic checks
+    needs: notify-start
     runs-on: ubuntu-latest
 
     steps:
@@ -96,3 +112,37 @@ jobs:
       - name: Run LoadImage workflow
         if: env.RUN_PYROMIND_SMOKE == 'true'
         run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
+
+  notify-success:
+    name: Notify Feishu success
+    needs: [basic, pyromind-smoke]
+    runs-on: ubuntu-latest
+    if: always() && needs.basic.result == 'success' && (needs.pyromind-smoke.result == 'success' || needs.pyromind-smoke.result == 'skipped')
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: success
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py
+
+  notify-failure:
+    name: Notify Feishu failure
+    needs: [basic, pyromind-smoke]
+    runs-on: ubuntu-latest
+    if: always() && (needs.basic.result == 'failure' || needs.pyromind-smoke.result == 'failure')
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: failure
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py
