@@ -1,6 +1,6 @@
 # Merge LoRA Node
 
-![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)  
+![alt text](/imgs/ModelMergeLoraNode/ModelMergeLoraNode.png)
 
 ## 1.1 Overview
 
@@ -12,17 +12,16 @@ contains base_model_name_or_path.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| lora_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| gpu_count | INT | Yes | Integer value. Default: `1` |
-| gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-| model_name | STRING | No | String value. Default: - |
-| model_type | STRING | No | String value. Default: `auto` |
+| lora_path | STRING | Yes | LoRA adapter directory path |
+| output_path | STRING | Yes | Output directory path |
+| model_path | STRING | Yes | Base model path or HuggingFace model ID. Default: `''` |
+| model_type | STRING | No | Default: `auto`. Options: auto, qwen3vl, qwen3.5 |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| merged_model_path | STRING | String value |
+| merged_model_path | STRING | Merged model output directory path |
 
 ## 1.4 Workflow JSON Definition
 

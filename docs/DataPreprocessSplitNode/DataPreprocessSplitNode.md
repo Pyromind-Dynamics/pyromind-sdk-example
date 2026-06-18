@@ -1,6 +1,6 @@
 # Train-Validation Split Node
 
-![alt text](/imgs/DataPreprocessSplitNode/DataPreprocessSplitNode.png)  
+![alt text](/imgs/DataPreprocessSplitNode/DataPreprocessSplitNode.png)
 
 ## 1.1 Overview
 
@@ -10,17 +10,18 @@ Split metadata into train and validation datasets from a shared output path temp
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| input_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| train_ratio | FLOAT | No | Floating point number. Default: `0.8` |
-| seed | INT | No | Integer value. Default: `42` |
-| shuffle | BOOLEAN | No | Boolean flag (true/false). Default: `True` |
+| input_path | STRING | Yes | - |
+| output_path | STRING | Yes | Output directory path |
+| train_ratio | FLOAT | No | Default: `0.8` |
+| seed | INT | No | Default: `42` |
+| shuffle | BOOLEAN | No | Default: `true` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| train_output_path | STRING | String value |
-| val_output_path | STRING | String value |
+| train_output_path | STRING | train_output_path |
+| val_output_path | STRING | val_output_path |
 
 ## 1.4 Workflow JSON Definition
 

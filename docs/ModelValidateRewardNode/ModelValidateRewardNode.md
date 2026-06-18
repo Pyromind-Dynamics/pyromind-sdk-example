@@ -1,6 +1,6 @@
 # Validate Reward Node
 
-![alt text](/imgs/ModelValidateRewardNode/ModelValidateRewardNode.png)  
+![alt text](/imgs/ModelValidateRewardNode/ModelValidateRewardNode.png)
 
 ## 1.1 Overview
 
@@ -10,15 +10,15 @@ Validate reward composition and score aggregation.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| reward_items | STRING | Yes | String value. Default: - |
-| normalize | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| completions | STRING | No | String value. Default: - |
+| reward_config | STRING | Yes | Reward configuration YAML string |
+| completions | STRING | No | Default: `''` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| status | STRING | String value |
-| scores | STRING | String value |
+| status | STRING | status |
+| scores | STRING | scores |
 
 ## 1.4 Workflow JSON Definition
 

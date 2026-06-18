@@ -1,6 +1,6 @@
 # Accelerate Config Builder Node
 
-![alt text](/imgs/AccelerateConfigBuilderNode/AccelerateConfigBuilderNode.png)  
+![alt text](/imgs/AccelerateConfigBuilderNode/AccelerateConfigBuilderNode.png)
 
 ## 1.1 Overview
 
@@ -10,8 +10,8 @@ Build accelerate_config YAML string for accelerate launch.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| zero_stage | INT | No | Integer value. Default: `2` |
-| gpu_count | INT | No | Integer value. Default: `4` |
+| zero_stage | INT | No | Default: `2` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

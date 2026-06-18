@@ -1,29 +1,28 @@
 # SFT Training Node
 
-![alt text](/imgs/ModelTrainSFTNode/ModelTrainSFTNode.png)  
+![alt text](/imgs/ModelTrainSFTNode/ModelTrainSFTNode.png)
 
 ## 1.1 Overview
 
-Run SFT training and return output directory.
+Run SFT training and return the output model directory.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| output_path | STRING | Yes | String value. Default: - |
-| dataset_config | STRING | Yes | String value. Default: - |
-| training_config | STRING | Yes | String value. Default: - |
-| model_config | STRING | Yes | String value. Default: - |
-| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate configuration YAML. Default: - |
-| gpu_count | INT | Yes | Integer value. Default: `1` |
-| gpu_product | STRING | Yes | String value. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-| thinking_as_input_ratio | FLOAT | No | Floating point number. Default: `0.0` |
-| wandb_config | WANDB_CONFIG | No | W&B configuration YAML. Default: - |
+| output_path | STRING | Yes | Output directory path |
+| dataset_config | STRING | Yes | Dataset configuration YAML string |
+| training_config | STRING | Yes | Training configuration YAML string |
+| model_config | STRING | Yes | Model configuration YAML string |
+| lora_config | STRING | No | LoRA configuration YAML string |
+| wandb_config | WANDB_CONFIG | No | W&B configuration |
+| thinking_as_input_ratio | FLOAT | No | Include chain-of-thought content as input at the given ratio. Default: `0.0` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_output_path | STRING | String value |
+| model_output_path | STRING | Trained model output directory path |
 
 ## 1.4 Workflow JSON Definition
 

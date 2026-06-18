@@ -1,6 +1,6 @@
 # Prompt & Reasoning Merge Node
 
-![alt text](/imgs/DataPreprocessMergeNode/DataPreprocessMergeNode.png)  
+![alt text](/imgs/DataPreprocessMergeNode/DataPreprocessMergeNode.png)
 
 ## 1.1 Overview
 
@@ -10,24 +10,25 @@ Merge reasoning/category/prompts into training data.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| metadata_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| reasoning_path | STRING | Yes | String value. Default: - |
-| base_prompt | STRING | No | String value. Default: - |
-| output_format | STRING | No | String value. Default: `jsonl` |
-| base_prompt_file | STRING | No | String value. Default: - |
-| category_annotations | STRING | No | String value. Default: - |
-| prompt_augmentation_path | STRING | No | String value. Default: - |
-| system_prompt | STRING | No | String value. Default: - |
-| system_prompt_file | STRING | No | String value. Default: - |
-| copy_columns | STRING | No | String value. Default: - |
-| label_column | STRING | No | String value. Default: `component_type` |
-| gt_column | STRING | No | String value. Default: `text` |
+| metadata_path | STRING | Yes | - |
+| output_path | STRING | Yes | Output directory path |
+| reasoning_path | STRING | Yes | - |
+| base_prompt | STRING | No | Default: `''` |
+| output_format | STRING | No | Default: `jsonl` |
+| base_prompt_file | STRING | No | Default: `''` |
+| category_annotations | STRING | No | Default: `''` |
+| prompt_augmentation_path | STRING | No | Default: `''` |
+| system_prompt | STRING | No | Default: `''` |
+| system_prompt_file | STRING | No | Default: `''` |
+| copy_columns | STRING | No | Default: `''` |
+| label_column | STRING | No | Default: `component_type` |
+| gt_column | STRING | No | Default: `text` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| result_output_path | STRING | String value |
+| result_output_path | STRING | result_output_path |
 
 ## 1.4 Workflow JSON Definition
 

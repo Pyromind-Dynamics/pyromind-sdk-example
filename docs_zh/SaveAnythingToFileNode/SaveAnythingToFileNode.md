@@ -1,6 +1,6 @@
 # Save Anything To File 节点
 
-![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)  
+![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)
 
 ## 1.1 功能概述
 
@@ -8,17 +8,19 @@ Save any provided content to a file path.
 
 ## 1.2 输入类型
 
-| 参数 | 数据类型 | 必填 | 描述                  |
-|------|---------|----|---------------------|
-| file_path | STRING | 是  | 文件路径。默认值：-          |
-| append | BOOLEAN | 是  | 内容追加。默认值：`False`    |
-| ensure_parent | BOOLEAN | 是  | 创建文件路径目录。默认值：`True` |
+| 参数 | 数据类型 | 必填 | 描述 |
+|------|---------|------|------|
+| file_path | STRING | 是 | - |
+| content | * | 否 | 默认值：`''` |
+| append | BOOLEAN | 否 | 默认值：`false` |
+| ensure_parent | BOOLEAN | 否 | 默认值：`true` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| saved_file_path | STRING | 字符串 |
-| written_bytes | INT | 整数 |
+| saved_file_path | STRING | saved_file_path |
+| written_bytes | INT | written_bytes |
 
 ## 1.4 Workflow JSON 定义
 

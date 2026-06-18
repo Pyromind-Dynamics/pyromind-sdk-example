@@ -1,6 +1,6 @@
 # Reward Config Builder Node
 
-![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)  
+![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)
 
 ## 1.1 Overview
 
@@ -10,17 +10,18 @@ Build reward config YAML from up to five reward item YAML strings and normalize 
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| reward_item_1 | STRING | No | String value. Default: - |
-| reward_item_2 | STRING | No | String value. Default: - |
-| reward_item_3 | STRING | No | String value. Default: - |
-| reward_item_4 | STRING | No | String value. Default: - |
-| reward_item_5 | STRING | No | String value. Default: - |
-| normalize | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
+| reward_item_1 | STRING | No | Default: `''` |
+| reward_item_2 | STRING | No | Default: `''` |
+| reward_item_3 | STRING | No | Default: `''` |
+| reward_item_4 | STRING | No | Default: `''` |
+| reward_item_5 | STRING | No | Default: `''` |
+| normalize | BOOLEAN | No | Default: `false` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| reward_config | STRING | String value |
+| reward_config | STRING | Built reward configuration YAML string |
 
 ## 1.4 Workflow JSON Definition
 

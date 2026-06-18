@@ -1,6 +1,6 @@
 # DataPreprocessLabelNode Node
 
-![alt text](/imgs/DataPreprocessLabelNode/DataPreprocessLabelNode.png)  
+![alt text](/imgs/DataPreprocessLabelNode/DataPreprocessLabelNode.png)
 
 ## 1.1 Overview
 
@@ -10,23 +10,24 @@ Run data_preprocess label pipeline and emit output path.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| input_path | STRING | Yes | String value. Default: - |
-| output_path | STRING | Yes | String value. Default: - |
-| api_base | STRING | Yes | String value. Default: - |
-| model | STRING | Yes | String value. Default: - |
-| api_key | STRING | Yes | String value. Default: - |
-| system_prompt | STRING | No | String value. Default: - |
-| format_lang | STRING | No | String value. Default: `en` |
-| extract | STRING | No | String value. Default: `boxed` |
-| max_tokens | INT | No | Integer value. Default: `1024` |
-| thinking | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| limit | INT | No | Integer value. Default: `0` |
-| concurrency | INT | No | Integer value. Default: `1` |
+| input_path | STRING | Yes | - |
+| output_path | STRING | Yes | Output directory path |
+| api_base | STRING | Yes | - |
+| model | STRING | Yes | - |
+| api_key | STRING | Yes | - |
+| system_prompt | STRING | No | Default: `''` |
+| format_lang | STRING | No | Default: `en` |
+| extract | STRING | No | Default: `boxed` |
+| max_tokens | INT | No | Default: `1024` |
+| thinking | BOOLEAN | No | Default: `false` |
+| limit | INT | No | Default: `0` |
+| concurrency | INT | No | Default: `1` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| result_output_path | STRING | String value |
+| result_output_path | STRING | result_output_path |
 
 ## 1.4 Workflow JSON Definition
 

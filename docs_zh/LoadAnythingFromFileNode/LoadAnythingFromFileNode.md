@@ -4,20 +4,22 @@
 
 ## 1.1 功能概述
 
-读取工作区中指定路径的文本文件，输出文件内容、解析后的路径和字节数。
+Load content from a file path.
+
 ## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| file_path | STRING | 是 | 工作区中要读取的文件路径，支持绝对路径和相对路径。默认值：- |
-| encoding | STRING | 否 | 读取文本文件时使用的编码格式。默认值：`utf-8` |
+| file_path | STRING | 是 | - |
+| encoding | STRING | 否 | 默认值：`utf-8` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| loaded_file_path | STRING | 加载文件在工作区中的解析后绝对路径。 |
-| content | STRING | 从文件中读取的完整文本内容。 |
-| read_bytes | INT | 按指定编码编码后的文件内容字节数。 |
+| loaded_file_path | STRING | loaded_file_path |
+| content | * | content |
+| read_bytes | INT | read_bytes |
 
 ## 1.4 Workflow JSON 定义
 

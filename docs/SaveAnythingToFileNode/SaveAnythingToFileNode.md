@@ -1,6 +1,6 @@
 # Save Anything To File Node
 
-![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)  
+![alt text](/imgs/SaveAnythingToFileNode/SaveAnythingToFileNode.png)
 
 ## 1.1 Overview
 
@@ -10,16 +10,17 @@ Save any provided content to a file path.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| file_path | STRING | Yes | String value. Default: - |
-| content | * | No | Any type. Default: - |
-| append | BOOLEAN | No | Boolean flag (true/false). Default: `False` |
-| ensure_parent | BOOLEAN | No | Boolean flag (true/false). Default: `True` |
+| file_path | STRING | Yes | - |
+| content | * | No | Default: `''` |
+| append | BOOLEAN | No | Default: `false` |
+| ensure_parent | BOOLEAN | No | Default: `true` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| saved_file_path | STRING | String value |
-| written_bytes | INT | Integer value |
+| saved_file_path | STRING | saved_file_path |
+| written_bytes | INT | written_bytes |
 
 ## 1.4 Workflow JSON Definition
 

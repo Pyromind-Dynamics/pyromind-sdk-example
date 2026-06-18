@@ -1,24 +1,25 @@
-# Reward Item Builder Node
+# Reward Item Builder(System Entry) Node
 
-![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)  
+![alt text](/imgs/RewardItemBuilderNode/RewardItemBuilderNode.png)
 
 ## 1.1 Overview
 
-Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false. 
+Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| entry | STRING | No | Reward function entry point path, e.g., `train.reward_fn:my_reward`. Must be non-empty at runtime, otherwise raises ValueError. Default: `''` |
-| name | STRING | No | Optional name identifier for the reward item. Default: `''` |
-| kwargs | STRING | No | YAML mapping string of keyword arguments passed to the reward function. Non-empty enables factory mode. Default: `''` |
-| weight | FLOAT | No | Weight multiplier for this reward item in the combined reward score. Default: `1.0` |
+| entry | STRING | Yes | Default: `geometry_vqa_thinking_reward`. Options: geometry_vqa_thinking_reward, geometry_vqa_answer_reward |
+| name | STRING | Yes | Default: `''` |
+| kwargs | STRING | No | Default: `''` |
+| weight | FLOAT | No | Default: `1.0` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| reward_item | STRING | YAML-formatted string representing the configured reward item. Contains fields: `entry`, `source` (fixed to `python_path`), `weight`, `factory`, `kwargs`, and optionally `name`. Passable to downstream reward configuration nodes. |
+| reward_item | STRING | Built reward item YAML string |
 
 ## 1.4 Workflow JSON Definition
 

@@ -1,6 +1,6 @@
 # Validate GRPO Dataloader 节点
 
-![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)  
+![alt text](/imgs/ModelValidateGRPODataloaderNode/ModelValidateGRPODataloaderNode.png)
 
 ## 1.1 功能概述
 
@@ -10,19 +10,20 @@ Validate GRPO dataloader configuration, reward config, and rollout behavior.
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| dataset_config | STRING | 是 | 字符串。默认值：- |
-| rollout_size | INT | 否 | 整数。默认值：`3` |
-| check_reasoning | BOOLEAN | 否 | 布尔值。默认值：`False` |
-| limit | INT | 否 | 整数。默认值：`0` |
-| verbose | BOOLEAN | 否 | 布尔值。默认值：`False` |
-| preview_html_path | STRING | 否 | 字符串。默认值：- |
-| reward_config | STRING | 否 | 字符串。默认值：- |
+| dataset_config | STRING | 是 | 数据集配置 YAML 字符串 |
+| rollout_size | INT | 否 | 默认值：`3` |
+| check_reasoning | BOOLEAN | 否 | 默认值：`false` |
+| limit | INT | 否 | 默认值：`0` |
+| verbose | BOOLEAN | 否 | 默认值：`false` |
+| preview_html_path | STRING | 否 | 默认值：`''` |
+| reward_config | STRING | 否 | 奖励配置 YAML 字符串。默认值：`''` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| metrics_json | STRING | 字符串 |
-| output_preview_path | STRING | 字符串 |
+| metrics_json | STRING | metrics_json |
+| output_preview_path | STRING | 数据预览 HTML 文件路径 |
 
 ## 1.4 Workflow JSON 定义
 

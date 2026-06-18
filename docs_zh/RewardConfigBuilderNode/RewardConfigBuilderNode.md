@@ -1,6 +1,6 @@
 # Reward Config Builder 节点
 
-![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)  
+![alt text](/imgs/RewardConfigBuilderNode/RewardConfigBuilderNode.png)
 
 ## 1.1 功能概述
 
@@ -10,17 +10,18 @@ Build reward config YAML from up to five reward item YAML strings and normalize 
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| reward_item_1 | STRING | 否 | 字符串。默认值：- |
-| reward_item_2 | STRING | 否 | 字符串。默认值：- |
-| reward_item_3 | STRING | 否 | 字符串。默认值：- |
-| reward_item_4 | STRING | 否 | 字符串。默认值：- |
-| reward_item_5 | STRING | 否 | 字符串。默认值：- |
-| normalize | BOOLEAN | 否 | 布尔值。默认值：`False` |
+| reward_item_1 | STRING | 否 | 默认值：`''` |
+| reward_item_2 | STRING | 否 | 默认值：`''` |
+| reward_item_3 | STRING | 否 | 默认值：`''` |
+| reward_item_4 | STRING | 否 | 默认值：`''` |
+| reward_item_5 | STRING | 否 | 默认值：`''` |
+| normalize | BOOLEAN | 否 | 默认值：`false` |
+
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| reward_config | STRING | 字符串 |
+| reward_config | STRING | 构建的 reward 配置 YAML 字符串 |
 
 ## 1.4 Workflow JSON 定义
 

@@ -4,21 +4,22 @@
 
 ## 1.1 Overview
 
-Reads a text file from the specified workspace path and outputs its content, resolved path, and byte count. 
+Load content from a file path.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| file_path | STRING | Yes | Path to the file in workspace to read. Supports both absolute and relative paths. Default: - |
-| encoding | STRING | No | File encoding for reading the text file. Default: `utf-8` |
+| file_path | STRING | Yes | - |
+| encoding | STRING | No | Default: `utf-8` |
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| loaded_file_path | STRING | The resolved absolute path of the loaded file in workspace. |
-| content | STRING | The full text content read from the file. |
-| read_bytes | INT | Number of bytes of the file content when encoded with the specified encoding. |
+| loaded_file_path | STRING | loaded_file_path |
+| content | * | content |
+| read_bytes | INT | read_bytes |
 
 ## 1.4 Workflow JSON Definition
 

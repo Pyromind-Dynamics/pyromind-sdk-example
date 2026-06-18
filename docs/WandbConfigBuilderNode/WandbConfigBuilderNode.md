@@ -4,21 +4,21 @@
 
 ## 1.1 Overview
 
-Builds a `wandb_config` YAML string for W&B (Weights & Biases) training runtime environment. This node is used to configure W&B experiment tracking parameters, enabling recording and visualization of experiment metrics during training.
+Build wandb_config YAML string for W&B training runtime env.
 
 ## 1.2 Input
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| wandb_api_key | STRING | No | W&B API key for authentication. Default: empty string |
-| wandb_project | STRING | No | W&B project name for organizing experiments. Default: empty string |
-| wandb_run_group | STRING | No | W&B run group name for grouping related experiments. Default: empty string |
+| wandb_api_key | STRING | Yes | W&B API key. Default: `''` |
+| wandb_project | STRING | Yes | W&B project name. Default: `''` |
+| wandb_name | STRING | No | W&B run name. Default: `''` |
 
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| wandb_config | STRING | Built W&B configuration object for downstream training nodes |
+| wandb_config | WANDB_CONFIG | W&B configuration YAML |
 
 ## 1.4 Workflow JSON Definition
 
@@ -30,7 +30,7 @@ Example configuration:
   "config": {
     "wandb_api_key": "",
     "wandb_project": "test-01",
-    "wandb_run_group": "daskdas"
+    "wandb_name": "run-001"
   }
 }
 ```
@@ -44,7 +44,7 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/WandbConfigBuilderNode/Wan
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--name` | `WandbConfigBuilderNode` | Task name |
+| `--name` | `wandbConfigBuilderNode` | Task name |
 | `--output` | - | Output results file |
 | `--poll-interval` | 5 | Poll interval in seconds |
 | `--timeout` | 600 | Max wait time in seconds |
@@ -76,10 +76,10 @@ Example output:
       "input": {
         "wandb_api_key": "",
         "wandb_project": "test-01",
-        "wandb_run_group": "daskdas"
+        "wandb_name": "run-001"
       },
       "output": {
-        "wandb_config": "WANDB_PROJECT: test-01\nWANDB_RUN_GROUP: daskdas"
+        "wandb_config": "WANDB_PROJECT: test-01\nWANDB_NAME: run-001"
       },
       "raw": {}
     }

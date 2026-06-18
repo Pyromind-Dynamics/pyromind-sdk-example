@@ -1,56 +1,25 @@
 # Accelerate GPU Node 节点
 
-![alt text](/imgs/AccelerateGpuNode/AccelerateGpuNode.png)  
+![alt text](/imgs/AccelerateGpuNode/AccelerateGpuNode.png)
 
 ## 1.1 功能概述
 
-AccelerateGpuNode 是用于在指定 GPU 硬件环境下执行 Accelerate 框架配置任务的核心节点。该节点接收自定义消息、Accelerate 的 YAML 配置文件以及 GPU 资源需求参数，在底层环境中完成初始化与运行，并最终返回详细的硬件信息、执行状态及运行日志，为后续的分布式训练或推理任务提供环境验证与执行反馈。
+GPU node example using accelerate launch mode
 
 ## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| message | STRING | 是 | 自定义的执行提示消息。默认值：`Accelerate GPU Node executed successfully` |
-| accelerate_config | ACCELERATE_CONFIG | 是 | Accelerate YAML 配置字符串。通常由 `AccelerateConfigBuilderNode` 节点生成。详见 §1.2.1。默认值：- |
-| gpu_count | INT | 是 | 请求分配的 GPU 数量，整数类型。默认值：`1` |
-| gpu_product | STRING | 是 | 指定所需的 GPU 硬件型号。默认值：`NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
-
-### 1.2.1 AccelerateConfigBuilderNode 参数
-
-`accelerate_config` 通常由 **AccelerateConfigBuilderNode** 节点生成，包含以下可配置参数：
-
-| 参数 | 数据类型 | 默认值 | 描述 |
-|------|---------|--------|------|
-| zero_stage | INT | `2` | DeepSpeed ZeRO 优化阶段 |
-| gpu_count | INT | `4` | 进程数量，映射到 YAML 中的 `num_processes` |
-
-生成的 YAML 示例：
-
-```yaml
-compute_environment: LOCAL_MACHINE
-debug: false
-deepspeed_config:
-  zero3_init_flag: false
-  zero_stage: 2
-distributed_type: DEEPSPEED
-enable_cpu_affinity: true
-machine_rank: 0
-main_training_function: main
-num_machines: 1
-num_processes: 4
-rdzv_backend: static
-same_network: true
-mixed_precision: bf16
-```
+| message | STRING | 是 | 默认值：`Accelerate GPU Node executed successfully` |
 
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| gpu_info | STRING | 实际分配到的 GPU 硬件型号信息。默认值：`NVIDIA H100 NVL` |
-| execution_result | STRING | 任务的最终执行结果状态标识。默认值：`Code executed successfully`|
-| execution_output | STRING | 详细的执行日志输出（如 CUDA 状态、GPU 数量及型号）。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL` |
-| message_output | STRING | 综合消息输出（如 CUDA 状态、GPU 数量及型号）。默认值：`Accelerate GPU Node executed successfullyCUDA available: True\nGPU count: 1\nGPU name: NVIDIA H100 NVL`  |
+| gpu_info | STRING | gpu_info |
+| execution_result | STRING | execution_result |
+| execution_output | STRING | execution_output |
+| message_output | STRING | message_output |
 
 ## 1.4 Workflow JSON 定义
 

@@ -4,21 +4,21 @@
 
 ## 1.1 功能概述
 
-构建 W&B (Weights & Biases) 训练运行时环境的 `wandb_config` YAML 字符串。该节点用于配置 W&B 实验追踪参数，便于在训练过程中记录和可视化实验指标。
+构建 W&B 训练运行时环境配置 YAML 字符串（`wandb_api_key`、`wandb_project`、`wandb_name`）。
 
 ## 1.2 输入类型
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| wandb_api_key | STRING | 否 | W&B API 密钥，用于身份验证。默认值：空字符串 |
-| wandb_project | STRING | 否 | W&B 项目名称，用于组织实验。默认值：空字符串 |
-| wandb_run_group | STRING | 否 | W&B 运行组名称，用于分组相关实验。默认值：空字符串 |
+| wandb_api_key | STRING | 是 | W&B API 密钥。默认值：`''` |
+| wandb_project | STRING | 是 | W&B 项目名称。默认值：`''` |
+| wandb_name | STRING | 否 | W&B run 名称。默认值：`''` |
 
 ## 1.3 输出类型
 
-| 参数 | 数据类型   | 描述 |
-|------|--------|------|
-| wandb_config | STRING | 构建的 W&B 配置对象，供下游训练节点使用 |
+| 参数 | 数据类型 | 描述 |
+|------|---------|------|
+| wandb_config | WANDB_CONFIG | W&B 配置 YAML |
 
 ## 1.4 Workflow JSON 定义
 
@@ -30,7 +30,7 @@
   "config": {
     "wandb_api_key": "",
     "wandb_project": "test-01",
-    "wandb_run_group": "daskdas"
+    "wandb_name": "run-001"
   }
 }
 ```
@@ -76,10 +76,10 @@ python -m pyromind_sdk.test_run_workflow_cli workflow/WandbConfigBuilderNode/Wan
       "input": {
         "wandb_api_key": "",
         "wandb_project": "test-01",
-        "wandb_run_group": "daskdas"
+        "wandb_name": "run-001"
       },
       "output": {
-        "wandb_config": "WANDB_PROJECT: test-01\nWANDB_RUN_GROUP: daskdas"
+        "wandb_config": "WANDB_PROJECT: test-01\nWANDB_NAME: run-001"
       },
       "raw": {}
     }
