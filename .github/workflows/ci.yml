@@ -87,7 +87,7 @@ jobs:
 
       - name: Run node doc consistency test
         if: env.RUN_PYROMIND_SMOKE == 'true'
-        run: uv run --no-sync python tests/test_node_doc_consistency.py
+        run: uv run --no-sync python tests/test_node_doc_consistency.py --validate-only
 
       - name: Run LoadDataset workflow
         if: env.RUN_PYROMIND_SMOKE == 'true'
