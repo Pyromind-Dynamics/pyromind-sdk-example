@@ -85,6 +85,10 @@ jobs:
             echo "RUN_PYROMIND_SMOKE=true" >> "${GITHUB_ENV}"
           fi
 
+      - name: Run node doc consistency test
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python tests/test_node_doc_consistency.py
+
       - name: Run LoadDataset workflow
         if: env.RUN_PYROMIND_SMOKE == 'true'
         run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json --pretty
