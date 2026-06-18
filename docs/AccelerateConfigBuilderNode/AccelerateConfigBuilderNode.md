@@ -11,7 +11,6 @@ Build accelerate_config YAML string for accelerate launch.
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | zero_stage | INT | No | DeepSpeed ZeRO stage. Default: `2` |
-| gpu_count | INT | No | Gpu count. Default: `4` |
 
 ## 1.3 Output
 

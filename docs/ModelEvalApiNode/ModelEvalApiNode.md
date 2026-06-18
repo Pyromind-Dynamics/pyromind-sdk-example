@@ -15,7 +15,7 @@ Offline benchmark evaluation via an OpenAI-compatible Inference API. Loads a dat
 | endpoint_model | STRING | No | Model name served by the inference endpoint. Default: `default` |
 | output_path | STRING | Yes | Output directory or file path |
 | dataset_config | STRING | Yes | Assembled dataset configuration YAML string |
-| metrics_entry | STRING | Yes | Metrics entry |
+| metrics_config | STRING | Yes | Metrics config |
 | max_samples | INT | No | Maximum evaluation samples (0 = all). Default: `0` |
 | max_tokens | INT | No | Maximum tokens per API completion. Default: `256` |
 | temperature | FLOAT | No | Sampling temperature. Default: `0.01` |

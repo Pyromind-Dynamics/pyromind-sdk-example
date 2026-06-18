@@ -15,7 +15,7 @@
 | endpoint_model | STRING | 否 | 推理端点提供的模型名称。默认值：`default` |
 | output_path | STRING | 是 | 输出目录或文件路径 |
 | dataset_config | STRING | 是 | 已组装的数据集配置 YAML 字符串 |
-| metrics_entry | STRING | 是 | Metrics entry |
+| metrics_config | STRING | 是 | Metrics config |
 | max_samples | INT | 否 | 最大评测样本数（0 表示全部）。默认值：`0` |
 | max_tokens | INT | 否 | 每次 API 调用的最大 token 数。默认值：`256` |
 | temperature | FLOAT | 否 | 采样温度。默认值：`0.01` |
