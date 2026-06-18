@@ -15,6 +15,10 @@ RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 RESULTS_FILE = RESULTS_DIR / "workflow_results.json"
 
 
+class NodeDocTypeMismatchError(Exception):
+    """Doc input/output types do not match SDK node definitions."""
+
+
 def _extract_type(raw_type) -> str:
     """Normalize a node's input/output type to an uppercase string for comparison."""
     if isinstance(raw_type, list):
@@ -225,10 +229,10 @@ def run_all(validate_only: bool = False):
             print(f"  - {r['node']}: {wf['message']} (task_id={wf['task_id']})")
 
     if mismatches:
-        print("\nType mismatches:", file=sys.stderr)
-        for m in mismatches:
-            print(f"  - {m}", file=sys.stderr)
-        sys.exit(1)
+        lines = "\n".join(f"  - {m}" for m in mismatches)
+        raise NodeDocTypeMismatchError(
+            f"Type mismatches ({len(mismatches)}):\n{lines}"
+        )
 
     print("\nAll nodes validated successfully.")
 
