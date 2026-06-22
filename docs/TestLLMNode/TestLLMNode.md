@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-Test Sglang Node：测试 sglang endpoint 的节点
+Test SGLang node: tests an SGLang endpoint.
 
 ## 1.2 Input
 

@@ -68,7 +68,7 @@ Example configuration:
           "created_at": "2026-04-15T02:02:42.587170+00:00",
           "updated_at": "2026-04-15T02:02:42.587170+00:00",
           "version": 1,
-          "description": "加载基础模型用于RL训练",
+          "description": "Loads a base model for RL training",
           "is_enabled": true,
           "metanode_deleted": false
         },
