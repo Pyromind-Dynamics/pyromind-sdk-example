@@ -15,6 +15,12 @@
 | model_name | STRING | Yes | String value. Default: `rl_model` |
 | save_format | STRING | Yes | String value. Default: `pkl` Options: pkl, onnx, torchscript, safetensors |
 
+## 1.3 Output
+
+| Parameter | Data Type | Description |
+|-----------|-----------|-------------|
+| *None* | - | This node has no output parameters |
+
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/SaveModel/SaveModel.json`](../../workflow/SaveModel/SaveModel.json) for the full workflow definition.

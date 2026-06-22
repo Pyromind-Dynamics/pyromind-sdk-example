@@ -15,6 +15,12 @@
 | model_name | STRING | 是 | 字符串。默认值：`rl_model` |
 | save_format | STRING | 是 | 字符串。默认值：`pkl` Options: pkl, onnx, torchscript, safetensors |
 
+## 1.3 输出类型
+
+| 参数 | 数据类型 | 描述 |
+|------|---------|------|
+| *无* | - | 该节点无输出参数 |
+
 ## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/SaveModel/SaveModel.json`](../../workflow/SaveModel/SaveModel.json)。
