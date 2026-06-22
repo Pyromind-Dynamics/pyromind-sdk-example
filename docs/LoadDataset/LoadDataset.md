@@ -1,6 +1,6 @@
 # LoadDataset Node
 
-![alt text](/imgs/LoadDataset/loadDataset.png)  
+![alt text](/imgs/LoadDataset/LoadDataset.png)  
 
 ## 1.1 Overview
 

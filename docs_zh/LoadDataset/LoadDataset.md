@@ -1,6 +1,6 @@
 # LoadDataset 节点
 
-![alt text](/imgs/LoadDataset/loadDataset.png)  
+![alt text](/imgs/LoadDataset/LoadDataset.png)  
 
 ## 1.1 功能概述
 

@@ -6,3 +6,6 @@ __pycache__/
 *.egg-info/
 .DS_Store
 /sop.md
+/AGENTS.md
+/skills/
+/opencode.json

@@ -1,6 +1,6 @@
 # Inference (SGlang) 节点
 
-![InferenceNode.png](/imgs/Inference/InferenceNode.png)
+![alt text](/imgs/Inference/Inference.png)
 
 ## 1.1 功能概述
 
