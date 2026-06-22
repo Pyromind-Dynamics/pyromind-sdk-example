@@ -19,7 +19,7 @@
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| *None* | - | This node has no output parameters |
+| save_path | STRING | String value |
 
 ## 1.4 Workflow JSON Definition
 

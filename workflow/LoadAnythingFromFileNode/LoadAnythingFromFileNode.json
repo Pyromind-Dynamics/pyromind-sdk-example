@@ -58,7 +58,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "file_path": "/workspace/py/example_valid_node.py",
+          "file_path": "/workspace/py/test.py",
           "encoding": "utf-8"
         },
         "definitionMissing": false

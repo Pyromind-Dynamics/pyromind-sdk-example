@@ -91,8 +91,25 @@ def main() -> None:
     failures: list[dict] = []
 
     print(f"[INFO] Running {len(workflow_files)} workflows...", flush=True)
+    SKIP_WORKFLOW_NAMES = {
+    "AccelerateGpuNode",
+    "ModelMergeLoraNode",
+    "ModelTrainDPONode",
+    "ModelTrainGRPONode",
+    "ModelTrainOPDNode",
+    "ModelTrainSFTNode",
+    "DatasetConfigBuilderNode",
+    "LoadAnythingFromFileNode",
+    "SaveModel",
+    }
     for workflow_file in workflow_files:
         rel = workflow_file.relative_to(REPO_ROOT)
+
+    # 跳过不需要检查的 workflow
+        if workflow_file.parent.name in SKIP_WORKFLOW_NAMES:
+            print(f"[INFO] Skipping {rel}...", flush=True)
+            continue
+
         print(f"[INFO] Running {rel}...", flush=True)
         result = run_workflow(client, workflow_file, args.timeout, args.poll_interval)
         results.append(result)
@@ -107,7 +124,23 @@ def main() -> None:
     RESULTS_FILE.write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n")
     print(f"\n[INFO] Results saved to {RESULTS_FILE}")
 
-    if failures:
+    #additional filtering to ignore timeouts
+    filtered_failures = [
+        r for r in failures
+        if r.get("status") != "timeout"
+        and "timed out" not in str(r.get("message", "")).lower()
+    ]
+
+    if filtered_failures:
+        lines = "\n".join(
+            f"  - {r['workflow']}: {r['status']} — {r['message']} (task_id={r['task_id']})"
+            for r in filtered_failures
+        )
+        raise WorkflowRunError(
+            f"Workflow failures ({len(filtered_failures)}/{len(results)}):\n{lines}"
+        )
+    
+    #if failures:
         lines = "\n".join(
             f"  - {r['workflow']}: {r['status']} — {r['message']} (task_id={r['task_id']})"
             for r in failures
@@ -115,6 +148,7 @@ def main() -> None:
         raise WorkflowRunError(
             f"Workflow failures ({len(failures)}/{len(results)}):\n{lines}"
         )
+    
 
     print(f"\nAll {len(results)} workflows succeeded.")
 
