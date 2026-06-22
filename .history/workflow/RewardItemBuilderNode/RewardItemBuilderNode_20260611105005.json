@@ -1,0 +1,89 @@
+{
+  "id": "ff29d50f-4e63-4047-8fbf-609c6d89c7b3",
+  "name": "RewarditemBuilderTest",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1250.6390759086382,
+        "y": 312.2490807528072
+      },
+      "data": {
+        "display_name": "Reward Item Builder",
+        "nodeType": "RewardItemBuilderNode",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "entry": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "name": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "kwargs": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "weight": [
+                "FLOAT",
+                {
+                  "default": 1
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "reward_item"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 354,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-05-27 11:03:07",
+          "version": 1,
+          "description": "Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "entry": "/workspace/py/example_valid_node.py",
+          "name": "example_valid_node",
+          "kwargs": "",
+          "weight": 1
+        },
+        "definitionMissing": false
+      },
+      "measured": {
+        "width": 300,
+        "height": 196
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -896.2212404530242,
+    "y": -26.161909925244174,
+    "zoom": 1.3966289623194152
+  },
+  "timestamp": "2026-06-09T03:23:45.566Z"
+}

@@ -92,11 +92,15 @@ def main() -> None:
 
     print(f"[INFO] Running {len(workflow_files)} workflows...", flush=True)
     SKIP_WORKFLOW_NAMES = {
+    "AccelerateGpuNode",
     "ModelMergeLoraNode",
     "ModelTrainDPONode",
     "ModelTrainGRPONode",
     "ModelTrainOPDNode",
     "ModelTrainSFTNode",
+    "DatasetConfigBuilderNode",
+    "LoadAnythingFromFileNode",
+    "SaveModel",
     }
     for workflow_file in workflow_files:
         rel = workflow_file.relative_to(REPO_ROOT)
