@@ -45,19 +45,25 @@
               ]
             }
           },
-          "output": [],
-          "output_is_list": [],
-          "output_name": [],
-          "category": "Models",
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "save_path"
+          ],
+          "category": "models",
           "output_node": true,
           "experimental": false,
           "deprecated": false,
           "python_module": "test_nodes",
-          "id": 2874,
+          "id": 99,
           "node_type": "system",
-          "created_at": "2026-06-15T06:57:34.738812+00:00",
-          "updated_at": "2026-06-16T08:13:39.645564+00:00",
-          "version": 2,
+          "created_at": "2026-04-10T10:44:24.595438+00:00",
+          "updated_at": "2026-04-10T10:44:24.595438+00:00",
+          "version": 1,
           "description": "Save trained RL model to file. Allows exporting trained models for later use or deployment.",
           "is_enabled": true,
           "metanode_deleted": false
@@ -83,5 +89,5 @@
     "y": -187.03337752336415,
     "zoom": 1.1163464506637315
   },
-  "timestamp": "2026-06-22T09:10:12.680Z"
+  "timestamp": "2026-06-22T12:07:37.154Z"
 }
