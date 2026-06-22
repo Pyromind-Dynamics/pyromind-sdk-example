@@ -1,0 +1,70 @@
+{
+  "id": "e7986134-177c-4745-919d-fc9e00753b6b",
+  "name": "AccelerateConfigBuilder",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1113.4271099744246,
+        "y": 611.7391304347826
+      },
+      "data": {
+        "display_name": "Accelerate Config Builder",
+        "nodeType": "AccelerateConfigBuilderNode",
+        "libraryNodeId": "5900",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "zero_stage": [
+                "INT",
+                {
+                  "default": 2
+                }
+              ]
+            }
+          },
+          "output": [
+            "ACCELERATE_CONFIG"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "accelerate_config"
+          ],
+          "category": "Examples",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5900,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Build accelerate_config YAML string for accelerate launch.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "zero_stage": 2
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -234.35294117647072,
+    "y": -103.32000000000005,
+    "zoom": 0.92
+  },
+  "timestamp": "2026-06-22T06:56:49.893Z"
+}

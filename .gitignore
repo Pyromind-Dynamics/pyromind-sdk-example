@@ -1,0 +1,13 @@
+.history/
+tests/test_output/
+__pycache__/
+.idea/
+.pytest_cache/
+.venv/
+*.egg-info/
+.DS_Store
+/sop.md
+/AGENTS.md
+/skills/
+/opencode.json
+/.codex_node_screenshot_harness/

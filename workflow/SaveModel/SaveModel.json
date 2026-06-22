@@ -1,0 +1,93 @@
+{
+  "id": "7f7a7b80-abcf-4b76-a33e-66ce0902225b",
+  "name": "SaveModel",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1361.1764705882351,
+        "y": 677.6470588235294
+      },
+      "data": {
+        "display_name": "Save Model",
+        "nodeType": "SaveModel",
+        "libraryNodeId": "2874",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "model": [
+                "STRING"
+              ],
+              "save_path": [
+                "STRING",
+                {
+                  "default": "path/to/save/model"
+                }
+              ],
+              "model_name": [
+                "STRING",
+                {
+                  "default": "rl_model"
+                }
+              ],
+              "save_format": [
+                "STRING",
+                {
+                  "default": "pkl",
+                  "enum": [
+                    "pkl",
+                    "onnx",
+                    "torchscript",
+                    "safetensors"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "save_path"
+          ],
+          "category": "models",
+          "output_node": true,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 99,
+          "node_type": "system",
+          "created_at": "2026-04-10T10:44:24.595438+00:00",
+          "updated_at": "2026-04-10T10:44:24.595438+00:00",
+          "version": 1,
+          "description": "Save trained RL model to file. Allows exporting trained models for later use or deployment.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "model": "/workspace/models/lora_merged/qwen3_06b_sft2/",
+          "save_path": "/workspace/models/lora_merged/qwen3_06b_sft3/",
+          "model_name": "rl_model",
+          "save_format": "pkl"
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -397.01356530649014,
+    "y": -187.03337752336415,
+    "zoom": 1.1163464506637315
+  },
+  "timestamp": "2026-06-22T12:07:37.154Z"
+}

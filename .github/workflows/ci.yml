@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify-start:
+    name: Notify Feishu start
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: started
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py
+
+  basic:
+    name: Basic checks
+    needs: notify-start
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create virtual environment
+        run: uv venv --python 3.12
+
+      - name: Install dependencies
+        run: uv pip install -e .
+
+      - name: Compile Python files
+        run: uv run --no-sync python -m compileall tests nodes
+
+      - name: Validate workflow JSON files
+        run: |
+          uv run --no-sync python - <<'PY'
+          import json
+          from pathlib import Path
+
+          workflow_files = sorted(Path("workflow").glob("*/*.json"))
+          for path in workflow_files:
+              json.loads(path.read_text())
+
+          print(f"Validated {len(workflow_files)} workflow JSON files.")
+          PY
+
+  pyromind-smoke:
+    name: PyroMind workflow smoke tests
+    needs: basic
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
+
+    env:
+      PYROMIND_API_KEY: ${{ secrets.PYROMIND_API_KEY }}
+      PYROMIND_BASE_URL: ${{ secrets.PYROMIND_BASE_URL }}
+      PYROMIND_CLUSTER: ${{ secrets.PYROMIND_CLUSTER }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create virtual environment
+        run: uv venv --python 3.12
+
+      - name: Install dependencies
+        run: uv pip install -e .
+
+      - name: Check PyroMind secrets
+        run: |
+          if [[ -z "${PYROMIND_API_KEY}" || -z "${PYROMIND_BASE_URL}" || -z "${PYROMIND_CLUSTER}" ]]; then
+            echo "RUN_PYROMIND_SMOKE=false" >> "${GITHUB_ENV}"
+            echo "::notice::Skipping PyroMind smoke tests because one or more PYROMIND_* secrets are missing."
+          else
+            echo "RUN_PYROMIND_SMOKE=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Run node doc consistency test
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python tests/test_node_doc_consistency.py --validate-only
+
+      - name: Run all workflows
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python tests/test_all_workflows.py
+
+  notify-success:
+    name: Notify Feishu success
+    needs: [basic, pyromind-smoke]
+    runs-on: ubuntu-latest
+    if: always() && needs.basic.result == 'success' && (needs.pyromind-smoke.result == 'success' || needs.pyromind-smoke.result == 'skipped')
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: success
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py
+
+  notify-failure:
+    name: Notify Feishu failure
+    needs: [basic, pyromind-smoke]
+    runs-on: ubuntu-latest
+    if: always() && (needs.basic.result == 'failure' || needs.pyromind-smoke.result == 'failure')
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Notify Feishu
+        env:
+          CI_STATUS: failure
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python .github/scripts/notify_feishu.py

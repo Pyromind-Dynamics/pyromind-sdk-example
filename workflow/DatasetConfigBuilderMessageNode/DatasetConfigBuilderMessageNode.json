@@ -1,0 +1,78 @@
+{
+  "id": "1dc0dea3-62d0-420d-8def-86f976477a02",
+  "name": "DatasetConfigBuilderMessage",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1376.4705882352941,
+        "y": 740
+      },
+      "data": {
+        "display_name": "Dataset Kind Config Builder(Messages)",
+        "nodeType": "DatasetConfigBuilderMessageNode",
+        "libraryNodeId": "5921",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "messages_field": [
+                "STRING",
+                {
+                  "default": "messages"
+                }
+              ]
+            },
+            "optional": {
+              "rejected_field": [
+                "STRING",
+                {
+                  "default": "rejected_messages"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "dataset_kind_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5921,
+          "node_type": "share",
+          "created_at": "2026-06-22 07:53:53",
+          "updated_at": "2026-06-22 07:53:53",
+          "version": 1,
+          "description": "Build messages dataset config YAML string for SFT/GRPO.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "messages_field": "messages",
+          "rejected_field": "rejected_messages"
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-22T08:15:18.867Z"
+}

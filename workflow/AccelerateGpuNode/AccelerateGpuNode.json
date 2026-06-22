@@ -1,0 +1,186 @@
+{
+  "id": "63b8940c-44a5-4b93-bfbb-8ee9ba2d8170",
+  "name": "AccelerateGPU",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 914.1176470588236,
+        "y": 285.88235294117646
+      },
+      "data": {
+        "display_name": "Accelerate GPU Node",
+        "nodeType": "AccelerateGpuNode",
+        "libraryNodeId": "340",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "message": [
+                "STRING",
+                {
+                  "default": "Accelerate GPU Node executed successfully"
+                }
+              ],
+              "accelerate_config": [
+                "ACCELERATE_CONFIG"
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 1,
+                  "min": 1,
+                  "max": 8
+                }
+              ],
+              "gpu_product": [
+                "STRING",
+                {
+                  "default": "NVIDIA-H100-NVL",
+                  "enum": [
+                    "NVIDIA-H100-NVL",
+                    "NVIDIA-L40S",
+                    "NVIDIA-H200",
+                    "NVIDIA-B200",
+                    "NVIDIA-H100-80GB-HBM3"
+                  ]
+                }
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "STRING",
+            "STRING",
+            "STRING",
+            "STRING"
+          ],
+          "output_is_list": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "output_name": [
+            "gpu_info",
+            "execution_result",
+            "execution_output",
+            "message_output"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 340,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-05-27 11:03:07",
+          "version": 1,
+          "description": "GPU node example using accelerate launch mode",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "message": "Accelerate GPU Node executed successfully",
+          "accelerate_config": "",
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-H100-NVL"
+        },
+        "definitionMissing": false,
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      }
+    },
+    {
+      "id": "2",
+      "type": "default",
+      "position": {
+        "x": 482.3529411764704,
+        "y": 338.82352941176464
+      },
+      "data": {
+        "display_name": "Accelerate Config Builder",
+        "nodeType": "AccelerateConfigBuilderNode",
+        "libraryNodeId": "322",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "zero_stage": [
+                "INT",
+                {
+                  "default": 2
+                }
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 4
+                }
+              ]
+            }
+          },
+          "output": [
+            "ACCELERATE_CONFIG"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "accelerate_config"
+          ],
+          "category": "system",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 322,
+          "node_type": "share",
+          "created_at": "2026-05-27 11:03:07",
+          "updated_at": "2026-06-09T08:09:59.875453+00:00",
+          "version": 2,
+          "description": "Build accelerate_config YAML string for accelerate launch.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "zero_stage": 2,
+          "gpu_count": 4
+        },
+        "definitionMissing": false,
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      }
+    }
+  ],
+  "edges": [
+    {
+      "animated": false,
+      "style": {
+        "stroke": "hsl(65, 70%, 55%)",
+        "strokeWidth": 2,
+        "color": "hsl(65, 70%, 55%)"
+      },
+      "type": "default",
+      "source": "2",
+      "sourceHandle": "accelerate_config",
+      "target": "1",
+      "targetHandle": "accelerate_config",
+      "data": {
+        "connectionType": "ACCELERATE_CONFIG"
+      },
+      "id": "xy-edge__2accelerate_config-1accelerate_config"
+    }
+  ],
+  "viewport": {
+    "x": 1.1368683772161603e-13,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-11T02:03:35.731Z"
+}

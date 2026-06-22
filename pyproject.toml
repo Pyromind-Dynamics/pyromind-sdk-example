@@ -1,0 +1,14 @@
+[project]
+name = "pyromind-sdk-example"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "pyromind-sdk==0.1.4rc4",
+]
+
+[tool.setuptools]
+packages = []
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

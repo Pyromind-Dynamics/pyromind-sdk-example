@@ -1,0 +1,70 @@
+{
+  "id": "8094a9d4-9d6e-479a-81d0-d436848e26f5",
+  "name": "String to Anything",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1376.4705882352941,
+        "y": 740
+      },
+      "data": {
+        "display_name": "String to Anything",
+        "nodeType": "StringToAnything",
+        "libraryNodeId": "2883",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "input_string": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "*"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "anything"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 2883,
+          "node_type": "system",
+          "created_at": "2026-06-15T06:57:34.831017+00:00",
+          "updated_at": "2026-06-15T06:57:34.831017+00:00",
+          "version": 1,
+          "description": "String to Anything Node: Convert string input to any output type",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "input_string": "llll"
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -277.2104575146009,
+    "y": -134.33732581902575,
+    "zoom": 1.0227484522634975
+  },
+  "timestamp": "2026-06-22T09:16:35.627Z"
+}
