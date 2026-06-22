@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-Sleep 节点：持续睡眠用于调试
+Sleep node: sleeps for a specified duration for debugging purposes.
 
 ## 1.2 Input
 

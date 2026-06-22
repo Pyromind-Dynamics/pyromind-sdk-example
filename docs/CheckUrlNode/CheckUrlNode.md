@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-Check URL 节点：检查URL是否可用
+Check URL node: verifies whether a URL is reachable.
 
 ## 1.2 Input
 

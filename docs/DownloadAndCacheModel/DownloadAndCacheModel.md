@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-下载并缓存数据集
+Downloads a model from a remote repository and caches it locally.
 
 ## 1.2 Input
 
