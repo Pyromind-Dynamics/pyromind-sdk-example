@@ -1,0 +1,91 @@
+{
+  "id": "d8de52d5-0a25-40a5-b62d-44a9fea95409",
+  "name": "DatasetConfigBuilderText",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1376.4705882352941,
+        "y": 740
+      },
+      "data": {
+        "display_name": "Dataset Kind Config Builder(Text Only)",
+        "nodeType": "DatasetConfigBuilderTextNode",
+        "libraryNodeId": "5923",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "system_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "user_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "assistant_response_field": [
+                "STRING",
+                {
+                  "default": "gt"
+                }
+              ],
+              "rejected_field": [
+                "STRING",
+                {
+                  "default": "rejected_answer"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "dataset_kind_config"
+          ],
+          "category": "train",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5923,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Build text only dataset config YAML string for SFT/GRPO.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "system_prompt_field": "",
+          "user_prompt_field": "",
+          "assistant_response_field": "gt",
+          "rejected_field": "rejected_answer"
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-22T08:13:50.280Z"
+}

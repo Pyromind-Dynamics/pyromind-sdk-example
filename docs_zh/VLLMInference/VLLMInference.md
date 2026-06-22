@@ -25,7 +25,7 @@
 
 ## 1.4 Workflow JSON 定义
 
-该节点暂无可用 Workflow JSON 定义。
+完整 workflow 定义见 [`workflow/VLLMInference/VLLMInference.json`](../../workflow/VLLMInference/VLLMInference.json)。
 
 ## 1.5 运行 Workflow
 

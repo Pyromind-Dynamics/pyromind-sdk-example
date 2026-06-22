@@ -1,0 +1,108 @@
+{
+  "id": "1dd5d760-2536-4eb8-9199-be6725e6ce91",
+  "name": "VLLMInference",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1376.4705882352941,
+        "y": 740
+      },
+      "data": {
+        "display_name": "Inference (VLLM)",
+        "nodeType": "VLLMInference",
+        "libraryNodeId": "2876",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "model_path": [
+                "STRING"
+              ],
+              "port": [
+                "INT",
+                {
+                  "default": 3000,
+                  "min": 1,
+                  "max": 8000
+                }
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 1,
+                  "min": 1,
+                  "max": 8
+                }
+              ],
+              "gpu_product": [
+                "STRING",
+                {
+                  "default": "NVIDIA-H100-NVL",
+                  "enum": [
+                    "NVIDIA-H100-NVL",
+                    "NVIDIA-L40S",
+                    "NVIDIA-H200",
+                    "NVIDIA-B200",
+                    "NVIDIA-H100-80GB-HBM3"
+                  ]
+                }
+              ]
+            },
+            "optional": {
+              "environment": [
+                "ENV"
+              ],
+              "max_model_len": [
+                "INT"
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "endpoint"
+          ],
+          "category": "Inference",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 2876,
+          "node_type": "system",
+          "created_at": "2026-06-15T06:57:34.759421+00:00",
+          "updated_at": "2026-06-16T08:13:39.158642+00:00",
+          "version": 2,
+          "description": "Run inference using vLLM, serving OpenAI-compatible API endpoint.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "model_path": "/workspace/models/Qwen/Qwen3-0.6B/",
+          "port": 3000,
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-H100-NVL",
+          "environment": "",
+          "max_model_len": ""
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -622.71917020246,
+    "y": -329.9205141683674,
+    "zoom": 1.2444197426766699
+  },
+  "timestamp": "2026-06-22T09:22:26.841Z"
+}
