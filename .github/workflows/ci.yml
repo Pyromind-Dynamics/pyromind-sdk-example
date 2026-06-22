@@ -105,13 +105,9 @@ jobs:
         if: env.RUN_PYROMIND_SMOKE == 'true'
         run: uv run --no-sync python tests/test_node_doc_consistency.py --validate-only
 
-      - name: Run LoadDataset workflow
+      - name: Run all workflows
         if: env.RUN_PYROMIND_SMOKE == 'true'
-        run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadDataset/LoadDataset.json --pretty
-
-      - name: Run LoadImage workflow
-        if: env.RUN_PYROMIND_SMOKE == 'true'
-        run: uv run --no-sync python -m pyromind_sdk.test_run_workflow_cli workflow/LoadImage/LoadImage.json --pretty
+        run: uv run --no-sync python tests/test_all_workflows.py
 
   notify-success:
     name: Notify Feishu success

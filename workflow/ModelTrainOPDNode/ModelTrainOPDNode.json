@@ -1,0 +1,155 @@
+{
+  "id": "7ee4848a-f01c-4dc8-8e14-610938cc3ed5",
+  "name": "ModelTrainOPD",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1221,
+        "y": 619
+      },
+      "data": {
+        "display_name": "OPD Training",
+        "nodeType": "ModelTrainOPDNode",
+        "libraryNodeId": "5913",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "output_path": [
+                "STRING"
+              ],
+              "dataset_config": [
+                "STRING"
+              ],
+              "training_config": [
+                "STRING"
+              ],
+              "model_config": [
+                "STRING"
+              ],
+              "teacher_model_config": [
+                "STRING"
+              ],
+              "accelerate_config": [
+                "ACCELERATE_CONFIG"
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 1,
+                  "min": 1,
+                  "max": 8
+                }
+              ],
+              "gpu_product": [
+                "STRING",
+                {
+                  "default": "NVIDIA-H100-NVL",
+                  "enum": [
+                    "NVIDIA-H100-NVL",
+                    "NVIDIA-L40S",
+                    "NVIDIA-H200",
+                    "NVIDIA-B200",
+                    "NVIDIA-H100-80GB-HBM3"
+                  ]
+                }
+              ]
+            },
+            "optional": {
+              "lmbda": [
+                "FLOAT",
+                {
+                  "default": 0.5
+                }
+              ],
+              "beta": [
+                "FLOAT",
+                {
+                  "default": 0.5
+                }
+              ],
+              "temperature": [
+                "FLOAT",
+                {
+                  "default": 0.9
+                }
+              ],
+              "max_new_tokens": [
+                "INT",
+                {
+                  "default": 200
+                }
+              ],
+              "seq_kd": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "thinking_as_input_ratio": [
+                "FLOAT",
+                {
+                  "default": 0
+                }
+              ],
+              "wandb_config": [
+                "WANDB_CONFIG"
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "model_output_path"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5913,
+          "node_type": "share",
+          "created_at": "2026-06-22 08:06:30",
+          "updated_at": "2026-06-22 08:06:30",
+          "version": 1,
+          "description": "Run OPD training and return output directory.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "output_path": "",
+          "dataset_config": "",
+          "training_config": "",
+          "model_config": "",
+          "teacher_model_config": "",
+          "accelerate_config": "",
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-H100-NVL",
+          "lmbda": 0.5,
+          "beta": 0.5,
+          "temperature": 0.9,
+          "max_new_tokens": 200,
+          "seq_kd": false,
+          "thinking_as_input_ratio": 0,
+          "wandb_config": ""
+        },
+        "width": 460
+      },
+      "style": {
+        "width": 460
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-22T08:49:14.001Z"
+}

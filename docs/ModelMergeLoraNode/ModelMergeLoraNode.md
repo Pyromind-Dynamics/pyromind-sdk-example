@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_name_or_path.
+Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor to a standalone directory. Base model id/path may be omitted if adapter_config.json contains base_model_path_or_path.
 
 ## 1.2 Input
 
@@ -12,10 +12,8 @@ Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + pr
 |-----------|-----------|----------|-------------|
 | lora_path | STRING | Yes | Lora path |
 | output_path | STRING | Yes | Output directory or file path |
-| model_name | STRING | No | HuggingFace model name or local path. Default: empty string |
+| model_path | STRING | No | HuggingFace model name or local path. Default: empty string |
 | model_type | STRING | No | Model architecture type (`auto`, `qwen3vl`, `qwen3.5`). Default: `auto` |
-| gpu_count | INT | Yes | Number of GPUs |
-| gpu_product | STRING | Yes | GPU product type |
 
 ## 1.3 Output
 

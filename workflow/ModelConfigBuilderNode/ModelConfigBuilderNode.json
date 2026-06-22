@@ -1,0 +1,83 @@
+{
+  "id": "161c462e-48c4-4735-a5f5-1d4e1a48b4a2",
+  "name": "ModelConfigBuilder",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 608,
+        "y": 441
+      },
+      "data": {
+        "display_name": "Model Config Builder",
+        "nodeType": "ModelConfigBuilderNode",
+        "libraryNodeId": "5918",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "model_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {
+              "model_type": [
+                "STRING",
+                {
+                  "default": "auto",
+                  "enum": [
+                    "auto",
+                    "qwen3vl",
+                    "qwen3.5"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "model_config"
+          ],
+          "category": "train",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5918,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Build model config YAML string.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "model_path": "/workspace/models/Qwen/Qwen3-0.6B/",
+          "model_type": "auto"
+        },
+        "width": 641,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 641
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 315.78,
+    "y": 158.88,
+    "zoom": 0.92
+  },
+  "timestamp": "2026-06-22T08:38:21.671Z"
+}

@@ -1,0 +1,91 @@
+{
+  "id": "da878ef7-61db-4f02-af29-ecaff84aadf2",
+  "name": "LoraConfigBuilder",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 1376.4705882352941,
+        "y": 740
+      },
+      "data": {
+        "display_name": "Lora Config Builder",
+        "nodeType": "LoraConfigBuilderNode",
+        "libraryNodeId": "5916",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "lora_rank": [
+                "INT",
+                {
+                  "default": 8
+                }
+              ],
+              "lora_dropout": [
+                "FLOAT",
+                {
+                  "default": 0.05
+                }
+              ],
+              "target_modules": [
+                "STRING",
+                {
+                  "default": "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj"
+                }
+              ],
+              "exclude_modules": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "lora_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5916,
+          "node_type": "share",
+          "created_at": "2026-06-22 08:06:00",
+          "updated_at": "2026-06-22 08:06:00",
+          "version": 1,
+          "description": "Build lora config YAML string.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "lora_rank": 8,
+          "lora_dropout": 0.05,
+          "target_modules": "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj",
+          "exclude_modules": ""
+        },
+        "width": 300,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-22T08:32:47.295Z"
+}

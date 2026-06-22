@@ -21,9 +21,6 @@ Runs OPD (On-Policy Distillation / GKD) training with separate student and teach
 | thinking_as_input_ratio | FLOAT | No | Ratio of chain-of-thought content included as input. Default: `0.0` |
 | model_config | STRING | Yes | Model config YAML string |
 | teacher_model_config | STRING | Yes | Teacher model config YAML string (OPD/GKD) |
-| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate configuration |
-| gpu_count | INT | Yes | Number of GPUs |
-| gpu_product | STRING | Yes | GPU product type |
 | wandb_config | WANDB_CONFIG | No | W&B configuration object |
 
 ## 1.3 Output

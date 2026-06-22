@@ -1,0 +1,96 @@
+{
+  "id": "c1b211ec-50ab-41cf-9d29-6b00c1f23f64",
+  "name": "DataPreprocessSplit",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 881.1619908269831,
+        "y": 622.4340417275843
+      },
+      "data": {
+        "display_name": "Train-Validation Split",
+        "nodeType": "DataPreprocessSplitNode",
+        "libraryNodeId": "5896",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "input_path": [
+                "STRING"
+              ],
+              "output_path": [
+                "STRING"
+              ]
+            },
+            "optional": {
+              "train_ratio": [
+                "FLOAT",
+                {
+                  "default": 0.8
+                }
+              ],
+              "seed": [
+                "INT",
+                {
+                  "default": 42
+                }
+              ],
+              "shuffle": [
+                "BOOLEAN",
+                {
+                  "default": true
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING",
+            "STRING"
+          ],
+          "output_is_list": [
+            false,
+            false
+          ],
+          "output_name": [
+            "train_output_path",
+            "val_output_path"
+          ],
+          "category": "DataPreprocess",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5896,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Split metadata into train and validation datasets from a shared output path template",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "input_path": "/workspace/datasets/pyromind/self-cognition/self-cognition.jsonl",
+          "output_path": "/workspace/datasets/pyromind/self-cognition/",
+          "train_ratio": 0.8,
+          "seed": 42,
+          "shuffle": true
+        },
+        "definitionMissing": false,
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": -446.9831068022472,
+    "y": -465.38485495401164,
+    "zoom": 1.277754954629193
+  },
+  "timestamp": "2026-06-22T08:11:42.388Z"
+}

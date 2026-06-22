@@ -1,0 +1,114 @@
+{
+  "id": "fa29c802-646d-48ec-b114-dd74c6c106a8",
+  "name": "ModelMergeLora",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 619,
+        "y": 386
+      },
+      "data": {
+        "display_name": "Merge LoRA",
+        "nodeType": "ModelMergeLoraNode",
+        "libraryNodeId": "5910",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "lora_path": [
+                "STRING"
+              ],
+              "output_path": [
+                "STRING"
+              ],
+              "model_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "gpu_count": [
+                "INT",
+                {
+                  "default": 1,
+                  "min": 1,
+                  "max": 1
+                }
+              ],
+              "gpu_product": [
+                "STRING",
+                {
+                  "default": "NVIDIA-H100-NVL",
+                  "enum": [
+                    "NVIDIA-H100-NVL",
+                    "NVIDIA-L40S",
+                    "NVIDIA-H200",
+                    "NVIDIA-B200",
+                    "NVIDIA-H100-80GB-HBM3"
+                  ]
+                }
+              ]
+            },
+            "optional": {
+              "model_type": [
+                "STRING",
+                {
+                  "default": "auto",
+                  "enum": [
+                    "auto",
+                    "qwen3vl",
+                    "qwen3.5"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "merged_model_path"
+          ],
+          "category": "train",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5910,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + processor\nto a standalone directory. Base model id/path may be omitted if adapter_config.json\ncontains base_model_name_or_path.\n",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "lora_path": "/workspace/models/checkpoints/sft0618/final_model/",
+          "output_path": "/workspace/models/lora_merged/qwen3_06b_sft2/",
+          "model_path": "/workspace/models/Qwen/Qwen3-0.6B/",
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-H100-NVL",
+          "model_type": "auto"
+        },
+        "width": 710,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 710
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 273.91999999999996,
+    "y": 157.95999999999998,
+    "zoom": 0.92
+  },
+  "timestamp": "2026-06-22T08:45:59.987Z"
+}

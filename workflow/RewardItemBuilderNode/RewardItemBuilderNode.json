@@ -6,20 +6,23 @@
       "id": "1",
       "type": "default",
       "position": {
-        "x": 1250.6390759086382,
-        "y": 312.2490807528072
+        "x": 1105,
+        "y": 312
       },
       "data": {
         "display_name": "Reward Item Builder",
         "nodeType": "RewardItemBuilderNode",
         "nodeDefinition": {
           "input": {
-            "required": {},
-            "optional": {
+            "required": {
               "entry": [
                 "STRING",
                 {
-                  "default": ""
+                  "default": "geometry_vqa_thinking_reward",
+                  "enum": [
+                    "geometry_vqa_thinking_reward",
+                    "geometry_vqa_answer_reward"
+                  ]
                 }
               ],
               "name": [
@@ -27,7 +30,9 @@
                 {
                   "default": ""
                 }
-              ],
+              ]
+            },
+            "optional": {
               "kwargs": [
                 "STRING",
                 {
@@ -51,32 +56,34 @@
           "output_name": [
             "reward_item"
           ],
-          "category": "",
+          "category": "train",
           "output_node": false,
           "experimental": false,
           "deprecated": false,
           "python_module": "test_nodes",
-          "id": 354,
+          "id": 5908,
           "node_type": "share",
-          "created_at": "2026-05-27 11:03:07",
-          "updated_at": "2026-05-27 11:03:07",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
           "version": 1,
           "description": "Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.",
           "is_enabled": true,
           "metanode_deleted": false
         },
         "config": {
-          "entry": "/workspace/py/example_valid_node.py",
+          "entry": "geometry_vqa_thinking_reward",
           "name": "example_valid_node",
           "kwargs": "",
           "weight": 1
         },
-        "definitionMissing": false
+        "definitionMissing": false,
+        "libraryNodeId": "5908",
+        "width": 446
       },
-      "measured": {
-        "width": 300,
-        "height": 196
-      }
+      "style": {
+        "width": 446
+      },
+      "properties": {}
     }
   ],
   "edges": [],
@@ -85,5 +92,5 @@
     "y": -26.161909925244174,
     "zoom": 1.3966289623194152
   },
-  "timestamp": "2026-06-09T03:23:45.566Z"
+  "timestamp": "2026-06-22T09:01:45.764Z"
 }

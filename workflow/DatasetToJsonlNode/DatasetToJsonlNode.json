@@ -1,0 +1,67 @@
+{
+  "id": "3584f9a1-a5c5-45ea-b686-a2807be87e25",
+  "name": "Dataset to JSONL",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 684,
+        "y": 453
+      },
+      "data": {
+        "display_name": "Dataset to JSONL",
+        "nodeType": "DatasetToJsonlNode",
+        "libraryNodeId": "5915",
+        "nodeDefinition": {
+          "input": {
+            "required": {
+              "dataset_path": [
+                "STRING"
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "jsonl_path"
+          ],
+          "category": "train",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5915,
+          "node_type": "share",
+          "created_at": "2026-06-18 08:51:07",
+          "updated_at": "2026-06-18 08:51:07",
+          "version": 1,
+          "description": "Convert dataset to JSONL format.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "dataset_path": "/workspace/datasets/pyromind/self-cognition/self-cognition.jsonl"
+        },
+        "width": 434,
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 434
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-06-22T08:22:22.962Z"
+}

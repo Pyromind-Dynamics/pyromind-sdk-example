@@ -10,7 +10,7 @@ Based on the provided parameters, this node starts an inference service that con
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| model_path | MODEL | Yes | Model reference. Default: - |
+| model_path | STRING | Yes | Model reference. Default: - |
 | environment | ENV | No | Environment variable name. Default: - |
 | port | INT | Yes | Inference service port number |
 | gpu_count | INT | Yes | Number of GPUs used by the inference service |
