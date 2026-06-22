@@ -1,6 +1,6 @@
 # Inference (SGlang) Node
 
-![InferenceNode.png](/imgs/Inference/InferenceNode.png)
+![alt text](/imgs/Inference/Inference.png)
 
 ## 1.1 Overview
 
