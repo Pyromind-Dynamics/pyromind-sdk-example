@@ -22,13 +22,11 @@ Assembles shared SFT/GRPO/DPO training hyperparameters into a `training_config` 
 | seed | INT | No | Random seed. Default: `42` |
 | resume_from_checkpoint | STRING | No | Checkpoint path to resume from. Default: empty string |
 | max_grad_norm | FLOAT | No | Maximum gradient norm for clipping. Default: `2` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| training_config | STRING | Training config YAML string (`BaseTrainingConfig` fields) |
-
+| training_config | STRING\|TRAINING_CONFIG | Training config YAML string (`BaseTrainingConfig` fields) |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/TrainingConfigBuilderNode/TrainingConfigBuilderNode.json`](../../workflow/TrainingConfigBuilderNode/TrainingConfigBuilderNode.json) for the full workflow definition.

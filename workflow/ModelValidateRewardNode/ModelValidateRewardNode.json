@@ -1,0 +1,86 @@
+{
+  "id": "490f3a90-2c99-4ca5-8c1d-db894d29d970",
+  "name": "ModelValidateRewardNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "ModelValidateRewardNode",
+        "nodeDefinition": {
+          "name": "ModelValidateRewardNode",
+          "input": {
+            "required": {
+              "reward_config": [
+                "STRING|REWARD_CONFIG"
+              ],
+              "ground_truths": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "completions": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "STRING",
+            "STRING"
+          ],
+          "output_is_list": [
+            false,
+            false
+          ],
+          "output_name": [
+            "status",
+            "scores"
+          ],
+          "category": "TrainValidation",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5901,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Validate Reward",
+          "description": "Validate reward composition and score aggregation.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "reward_config": "",
+          "ground_truths": "",
+          "completions": ""
+        },
+        "definitionMissing": false,
+        "display_name": "Validate Reward",
+        "libraryNodeId": "5901",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.426986Z"
+}

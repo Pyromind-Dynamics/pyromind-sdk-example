@@ -14,13 +14,11 @@ Builds a single reward item YAML from a custom Python entry path. Non-empty `kwa
 | name | STRING | Yes | Metric or reward item name |
 | kwargs | STRING | No | YAML mapping of keyword arguments (non-empty enables factory mode). Default: empty string |
 | weight | FLOAT | No | Weight multiplier in combined score. Default: `1.0` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| reward_item | STRING | Single reward item YAML string |
-
+| reward_item | STRING\|REWARD_ITEM | Single reward item YAML string |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/RewardItemBuilderCustomNode/RewardItemBuilderCustomNode.json`](../../workflow/RewardItemBuilderCustomNode/RewardItemBuilderCustomNode.json) for the full workflow definition.

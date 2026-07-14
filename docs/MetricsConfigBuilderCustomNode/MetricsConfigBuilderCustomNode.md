@@ -12,13 +12,11 @@ Builds a metrics config YAML from a custom Python entry path (e.g. `/workspace/n
 |-----------|-----------|----------|-------------|
 | entry | STRING | Yes | Python entry path (`module.py:function_name`) |
 | name | STRING | Yes | Metric or reward item name |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| metrics_config | STRING | Single metrics config YAML string |
-
+| metrics_config | STRING\|METRICS_CONFIG | Single metrics config YAML string |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/MetricsConfigBuilderCustomNode/MetricsConfigBuilderCustomNode.json`](../../workflow/MetricsConfigBuilderCustomNode/MetricsConfigBuilderCustomNode.json) for the full workflow definition.

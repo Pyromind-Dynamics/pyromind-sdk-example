@@ -1,0 +1,156 @@
+{
+  "id": "dc99d795-4640-4e59-bdad-89596d9068d8",
+  "name": "DataPreprocessReasoningNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "DataPreprocessReasoningNode",
+        "nodeDefinition": {
+          "name": "DataPreprocessReasoningNode",
+          "input": {
+            "required": {
+              "input_path": [
+                "STRING"
+              ],
+              "output_path": [
+                "STRING"
+              ],
+              "api_base": [
+                "STRING"
+              ],
+              "model": [
+                "STRING"
+              ],
+              "api_key": [
+                "STRING"
+              ]
+            },
+            "optional": {
+              "system_prompt": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "user_prompt": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "user_prompt_column": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "format_lang": [
+                "STRING",
+                {
+                  "default": "en"
+                }
+              ],
+              "max_tokens": [
+                "INT",
+                {
+                  "default": 1024
+                }
+              ],
+              "thinking": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "limit": [
+                "INT",
+                {
+                  "default": 0
+                }
+              ],
+              "concurrency": [
+                "INT",
+                {
+                  "default": 1
+                }
+              ],
+              "gt_column": [
+                "STRING",
+                {
+                  "default": "text"
+                }
+              ],
+              "num_variations": [
+                "INT",
+                {
+                  "default": 1
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "reasoning_path"
+          ],
+          "category": "DataPreprocess",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5894,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Chain of Thought Generation",
+          "description": "Run data_preprocess reasoning pipeline and emit output path.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "input_path": "",
+          "output_path": "",
+          "api_base": "",
+          "model": "",
+          "api_key": "",
+          "system_prompt": "",
+          "user_prompt": "",
+          "user_prompt_column": "",
+          "format_lang": "en",
+          "max_tokens": 1024,
+          "thinking": false,
+          "limit": 0,
+          "concurrency": 1,
+          "gt_column": "text",
+          "num_variations": 1
+        },
+        "definitionMissing": false,
+        "display_name": "Chain of Thought Generation",
+        "libraryNodeId": "5894",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.425438Z"
+}
