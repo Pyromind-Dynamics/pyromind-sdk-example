@@ -1,0 +1,73 @@
+{
+  "id": "04d27f83-576d-47a9-acc3-d897baba55b5",
+  "name": "PreviewFile example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "PreviewFile",
+        "nodeDefinition": {
+          "name": "PreviewFile",
+          "input": {
+            "required": {
+              "file_path": [
+                "STRING",
+                {
+                  "input_components": {
+                    "type": "file_select"
+                  }
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "file_path"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 8526,
+          "node_type": "system",
+          "created_at": "2026-06-18T09:38:23.929685+00:00",
+          "updated_at": "2026-06-18T09:38:23.929685+00:00",
+          "version": 1,
+          "display_name": "File Preview",
+          "description": "Enter a storage path to preview the file. Supported formats: Images and TXT.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "file_path": ""
+        },
+        "definitionMissing": false,
+        "display_name": "File Preview",
+        "libraryNodeId": "8526",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.427245Z"
+}

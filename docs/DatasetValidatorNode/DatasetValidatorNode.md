@@ -10,19 +10,17 @@ Validates an assembled `dataset_config`, builds a dataloader preview, and output
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| dataset_config | STRING | Yes | Assembled dataset configuration YAML string |
+| dataset_config | STRING\|DATASET_CONFIG | Yes | Assembled dataset configuration YAML string |
 | check_reasoning | BOOLEAN | No | Validate reasoning fields in the dataset. Default: false |
 | limit | INT | No | Max samples for validation preview (0 = no limit). Default: `0` |
 | verbose | BOOLEAN | No | Print detailed validation logs. Default: false |
 | preview_html_path | STRING | No | HTML preview output path. Default: `/workspace/datasets/preview.html` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | metrics_yaml | STRING | Validation metrics as YAML string |
 | output_preview_path | STRING | Generated HTML preview file path |
-
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetValidatorNode/DatasetValidatorNode.json`](../../workflow/DatasetValidatorNode/DatasetValidatorNode.json) for the full workflow definition.

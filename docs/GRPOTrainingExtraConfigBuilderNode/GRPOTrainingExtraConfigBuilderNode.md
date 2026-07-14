@@ -17,13 +17,11 @@ Build grpo_extra_config YAML (GRPO-only training fields; use with shared trainin
 | temperature | FLOAT | No | Sampling temperature. Default: `0.7` |
 | enable_chord | BOOLEAN | No | Enable CHORD algorithm (GRPO extra). Default: false |
 | enable_hint | BOOLEAN | No | Enable hint mode (GRPO extra). Default: false |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| grpo_extra_config | STRING | GRPO-only extra training config YAML |
-
+| grpo_extra_config | STRING\|GRPO_EXTRA_CONFIG | GRPO-only extra training config YAML |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json`](../../workflow/GRPOTrainingExtraConfigBuilderNode/GRPOTrainingExtraConfigBuilderNode.json) for the full workflow definition.

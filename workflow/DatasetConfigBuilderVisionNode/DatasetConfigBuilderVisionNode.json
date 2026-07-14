@@ -1,0 +1,101 @@
+{
+  "id": "ad02a728-e458-4e85-ac93-a6e1000b2ba8",
+  "name": "DatasetConfigBuilderVisionNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "DatasetConfigBuilderVisionNode",
+        "nodeDefinition": {
+          "name": "DatasetConfigBuilderVisionNode",
+          "input": {
+            "required": {
+              "image_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {
+              "system_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "user_prompt_field": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "assistant_response_field": [
+                "STRING",
+                {
+                  "default": "gt"
+                }
+              ],
+              "rejected_field": [
+                "STRING",
+                {
+                  "default": "rejected_answer"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING|DATASET_KIND_CONFIG"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "dataset_kind_config"
+          ],
+          "category": "TrainConfig",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5922,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Dataset Kind Config Builder(Vision)",
+          "description": "Build vision dataset config YAML string for SFT/GRPO.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "image_field": "",
+          "system_prompt_field": "",
+          "user_prompt_field": "",
+          "assistant_response_field": "gt",
+          "rejected_field": "rejected_answer"
+        },
+        "definitionMissing": false,
+        "display_name": "Dataset Kind Config Builder(Vision)",
+        "libraryNodeId": "5922",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.425631Z"
+}

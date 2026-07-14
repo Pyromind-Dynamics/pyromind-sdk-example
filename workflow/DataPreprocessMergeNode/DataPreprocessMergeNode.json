@@ -1,0 +1,148 @@
+{
+  "id": "5c4602a9-929c-4940-8476-43afbd9465bc",
+  "name": "DataPreprocessMergeNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "DataPreprocessMergeNode",
+        "nodeDefinition": {
+          "name": "DataPreprocessMergeNode",
+          "input": {
+            "required": {
+              "metadata_path": [
+                "STRING"
+              ],
+              "output_path": [
+                "STRING"
+              ],
+              "reasoning_path": [
+                "STRING"
+              ]
+            },
+            "optional": {
+              "base_prompt": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "output_format": [
+                "STRING",
+                {
+                  "default": "jsonl"
+                }
+              ],
+              "base_prompt_file": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "category_annotations": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "prompt_augmentation_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "system_prompt": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "system_prompt_file": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "copy_columns": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "label_column": [
+                "STRING",
+                {
+                  "default": "component_type"
+                }
+              ],
+              "gt_column": [
+                "STRING",
+                {
+                  "default": "text"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "result_output_path"
+          ],
+          "category": "DataPreprocess",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5895,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Prompt & Reasoning Merge",
+          "description": "Merge reasoning/category/prompts into training data.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "metadata_path": "",
+          "output_path": "",
+          "reasoning_path": "",
+          "base_prompt": "",
+          "output_format": "jsonl",
+          "base_prompt_file": "",
+          "category_annotations": "",
+          "prompt_augmentation_path": "",
+          "system_prompt": "",
+          "system_prompt_file": "",
+          "copy_columns": "",
+          "label_column": "component_type",
+          "gt_column": "text"
+        },
+        "definitionMissing": false,
+        "display_name": "Prompt & Reasoning Merge",
+        "libraryNodeId": "5895",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.424797Z"
+}

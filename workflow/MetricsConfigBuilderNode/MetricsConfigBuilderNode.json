@@ -1,0 +1,85 @@
+{
+  "id": "8866c193-d880-424c-8308-97c0ebb3aa7f",
+  "name": "MetricsConfigBuilderNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "MetricsConfigBuilderNode",
+        "nodeDefinition": {
+          "name": "MetricsConfigBuilderNode",
+          "input": {
+            "required": {
+              "entry": [
+                "STRING",
+                {
+                  "default": "compute_gsm8k",
+                  "enum": [
+                    "compute_gsm8k",
+                    "compute_accuracy",
+                    "compute_bleu",
+                    "compute_rouge_l"
+                  ]
+                }
+              ],
+              "name": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "STRING|METRICS_CONFIG"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "metrics_config"
+          ],
+          "category": "TrainConfig",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5924,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Metrics Config Builder(System Entry)",
+          "description": "Build a metrics config as YAML.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "entry": "compute_gsm8k",
+          "name": ""
+        },
+        "definitionMissing": false,
+        "display_name": "Metrics Config Builder(System Entry)",
+        "libraryNodeId": "5924",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.426163Z"
+}

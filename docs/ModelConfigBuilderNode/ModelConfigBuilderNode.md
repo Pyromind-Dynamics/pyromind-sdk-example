@@ -12,13 +12,11 @@ Builds the `model_config` YAML string (model name and type). Use **Lora Config B
 |-----------|-----------|----------|-------------|
 | model_path | STRING | No | HuggingFace model name or local path. Default: `Qwen/Qwen3-VL-2B-Instruct` |
 | model_type | STRING | No | Model architecture type (`auto`, `qwen3vl`, `qwen3.5`). Options: `auto`, `qwen3vl`, `qwen3.5` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_config | STRING | Model config YAML string |
-
+| model_config | STRING\|MODEL_CONFIG | Model config YAML string |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelConfigBuilderNode/ModelConfigBuilderNode.json`](../../workflow/ModelConfigBuilderNode/ModelConfigBuilderNode.json) for the full workflow definition.

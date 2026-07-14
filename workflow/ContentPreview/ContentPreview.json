@@ -1,0 +1,81 @@
+{
+  "id": "c3f5097a-ffc5-41f4-8e53-9a03ba3654a6",
+  "name": "ContentPreview example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "ContentPreview",
+        "nodeDefinition": {
+          "name": "ContentPreview",
+          "input": {
+            "required": {
+              "content": [
+                "*"
+              ],
+              "file_format": [
+                "STRING",
+                {
+                  "default": "txt",
+                  "enum": [
+                    "txt",
+                    "json",
+                    "xml",
+                    "python"
+                  ]
+                }
+              ]
+            }
+          },
+          "output": [
+            "*"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "content"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 14692,
+          "node_type": "system",
+          "created_at": "2026-07-03T08:08:19.970765+00:00",
+          "updated_at": "2026-07-03T08:08:19.970765+00:00",
+          "version": 1,
+          "display_name": "Content Preview",
+          "description": "Display the input [content] in the specified file format.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "content": "",
+          "file_format": "txt"
+        },
+        "definitionMissing": false,
+        "display_name": "Content Preview",
+        "libraryNodeId": "14692",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.423686Z"
+}

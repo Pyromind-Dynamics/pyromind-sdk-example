@@ -12,13 +12,11 @@ Builds a single metrics config YAML using a built-in evaluation entry (GSM8K, ac
 |-----------|-----------|----------|-------------|
 | entry | STRING | Yes | Python entry path (`module.py:function_name`). Options: `examples/eval_metrics_common.py:compute_gsm8k`, `examples/eval_metrics_common.py:compute_accuracy`, `examples/eval_metrics_common.py:compute_bleu`, `examples/eval_metrics_common.py:compute_rouge_l` |
 | name | STRING | Yes | Metric or reward item name |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| metrics_config | STRING | Single metrics config YAML string |
-
+| metrics_config | STRING\|METRICS_CONFIG | Single metrics config YAML string |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/MetricsConfigBuilderNode/MetricsConfigBuilderNode.json`](../../workflow/MetricsConfigBuilderNode/MetricsConfigBuilderNode.json) for the full workflow definition.

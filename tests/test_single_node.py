@@ -35,7 +35,7 @@ def parse_markdown_table(table_text: str) -> dict[str, str]:
         return {}
     result = {}
     for row in rows[2:]:
-        cols = [c.strip() for c in row.split("|") if c.strip()]
+        cols = [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", row) if c.strip()]
         if len(cols) >= 2:
             result[cols[0]] = cols[1]
     return result

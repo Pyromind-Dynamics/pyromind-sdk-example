@@ -1,0 +1,101 @@
+{
+  "id": "450681ac-e2b1-4e1e-b0e3-483d44876934",
+  "name": "DatasetValidatorNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "DatasetValidatorNode",
+        "nodeDefinition": {
+          "name": "DatasetValidatorNode",
+          "input": {
+            "required": {
+              "dataset_config": [
+                "STRING|DATASET_CONFIG"
+              ]
+            },
+            "optional": {
+              "check_reasoning": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "limit": [
+                "INT",
+                {
+                  "default": 0
+                }
+              ],
+              "verbose": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "preview_html_path": [
+                "STRING",
+                {
+                  "default": "/workspace/datasets/preview.html"
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING",
+            "STRING"
+          ],
+          "output_is_list": [
+            false,
+            false
+          ],
+          "output_name": [
+            "metrics_yaml",
+            "output_preview_path"
+          ],
+          "category": "DataPreprocess",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5917,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Dataset Validator",
+          "description": "Validates dataset and generates data preview.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "dataset_config": "",
+          "check_reasoning": false,
+          "limit": 0,
+          "verbose": false,
+          "preview_html_path": "/workspace/datasets/preview.html"
+        },
+        "definitionMissing": false,
+        "display_name": "Dataset Validator",
+        "libraryNodeId": "5917",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.425864Z"
+}

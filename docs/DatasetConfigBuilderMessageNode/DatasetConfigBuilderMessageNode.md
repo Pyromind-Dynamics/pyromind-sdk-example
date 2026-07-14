@@ -12,13 +12,11 @@ Builds the `dataset_kind_config` YAML fragment for chat/messages datasets. Conne
 |-----------|-----------|----------|-------------|
 | messages_field | STRING | Yes | Messages field name |
 | rejected_field | STRING | No | Rejected response / messages field name. Default: `rejected_messages` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| dataset_kind_config | STRING | Dataset kind config YAML from a Kind Config Builder node |
-
+| dataset_kind_config | STRING\|DATASET_KIND_CONFIG | Dataset kind config YAML from a Kind Config Builder node |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetConfigBuilderMessageNode/DatasetConfigBuilderMessageNode.json`](../../workflow/DatasetConfigBuilderMessageNode/DatasetConfigBuilderMessageNode.json) for the full workflow definition.

@@ -15,13 +15,11 @@ Builds the `dataset_kind_config` YAML fragment for vision datasets (image + text
 | image_field | STRING | No | Image field name. Default: empty string |
 | assistant_response_field | STRING | No | Assistant response / ground-truth field name. Default: `gt` |
 | rejected_field | STRING | No | Rejected response / messages field name. Default: `rejected_answer` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| dataset_kind_config | STRING | Dataset kind config YAML from a Kind Config Builder node |
-
+| dataset_kind_config | STRING\|DATASET_KIND_CONFIG | Dataset kind config YAML from a Kind Config Builder node |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetConfigBuilderVisionNode/DatasetConfigBuilderVisionNode.json`](../../workflow/DatasetConfigBuilderVisionNode/DatasetConfigBuilderVisionNode.json) for the full workflow definition.

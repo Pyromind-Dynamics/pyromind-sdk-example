@@ -14,7 +14,7 @@ Based on the provided parameters, this node starts an inference service that con
 | environment | ENV | No | Environment variable name. Default: - |
 | port | INT | Yes | Inference service port number |
 | gpu_count | INT | Yes | Number of GPUs used by the inference service |
-| gpu_product | STRING | Yes | GPU type. Default: `NVIDIA-H100-NVL` Options: NVIDIA-H100-NVL, NVIDIA-L40S, NVIDIA-H200, NVIDIA-B200, NVIDIA-H100-80GB-HBM3 |
+| gpu_product | STRING | Yes | GPU type. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3, NVIDIA-L40S |
 
 
 

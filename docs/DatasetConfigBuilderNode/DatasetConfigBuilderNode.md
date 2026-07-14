@@ -12,15 +12,13 @@ Builds the base `dataset_config` YAML string for SFT/GRPO/DPO training. Combine 
 |-----------|-----------|----------|-------------|
 | train_data_path | STRING | Yes | Training data path |
 | val_data_path | STRING | No | Validation data path. Default: empty string |
-| dataset_kind_config | STRING | No | Dataset kind config YAML from a Kind Config Builder node. Default: empty string |
-| dataset_extra_config | STRING | No | Dataset extra config YAML from Dataset Extra Config Builder. Default: empty string |
-
+| dataset_kind_config | STRING\|DATASET_KIND_CONFIG | No | Dataset kind config YAML from a Kind Config Builder node. Default: empty string |
+| dataset_extra_config | STRING\|DATASET_EXTRA_CONFIG | No | Dataset extra config YAML from Dataset Extra Config Builder. Default: empty string |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| dataset_config | STRING | Assembled dataset configuration YAML string |
-
+| dataset_config | STRING\|DATASET_CONFIG | Assembled dataset configuration YAML string |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json`](../../workflow/DatasetConfigBuilderNode/DatasetConfigBuilderNode.json) for the full workflow definition.

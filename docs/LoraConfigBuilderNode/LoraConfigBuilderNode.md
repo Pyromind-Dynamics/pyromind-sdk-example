@@ -14,13 +14,11 @@ Builds the `lora_config` YAML string (rank, dropout, target modules). Pass to tr
 | lora_dropout | FLOAT | No | LoRA dropout rate. Default: `0.05` |
 | target_modules | STRING | No | Comma-separated LoRA target module names. Default: `q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj` |
 | exclude_modules | STRING | No | Comma-separated modules to exclude from LoRA. Default: empty string |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| lora_config | STRING | LoRA config YAML string from Lora Config Builder |
-
+| lora_config | STRING\|LORA_CONFIG | LoRA config YAML string from Lora Config Builder |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/LoraConfigBuilderNode/LoraConfigBuilderNode.json`](../../workflow/LoraConfigBuilderNode/LoraConfigBuilderNode.json) for the full workflow definition.

@@ -1,0 +1,115 @@
+{
+  "id": "f6a361bc-44c4-4bdc-9921-a217e771241a",
+  "name": "ModelValidateGRPODataloaderNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "ModelValidateGRPODataloaderNode",
+        "nodeDefinition": {
+          "name": "ModelValidateGRPODataloaderNode",
+          "input": {
+            "required": {
+              "dataset_config": [
+                "STRING|DATASET_CONFIG"
+              ]
+            },
+            "optional": {
+              "rollout_size": [
+                "INT",
+                {
+                  "default": 3
+                }
+              ],
+              "check_reasoning": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "limit": [
+                "INT",
+                {
+                  "default": 0
+                }
+              ],
+              "verbose": [
+                "BOOLEAN",
+                {
+                  "default": false
+                }
+              ],
+              "preview_html_path": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "reward_config": [
+                "STRING|REWARD_CONFIG",
+                {
+                  "default": ""
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING",
+            "STRING"
+          ],
+          "output_is_list": [
+            false,
+            false
+          ],
+          "output_name": [
+            "metrics_json",
+            "output_preview_path"
+          ],
+          "category": "TrainValidation",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5903,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Validate GRPO Dataloader",
+          "description": "Validate GRPO dataloader configuration, reward config, and rollout behavior.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "dataset_config": "",
+          "rollout_size": 3,
+          "check_reasoning": false,
+          "limit": 0,
+          "verbose": false,
+          "preview_html_path": "",
+          "reward_config": ""
+        },
+        "definitionMissing": false,
+        "display_name": "Validate GRPO Dataloader",
+        "libraryNodeId": "5903",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.426842Z"
+}

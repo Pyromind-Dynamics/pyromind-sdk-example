@@ -12,14 +12,12 @@ Supported formats: `.jpg`, `.jpeg`, `.png`, `.gif`, `.bmp`, `.tiff`, `.webp`, `.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| image     | STRING (enum) | Yes      | Image file selected from the dynamic list of `/workspace/image_cache/`. Supports `image_upload` extension (allows users to upload new images). Default: first image path in the list. |
-
+| image | STRING | Yes | Image file selected from the dynamic list of `/workspace/image_cache/`. Supports `image_upload` extension (allows users to upload new images). Default: first image path in the list. |
 ## 1.3 Output
 
 | Parameter      | Data Type | Description |
 |----------------|-----------|-------------|
-| image_file_path | STRING    | Full path of the image in workspace, formatted as `/workspace/{selected_image_path}`. Passed to downstream nodes (e.g., RL training, Rollout) for image content reading. No path existence validation is performed. |
-
+| image_file_path | STRING | Full path of the image in workspace, formatted as `/workspace/{selected_image_path}`. Passed to downstream nodes (e.g., RL training, Rollout) for image content reading. No path existence validation is performed. |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/LoadImage/LoadImage.json`](../../workflow/LoadImage/LoadImage.json) for the full workflow definition.
