@@ -1,0 +1,120 @@
+{
+  "id": "b95594e2-0e10-479d-b461-eaac233fae42",
+  "name": "ModelEvalApiNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "ModelEvalApiNode",
+        "nodeDefinition": {
+          "name": "ModelEvalApiNode",
+          "input": {
+            "required": {
+              "endpoint": [
+                "STRING",
+                {
+                  "default": "http://127.0.0.1:3000/v1"
+                }
+              ],
+              "endpoint_api_key": [
+                "STRING",
+                {
+                  "default": "empty"
+                }
+              ],
+              "endpoint_model": [
+                "STRING",
+                {
+                  "default": "default"
+                }
+              ],
+              "output_path": [
+                "STRING"
+              ],
+              "dataset_config": [
+                "STRING|DATASET_CONFIG"
+              ],
+              "metrics_config": [
+                "STRING|METRICS_CONFIG"
+              ]
+            },
+            "optional": {
+              "max_samples": [
+                "INT",
+                {
+                  "default": 0
+                }
+              ],
+              "max_tokens": [
+                "INT",
+                {
+                  "default": 256
+                }
+              ],
+              "temperature": [
+                "FLOAT",
+                {
+                  "default": 0.01
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "benchmark_output_path"
+          ],
+          "category": "ModelEval",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5912,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Benchmark By Api",
+          "description": "Offline model evaluation via Inference API.\nLoads a benchmark dataset, batch-calls the deployed model endpoint, computes\ntask-level metrics (accuracy, JSON format compliance, etc.), and outputs a report\nfor comparing model versions before and after SFT / GRPO / DPO training.\n",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "endpoint": "http://127.0.0.1:3000/v1",
+          "endpoint_api_key": "empty",
+          "endpoint_model": "default",
+          "output_path": "",
+          "dataset_config": "",
+          "metrics_config": "",
+          "max_samples": 0,
+          "max_tokens": 256,
+          "temperature": 0.01
+        },
+        "definitionMissing": false,
+        "display_name": "Benchmark By Api",
+        "libraryNodeId": "5912",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.426297Z"
+}

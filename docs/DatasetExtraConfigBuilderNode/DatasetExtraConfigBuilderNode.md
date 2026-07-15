@@ -16,13 +16,11 @@ Builds the `dataset_extra_config` YAML fragment (collator entries, max samples, 
 | dpo_collator_entry | STRING | No | DPO collator entry (`module:function`). Default: `train.dpo_collator:make_collate_fn` |
 | grpo_collator_entry | STRING | No | GRPO collator entry (`module:function`). Default: `train.data.default_vision_grpo_collate:create_grpo_collate_fn` |
 | max_seq_length | INT | No | Maximum sequence length. Default: `4096` |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| dataset_extra_config | STRING | Dataset extra config YAML from Dataset Extra Config Builder |
-
+| dataset_extra_config | STRING\|DATASET_EXTRA_CONFIG | Dataset extra config YAML from Dataset Extra Config Builder |
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/DatasetExtraConfigBuilderNode/DatasetExtraConfigBuilderNode.json`](../../workflow/DatasetExtraConfigBuilderNode/DatasetExtraConfigBuilderNode.json) for the full workflow definition.

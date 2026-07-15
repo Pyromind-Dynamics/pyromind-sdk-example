@@ -1,0 +1,94 @@
+{
+  "id": "b6018abe-37b2-444e-8ab3-19049125944d",
+  "name": "RewardItemBuilderCustomNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "RewardItemBuilderCustomNode",
+        "nodeDefinition": {
+          "name": "RewardItemBuilderCustomNode",
+          "input": {
+            "required": {
+              "entry": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "name": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            },
+            "optional": {
+              "kwargs": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ],
+              "weight": [
+                "FLOAT",
+                {
+                  "default": 1.0
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING|REWARD_ITEM"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "reward_item"
+          ],
+          "category": "TrainConfig",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 5920,
+          "node_type": "share",
+          "created_at": "2026-07-07 07:49:21",
+          "updated_at": "2026-07-07 07:49:21",
+          "version": 1,
+          "display_name": "Reward Item Builder(Custom Entry)",
+          "description": "Build a single reward item as YAML (entry, name, kwargs, weight). Non-empty kwargs implies factory=true; empty kwargs implies factory=false.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "entry": "",
+          "name": "",
+          "kwargs": "",
+          "weight": 1.0
+        },
+        "definitionMissing": false,
+        "display_name": "Reward Item Builder(Custom Entry)",
+        "libraryNodeId": "5920",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-07-14T10:54:16.427673Z"
+}

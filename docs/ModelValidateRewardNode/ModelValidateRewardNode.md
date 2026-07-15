@@ -10,16 +10,14 @@ Validate reward composition and score aggregation.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| reward_config | STRING | Yes | Reward config YAML from Reward Config Builder |
+| reward_config | STRING\|REWARD_CONFIG | Yes | Reward config YAML from Reward Config Builder |
 | completions | STRING | No | Optional completions JSON for reward validation. Default: empty string |
-
 ## 1.3 Output
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
 | status | STRING | Validation status string |
 | scores | STRING | Validation scores as YAML/JSON string |
-
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelValidateRewardNode/ModelValidateRewardNode.json`](../../workflow/ModelValidateRewardNode/ModelValidateRewardNode.json) for the full workflow definition.
