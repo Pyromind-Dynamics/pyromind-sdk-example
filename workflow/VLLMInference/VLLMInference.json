@@ -38,12 +38,9 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-H100-NVL",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
-                    "NVIDIA-L40S",
                     "NVIDIA-H200",
-                    "NVIDIA-B200",
                     "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
@@ -85,7 +82,7 @@
           "model_path": "/workspace/models/Qwen/Qwen3-0.6B/",
           "port": 3000,
           "gpu_count": 1,
-          "gpu_product": "NVIDIA-H100-NVL",
+          "gpu_product": "NVIDIA-H200",
           "environment": "",
           "max_model_len": ""
         },

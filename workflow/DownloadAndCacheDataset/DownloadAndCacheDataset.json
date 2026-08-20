@@ -60,7 +60,7 @@
           "updated_at": "2026-05-07T03:47:03.549461+00:00",
           "version": 1,
           "display_name": "Download Dataset",
-          "description": "下载并缓存数据集",
+          "description": "Download and cache datasets for RL training. Handles downloading from HuggingFace or ModelScope and caching locally for efficient access.",
           "is_enabled": true,
           "metanode_deleted": false
         },

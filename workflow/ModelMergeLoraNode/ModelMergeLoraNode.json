@@ -39,12 +39,9 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-H100-NVL",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
-                    "NVIDIA-L40S",
                     "NVIDIA-H200",
-                    "NVIDIA-B200",
                     "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
@@ -92,7 +89,7 @@
           "output_path": "/workspace/models/lora_merged/qwen3_06b_sft2/",
           "model_path": "/workspace/models/Qwen/Qwen3-0.6B/",
           "gpu_count": 1,
-          "gpu_product": "NVIDIA-H100-NVL",
+          "gpu_product": "NVIDIA-H200",
           "model_type": "auto"
         },
         "width": 710,

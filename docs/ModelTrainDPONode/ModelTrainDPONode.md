@@ -17,6 +17,11 @@ Run DPO training and return output directory.
 | lora_config | STRING\|LORA_CONFIG | No | LoRA config YAML string from Lora Config Builder |
 | wandb_config | WANDB_CONFIG | No | W&B configuration object |
 | thinking_as_input_ratio | FLOAT | No | Ratio of chain-of-thought content included as input. Default: `0.0` |
+| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate launch configuration YAML |
+| gpu_count | INT | Yes | Number of GPUs requested. Default: `1` |
+| gpu_product | STRING | Yes | GPU product name (follow the GPUs actually available in the target environment). Options: `NVIDIA-H200`, `NVIDIA-H100-80GB-HBM3` |
+> **Note:** GPU type and count follow the actual GPUs available in the target environment.
+
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

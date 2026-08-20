@@ -11,7 +11,8 @@ Validate reward composition and score aggregation.
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | reward_config | STRING\|REWARD_CONFIG | Yes | Reward config YAML from Reward Config Builder |
-| completions | STRING | No | Optional completions JSON for reward validation. Default: empty string |
+| completions | STRING | Yes | Completions JSON validated against the ground truths |
+| ground_truths | STRING | Yes | Ground-truth answers used to validate completions. Default: empty string |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

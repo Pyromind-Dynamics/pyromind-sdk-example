@@ -44,10 +44,10 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-H100-NVL",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
-                    "NVIDIA-L40S"
+                    "NVIDIA-H200",
+                    "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
               ]
@@ -105,7 +105,7 @@
           "reward_config": "",
           "accelerate_config": "",
           "gpu_count": 1,
-          "gpu_product": "NVIDIA-H100-NVL",
+          "gpu_product": "NVIDIA-H200",
           "grpo_extra_config": "",
           "lora_config": "",
           "wandb_config": "",

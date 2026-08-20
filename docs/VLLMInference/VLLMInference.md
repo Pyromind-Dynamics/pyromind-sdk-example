@@ -13,7 +13,7 @@ Run inference using vLLM, serving an OpenAI-compatible API endpoint.
 | model_path | STRING | Yes | Model path reference |
 | port | INT | Yes | Inference service port number. Default: `3000` |
 | gpu_count | INT | Yes | Number of GPUs used by the inference service. Default: `1` |
-| gpu_product | STRING | Yes | GPU type. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3, NVIDIA-L40S |
+| gpu_product | STRING | Yes | GPU type. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3 (subject to actual GPUs available in the target environment) |
 | environment | ENV | No | Environment variables |
 | max_model_len | INT | No | Maximum model context length |
 

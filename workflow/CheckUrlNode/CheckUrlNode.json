@@ -58,7 +58,7 @@
           "created_at": "2026-06-03T04:55:45.357148+00:00",
           "updated_at": "2026-06-03T04:55:45.357148+00:00",
           "version": 1,
-          "description": "\n    Check URL 节点：检查URL是否可用\n    ",
+          "description": "Check if a URL is accessible and returns the status",
           "is_enabled": true,
           "metanode_deleted": false
         },

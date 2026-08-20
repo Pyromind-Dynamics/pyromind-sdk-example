@@ -14,7 +14,7 @@ Run a custom shell command with configurable CPU, memory, and GPU resources. Com
 | cpu | INT | Yes | CPU limit in cores (1–64). Default: 4 |
 | memory | INT | Yes | Memory limit in GiB (1–256). Default: 32 |
 | gpu_count | INT | Yes | Number of GPUs to request (0–8). Default: 0 |
-| gpu_product | STRING | Yes | GPU product to request when gpu_count is greater than zero. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3, NVIDIA-L40S. |
+| gpu_product | STRING | Yes | GPU product to request when gpu_count is greater than zero. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3. (subject to actual GPUs available in the target environment) |
 
 ## 1.3 Output
 

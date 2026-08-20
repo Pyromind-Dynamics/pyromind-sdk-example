@@ -11,6 +11,11 @@ GPU node example using accelerate launch mode
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | message | STRING | Yes | Message |
+| accelerate_config | ACCELERATE_CONFIG | Yes | Accelerate launch configuration YAML |
+| gpu_count | INT | Yes | Number of GPUs requested. Default: `1` |
+| gpu_product | STRING | Yes | GPU product name (follow the GPUs actually available in the target environment). Options: `NVIDIA-H200`, `NVIDIA-H100-80GB-HBM3` |
+
+> **Note:** GPU type and count follow the actual GPUs available in the target environment.
 
 ## 1.3 Output
 

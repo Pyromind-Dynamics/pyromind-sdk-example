@@ -1,0 +1,88 @@
+{
+  "id": "8f2e1c4a-9b3d-4f6e-8a1c-2d5e7f9a1b3c",
+  "name": "CustomCommandCPUNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "nodeType": "CustomCommandCPUNode",
+        "nodeDefinition": {
+          "name": "CustomCommandCPUNode",
+          "input": {
+            "required": {
+              "command": [
+                "STRING",
+                {
+                  "default": "echo hello from custom command",
+                  "multiline": true
+                }
+              ],
+              "cpu": [
+                "INT",
+                {
+                  "default": 4,
+                  "min": 1,
+                  "max": 64
+                }
+              ],
+              "memory": [
+                "INT",
+                {
+                  "default": 32,
+                  "min": 1,
+                  "max": 256
+                }
+              ]
+            },
+            "optional": {}
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "result"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 14095831710450933897,
+          "node_type": "system",
+          "version": 1,
+          "is_enabled": false,
+          "metanode_deleted": false,
+          "description": "Run a custom shell command with configurable CPU resources (no GPU)."
+        },
+        "config": {
+          "command": "echo hello from custom command",
+          "cpu": 4,
+          "memory": 32
+        },
+        "definitionMissing": false,
+        "display_name": "CustomCommandCPUNode",
+        "libraryNodeId": "14095831710450933897",
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-08-10T00:00:00.000Z"
+}

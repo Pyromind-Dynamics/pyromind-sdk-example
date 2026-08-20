@@ -66,7 +66,7 @@
           "updated_at": "2026-06-03T04:55:45.365888+00:00",
           "version": 1,
           "display_name": "LLM Test",
-          "description": "\n    Test Sglang Node：测试 sglang endpoint 的节点\n    ",
+          "description": "Test sglang endpoint by sending a prompt and returning the result",
           "is_enabled": true,
           "metanode_deleted": false
         },

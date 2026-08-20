@@ -5,7 +5,7 @@
 ## 1.1 Overview
 
 
-> **TODO**: Add overview description
+Converts a string input into any output type.
 
 
 ## 1.2 Input

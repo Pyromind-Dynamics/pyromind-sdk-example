@@ -63,7 +63,7 @@
           "version": 1,
           "is_enabled": true,
           "metanode_deleted": false,
-          "description": "Run a Python file processor and return the output file path."
+          "description": "Run a Python script that defines process(input_file_path, output_file). The script writes processed str/bytes data with output_file.write(...). The node stores the data at the configured output file path and returns the output file path."
         },
         "config": {
           "file_path": "",

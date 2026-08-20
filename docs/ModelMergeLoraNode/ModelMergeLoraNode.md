@@ -12,8 +12,12 @@ Merge LoRA adapter into base weights (PEFT merge_and_unload) and save model + pr
 |-----------|-----------|----------|-------------|
 | lora_path | STRING | Yes | Lora path |
 | output_path | STRING | Yes | Output directory or file path |
-| model_path | STRING | No | HuggingFace model name or local path. Default: empty string |
+| model_path | STRING | Yes | HuggingFace model name or local path. Default: empty string |
 | model_type | STRING | No | Model architecture type (`auto`, `qwen3vl`, `qwen3.5`). Default: `auto` |
+| gpu_count | INT | Yes | Number of GPUs requested. Default: `1` |
+| gpu_product | STRING | Yes | GPU product name (follow the GPUs actually available in the target environment). Options: `NVIDIA-H200`, `NVIDIA-H100-80GB-HBM3` |
+
+> **Note:** GPU type and count follow the actual GPUs available in the target environment.
 
 ## 1.3 Output
 

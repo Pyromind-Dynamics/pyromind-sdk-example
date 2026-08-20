@@ -245,12 +245,9 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-H100-NVL",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
-                    "NVIDIA-L40S",
                     "NVIDIA-H200",
-                    "NVIDIA-B200",
                     "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
@@ -301,7 +298,7 @@
           "model_config": "model_path: /workspace/models/Qwen/Qwen3-0.6B\nmodel_type: auto",
           "accelerate_config": "compute_environment: LOCAL_MACHINE\ndebug: false\ndeepspeed_config:\n  zero3_init_flag: false\n  zero_stage: 1\ndistributed_type: DEEPSPEED\nenable_cpu_affinity: true\nmachine_rank: 0\nmain_training_function: main\nnum_machines: 1\nnum_processes: 1\nrdzv_backend: static\nsame_network: true\nmixed_precision: bf16",
           "gpu_count": 1,
-          "gpu_product": "NVIDIA-H100-NVL",
+          "gpu_product": "NVIDIA-H200",
           "lora_config": "lora_rank: 8\nlora_dropout: 0.05\ntarget_modules: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj\nexclude_modules: ''",
           "wandb_config": "WANDB_API_KEY: 7c7f22bc2f23cda64c29fd2d78e4112890cee22f\nWANDB_PROJECT: studio_training",
           "thinking_as_input_ratio": 0
@@ -920,7 +917,7 @@
           "num_epochs": 1,
           "batch_size": 2,
           "grad_accum": 2,
-          "learning_rate": 0.000001,
+          "learning_rate": 1e-06,
           "lr_scheduler_type": "constant",
           "logging_steps": 1,
           "save_steps": 500,

@@ -17,7 +17,7 @@
           "input": {
             "required": {
               "model_path": [
-                "MODEL"
+                "STRING"
               ],
               "port": [
                 "INT",
@@ -38,12 +38,9 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-H100-NVL",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
-                    "NVIDIA-L40S",
                     "NVIDIA-H200",
-                    "NVIDIA-B200",
                     "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
@@ -75,7 +72,7 @@
           "updated_at": "2026-04-20T05:35:00.663794+00:00",
           "version": 1,
           "display_name": "Inference (SGlang)",
-          "description": "RL推理配置",
+          "description": "Run Inference in the workflow, specifying for LLM-as-a-judge jobs.",
           "is_enabled": true,
           "metanode_deleted": false
         },
@@ -83,7 +80,7 @@
           "model_path": "",
           "port": 3000,
           "gpu_count": 1,
-          "gpu_product": "NVIDIA-L40S",
+          "gpu_product": "NVIDIA-H200",
           "environment": ""
         },
         "definitionMissing": false

@@ -44,7 +44,7 @@
           "updated_at": "2026-04-15T02:02:44.576465+00:00",
           "version": 1,
           "display_name": "Load Dataset",
-          "description": "加载数据集",
+          "description": "Load datasets for RL training. Handles loading datasets from local or remote sources.",
           "is_enabled": true,
           "metanode_deleted": false
         },

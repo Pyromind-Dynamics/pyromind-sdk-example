@@ -18,7 +18,8 @@
               "command": [
                 "STRING",
                 {
-                  "default": "echo hello from custom command"
+                  "default": "echo hello from custom command",
+                  "multiline": true
                 }
               ],
               "cpu": [
@@ -48,12 +49,10 @@
               "gpu_product": [
                 "STRING",
                 {
-                  "default": "NVIDIA-L40S",
+                  "default": "NVIDIA-H200",
                   "enum": [
-                    "NVIDIA-H100-NVL",
                     "NVIDIA-H200",
-                    "NVIDIA-H100-80GB-HBM3",
-                    "NVIDIA-L40S"
+                    "NVIDIA-H100-80GB-HBM3"
                   ]
                 }
               ]
@@ -88,7 +87,7 @@
           "cpu": 4,
           "memory": 32,
           "gpu_count": 0,
-          "gpu_product": "NVIDIA-L40S"
+          "gpu_product": "NVIDIA-H200"
         },
         "definitionMissing": false,
         "display_name": "CustomCommandNode",

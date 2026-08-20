@@ -34,7 +34,10 @@
                     "ritzzai/GUI-R1",
                     "xlangai/aguvis-stage1",
                     "xlangai/aguvis-stage2",
-                    "zonghanHZH/UGround-V1-8k"
+                    "zonghanHZH/UGround-V1-8k",
+                    "pyromind/alpaca-gpt4-llm-demo",
+                    "pyromind/geometry-vqa-vlm-demo",
+                    "pyromind/self-cognition"
                   ]
                 }
               ],
@@ -68,7 +71,7 @@
           "created_at": "2026-04-10T10:44:29.053447+00:00",
           "updated_at": "2026-04-10T10:44:29.053447+00:00",
           "version": 1,
-          "description": "克隆数据集",
+          "description": "Clone datasets for training and evaluation. The dataset is stored in the pyromind environment, so you can clone it very fast.",
           "is_enabled": true,
           "metanode_deleted": false
         },
