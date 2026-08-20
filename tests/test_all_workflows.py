@@ -42,6 +42,7 @@ def run_workflow(
             TrainingTaskCreateRequest(
                 name=f"test_{node_name}",
                 workflow=workflow_data,
+                out_id=f"test_{node_name}",
             ),
             timeout=timeout,
             check_interval=check_interval,
