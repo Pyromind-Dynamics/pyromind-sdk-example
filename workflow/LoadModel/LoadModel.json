@@ -47,7 +47,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "model_path": "/workspace/models/Qwen/Qwen3-0.6B/"
+          "model_path": "/workspace/models/Qwen/Qwen3-1.7B"
         },
         "definitionMissing": false,
         "disabled": false,

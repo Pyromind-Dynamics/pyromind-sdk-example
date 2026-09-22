@@ -66,10 +66,10 @@
           "description": "Run a Python script that defines process(input_file_path, output_file). The script writes processed str/bytes data with output_file.write(...). The node stores the data at the configured output file path and returns the output file path."
         },
         "config": {
-          "file_path": "",
+          "file_path": "/workspace/nodes/custom_py_script/sample_input.json",
           "output_file_path": "/workspace/output.json",
-          "python_script_path": "",
-          "overwrite_output": false
+          "python_script_path": "/workspace/nodes/custom_py_script/file_processor.py",
+          "overwrite_output": true
         },
         "definitionMissing": false,
         "display_name": "PythonFileProcessorNode",

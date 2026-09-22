@@ -86,7 +86,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "dataset_config": "",
+          "dataset_config": "train_data_path: /workspace/datasets/sample.jsonl\nuser_prompt_field: user_prompt\nassistant_response_field: gt\ndataloader_kind: text_only\ntrain_max_samples: 0\nval_max_samples: 0\nmax_seq_length: 4096",
           "rollout_size": 3,
           "check_reasoning": false,
           "limit": 0,

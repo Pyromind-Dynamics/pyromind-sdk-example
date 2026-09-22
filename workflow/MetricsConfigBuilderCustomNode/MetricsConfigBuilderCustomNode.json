@@ -55,8 +55,8 @@
           "metanode_deleted": false
         },
         "config": {
-          "entry": "",
-          "name": ""
+          "entry": "/workspace/nodes/custom_entry/custom_metrics.py:compute_gsm8k",
+          "name": "gsm8k"
         },
         "definitionMissing": false,
         "display_name": "Metrics Config Builder(Custom Entry)",

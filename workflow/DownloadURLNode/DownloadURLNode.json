@@ -1,0 +1,81 @@
+{
+  "id": "f3a9d8c2-5b1e-4b37-9a62-c44021e7f0a1",
+  "name": "DownloadURLNode example",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "default",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "data": {
+        "display_name": "Download File",
+        "nodeType": "DownloadURLNode",
+        "nodeDefinition": {
+          "name": "DownloadURLNode",
+          "input": {
+            "required": {
+              "url": [
+                "STRING",
+                {}
+              ],
+              "output_path": [
+                "STRING",
+                {}
+              ]
+            },
+            "optional": {
+              "expected_sha256": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "path"
+          ],
+          "category": "utils",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 12874,
+          "node_type": "system",
+          "created_at": "2026-09-22T05:34:52.012958+00:00",
+          "updated_at": "2026-09-22T05:34:52.012958+00:00",
+          "version": 1,
+          "display_name": "Download File",
+          "description": "Sharded parallel ranged download with resume, strict 206 check and merge into a single file.",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/main/config.json",
+          "output_path": "/workspace/downloads/config.json",
+          "expected_sha256": ""
+        },
+        "definitionMissing": false
+      },
+      "style": {
+        "width": 300
+      },
+      "properties": {}
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "timestamp": "2026-09-22T00:00:00.000Z"
+}

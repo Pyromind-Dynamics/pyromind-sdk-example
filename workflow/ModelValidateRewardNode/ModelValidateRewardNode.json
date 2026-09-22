@@ -61,9 +61,9 @@
           "metanode_deleted": false
         },
         "config": {
-          "reward_config": "",
-          "ground_truths": "",
-          "completions": ""
+          "reward_config": "normalize: false\nitems:\n  - entry: geometry_vqa_answer_reward\n    name: answer_acc\n    weight: 1.0",
+          "ground_truths": "<answer>A</answer>\n<answer>B</answer>",
+          "completions": "<answer>A</answer>\n<answer>B</answer>"
         },
         "definitionMissing": false,
         "display_name": "Validate Reward",

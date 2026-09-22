@@ -68,8 +68,8 @@
           "metanode_deleted": false
         },
         "config": {
-          "entry": "",
-          "name": "",
+          "entry": "/workspace/nodes/custom_entry/custom_rewards.py:answer_reward",
+          "name": "answer_reward",
           "kwargs": "",
           "weight": 1.0
         },

@@ -57,7 +57,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "content": "",
+          "content": "Hello, PyroMind!",
           "file_format": "txt"
         },
         "definitionMissing": false,

@@ -46,7 +46,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "dataset_path": "/workspace/datasets/pyromind/self-cognition/self-cognition.jsonl"
+          "dataset_path": "/workspace/datasets/openai/gsm8k/main/train-00000-of-00001.parquet"
         },
         "width": 434,
         "definitionMissing": false

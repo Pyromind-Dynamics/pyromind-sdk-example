@@ -113,9 +113,9 @@
           "metanode_deleted": false
         },
         "config": {
-          "metadata_path": "",
-          "output_path": "",
-          "reasoning_path": "",
+          "metadata_path": "/workspace/datasets/preprocess/metadata.json",
+          "output_path": "/workspace/datasets/preprocess/merged.jsonl",
+          "reasoning_path": "/workspace/datasets/preprocess/reasoning.json",
           "base_prompt": "",
           "output_format": "jsonl",
           "base_prompt_file": "",

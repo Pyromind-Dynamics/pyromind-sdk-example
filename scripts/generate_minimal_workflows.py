@@ -30,7 +30,6 @@ MISSING_NODES = (
     "ModelTrainOPDNode",
     "ModelValidateGRPODataloaderNode",
     "ModelValidateRewardNode",
-    "OutputPreview",
     "PreviewFile",
     "PreviewImageEx",
     "PythonFileProcessorNode",

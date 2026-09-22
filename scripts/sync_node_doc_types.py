@@ -333,14 +333,14 @@ def main() -> None:
             if args.check:
                 issues = check_document(path, inputs, input_order, lang)
                 if issues:
-                    total_issues.append(f"{path.relative_to(ROOT)}:")
+                    total_issues.append(f"{path.resolve().relative_to(Path(args.repo).resolve())}:")
                     total_issues.extend(f"  - {msg}" for msg in issues)
                 continue
             changed, appended = update_document(path, inputs, outputs, input_order, output_order, lang)
             if changed or appended:
                 total_changed += changed
                 total_appended.extend(appended)
-                print(f"Updated {path.relative_to(ROOT)} ({changed} type/required cells, +{len(appended)} rows {appended or ''})")
+                print(f"Updated {path.resolve().relative_to(Path(args.repo).resolve())} ({changed} type/required cells, +{len(appended)} rows {appended or ''})")
 
     if args.check:
         print(f"Checked {len(defs)} node definitions; issues={len(total_issues)}")

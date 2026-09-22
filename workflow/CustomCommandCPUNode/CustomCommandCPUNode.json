@@ -39,7 +39,14 @@
                 }
               ]
             },
-            "optional": {}
+            "optional": {
+              "param": [
+                "STRING",
+                {
+                  "default": "param-value"
+                }
+              ]
+            }
           },
           "output": [
             "STRING"
@@ -65,7 +72,8 @@
         "config": {
           "command": "echo hello from custom command",
           "cpu": 4,
-          "memory": 32
+          "memory": 32,
+          "param": "param-value"
         },
         "definitionMissing": false,
         "display_name": "CustomCommandCPUNode",

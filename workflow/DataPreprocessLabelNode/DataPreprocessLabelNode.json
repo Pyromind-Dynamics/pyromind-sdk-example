@@ -101,11 +101,11 @@
           "metanode_deleted": false
         },
         "config": {
-          "input_path": "",
-          "output_path": "",
-          "api_base": "",
-          "model": "",
-          "api_key": "",
+          "input_path": "/workspace/datasets/preprocess/input.jsonl",
+          "output_path": "/workspace/datasets/preprocess/labeled.jsonl",
+          "api_base": "http://127.0.0.1:3000/v1",
+          "model": "default",
+          "api_key": "empty",
           "system_prompt": "",
           "format_lang": "en",
           "extract": "boxed",

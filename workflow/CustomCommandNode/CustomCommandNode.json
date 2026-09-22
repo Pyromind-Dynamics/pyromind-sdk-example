@@ -41,8 +41,8 @@
               "gpu_count": [
                 "INT",
                 {
-                  "default": 0,
-                  "min": 0,
+                  "default": 1,
+                  "min": 1,
                   "max": 8
                 }
               ],
@@ -57,7 +57,14 @@
                 }
               ]
             },
-            "optional": {}
+            "optional": {
+              "param": [
+                "STRING",
+                {
+                  "default": "param-value"
+                }
+              ]
+            }
           },
           "output": [
             "STRING"
@@ -86,8 +93,9 @@
           "command": "echo hello from custom command",
           "cpu": 4,
           "memory": 32,
-          "gpu_count": 0,
-          "gpu_product": "NVIDIA-H200"
+          "gpu_count": 1,
+          "gpu_product": "NVIDIA-H200",
+          "param": "param-value"
         },
         "definitionMissing": false,
         "display_name": "CustomCommandNode",

@@ -77,7 +77,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "model_path": "",
+          "model_path": "/workspace/models/Qwen/Qwen2.5-1.5B-Instruct/",
           "port": 3000,
           "gpu_count": 1,
           "gpu_product": "NVIDIA-H200",

@@ -45,7 +45,7 @@
           "metanode_deleted": false
         },
         "config": {
-          "image_file_path": ""
+          "image_file_path": "/workspace/images/preview.png"
         },
         "definitionMissing": false,
         "display_name": "Image Preview",

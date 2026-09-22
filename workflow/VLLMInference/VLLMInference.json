@@ -84,7 +84,7 @@
           "gpu_count": 1,
           "gpu_product": "NVIDIA-H200",
           "environment": "",
-          "max_model_len": ""
+          "max_model_len": 2048
         },
         "width": 300,
         "definitionMissing": false
