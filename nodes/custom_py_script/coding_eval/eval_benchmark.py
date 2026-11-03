@@ -94,40 +94,40 @@ def eval_benchmark(
     """Keep the prediction launcher, then grade and export the actual trace."""
     if not output_dir.strip():
         raise ValueError("output_dir must not be empty")
+    _api_base(endpoint)
+    for name, value in (("model_name", model_name), ("api_key", api_key),
+                        ("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
+        if not value.strip():
+            raise ValueError(f"{name} must not be empty")
+    if isinstance(num_of_sandbox, bool) or not isinstance(num_of_sandbox, int) or num_of_sandbox < 1:
+        raise ValueError("num_of_sandbox must be a positive integer")
     # Load helpers by file path, like docker-ctx-prep.py, so Pod loaders do not
     # need this directory on sys.path or installed as a Python package.
     script_dir = Path(__file__).parent
     exporter = runpy.run_path(str(script_dir / "atif_export.py"))
-    grader = runpy.run_path(str(script_dir / "run_harness.py"))
+    finisher = runpy.run_path(str(script_dir / "finish_evaluation.py"))
     exporter["trajectory_model"]()
     run_id = f"eval-{uuid4().hex}"
     run_dir = Path(output_dir).expanduser().resolve() / run_id
     run_dir.mkdir(parents=True)
     runs_dir = run_dir / "runs"
-    prepare_docker_context = runpy.run_path(
+    docker_context = runpy.run_path(
         str(Path(__file__).with_name("docker-ctx-prep.py"))
-    )["prepare_docker_context"]
-    docker_host = prepare_docker_context(
+    )
+    docker_host = docker_context["prepare_docker_context"](
         pyromind_api_key, cluster, str(run_dir / "docker-rt.log")
     )
     print("docker-rt launched")
 
-    predictions = launch_mini_extra_swebench(
-        endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
-        docker_host=docker_host,
-    )
-    prediction = exporter["read_single_prediction"](predictions)
-    # Fail before invoking the verifier if prediction produced no trace.
-    task_id = prediction["instance_id"]
-    native_path = predictions.parent / task_id / f"{task_id}.traj.json"
-    if not native_path.is_file():
-        raise FileNotFoundError(f"Original interaction trajectory is required: {native_path}")
-    benchmark = grader["grade_predictions"](
-        predictions, prediction, run_dir / "verified",
-        run_id=run_id, docker_host=docker_host,
-    )
-    output_path = exporter["export_atif"](
-        predictions, run_dir / "trajectory.atif.json",
-        model_name=model_name, session_id=run_id, benchmark=benchmark,
-    )
-    return {"output_file_path": str(output_path)}
+    try:
+        predictions = launch_mini_extra_swebench(
+            endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
+            docker_host=docker_host,
+        )
+        output_path = finisher["finish_evaluation"](
+            predictions, run_dir, model_name=model_name, run_id=run_id,
+            docker_host=docker_host,
+        )
+        return {"output_file_path": str(output_path)}
+    finally:
+        docker_context["stop_docker_context"](docker_host, str(run_dir / "docker-rt.log"))

@@ -24,7 +24,10 @@
 - [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
 - [ ] For a multi-task benchmark, write one ATIF document per task and decide how the workflow should expose the collection of artifacts.
 - [x] Use unique output directories, preserve failure artifacts, reject incomplete/infra-error grading, and set a verifier subprocess timeout.
-- [ ] Validate Docker resource cleanup, shared socket behavior, and regional docker-rt compatibility in a real Pod.
+- [x] Add an inference-free CLI to grade saved predictions or replay existing harness reports, including PyroDash's flattened layout.
+- [x] Require SDK 0.1.15 and check the actual docker-rt CLI capabilities; install and verify Docker CLI 27.5.1 locally.
+- [x] Use private sockets, PID files and Docker configs; stop the owned daemon in finally and attempt scoped verifier-container cleanup on failure/timeout.
+- [ ] Validate remote sandbox cleanup and daemon behavior in a real Pod. Regional compatibility is outside the current scope.
 - [ ] Verify one-task execution end to end, then expand to the full benchmark.
 
 The node entry retains the existing prediction call, invokes the verifier, then
@@ -34,3 +37,8 @@ conversion supports the saved text/chat-completions trace used by the existing
 launcher; unsupported message roles or non-text content fail explicitly. No
 real model inference, Docker startup, benchmark grading, or deployment was used
 for offline validation. Pinning dependencies does not establish live Pod compatibility.
+
+The current workspace has Python 3.12.11, SDK 0.1.15 and a working Docker CLI.
+There is no running Docker socket, no platform key in environment variables,
+and no real prediction artifacts here. Full scoring and deployment therefore
+remain unverified; report replay with synthetic fixtures is not a live score.

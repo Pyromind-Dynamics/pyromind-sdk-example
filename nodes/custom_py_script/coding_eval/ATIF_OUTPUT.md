@@ -63,3 +63,11 @@ Without a normalized grading result, it marks grading as `not_run` and omits
 the score. Local offline validation does not establish
 real inference or verifier execution; see `nodes/README.md` for commands and
 the remaining Pod/region validation requirements.
+
+`finish_evaluation.py` joins grading/report replay with ATIF export without
+invoking inference. It validates the native trace before starting any verifier.
+Report replay requires the original harness run ID and accepts either nested
+or PyroDash-flattened task reports. The normalized result is also saved as
+`benchmark.json`. Explicit Docker grading first checks the supplied daemon;
+it never starts a daemon implicitly. Synthetic reports remain synthetic even
+when their structure passes the same validators as real reports.
