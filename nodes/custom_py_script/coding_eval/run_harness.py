@@ -1,4 +1,4 @@
-"""Grade an existing single-task prediction; never perform model inference.
+"""Grade existing predictions; never perform model inference.
 
 Based on PyroDash/evaluation/evaluation_code/swe-bench/run_harness.py's
 SWE-bench 5.x invocation and extended Docker API timeout.
@@ -51,20 +51,21 @@ def _terminate_process_group(process) -> None:
         process.wait(timeout=10)
 
 
-def _cleanup_task_containers(docker_host: str, task_id: str, run_id: str, log_path: Path) -> None:
+def _cleanup_task_containers(docker_host: str, task_id: str | list[str], run_id: str, log_path: Path) -> None:
     """Best effort cleanup of this exact run's verifier containers, never prune."""
     client = None
     try:
         import docker
 
         client = docker.DockerClient(base_url=docker_host, timeout=10)
-        prefix = f"sweb.eval.{task_id.lower()}.{run_id}"
+        task_ids = [task_id] if isinstance(task_id, str) else task_id
+        prefixes = {f"sweb.eval.{value.lower()}.{run_id}" for value in task_ids}
         for row in client.api.containers(all=True):
             names = row.get("Names") or [row.get("name", "")]
             owned = any(
-                name.lstrip("/") == prefix
-                or (name.lstrip("/").startswith(prefix + ".")
-                    and name.lstrip("/")[len(prefix) + 1:].isdigit())
+                name.lstrip("/") in prefixes
+                or (name.lstrip("/").rsplit(".", 1)[0] in prefixes
+                    and name.rsplit(".", 1)[-1].isdigit())
                 for name in names
             )
             if owned:
@@ -85,12 +86,33 @@ def grade_predictions(
     predictions_path: Path, prediction: dict, output_dir: Path, *,
     run_id: str, docker_host: str,
 ) -> dict:
-    """Run the verifier and distinguish an unresolved task from a harness error."""
-    output_dir.mkdir(parents=True, exist_ok=True)
+    """Backward-compatible entry point for grading one prediction."""
     task_id = prediction["instance_id"]
-    model_directory = prediction["model_name_or_path"].replace("/", "__")
-    for value in (task_id, model_directory, run_id):
+    return grade_batch_predictions(
+        predictions_path, {task_id: prediction}, output_dir,
+        run_id=run_id, docker_host=docker_host,
+    )[task_id]
+
+
+def grade_batch_predictions(
+    predictions_path: Path, predictions: dict[str, dict], output_dir: Path, *,
+    run_id: str, docker_host: str, max_workers: int = 1,
+) -> dict[str, dict]:
+    """Grade every selected task in one verifier invocation."""
+    if not predictions:
+        raise ValueError("At least one prediction is required for grading")
+    if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
+        raise ValueError("max_workers must be a positive integer")
+    models = {prediction["model_name_or_path"] for prediction in predictions.values()}
+    if len(models) != 1:
+        raise ValueError("All predictions in a run must use the same model")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    task_ids = sorted(predictions)
+    model_directory = next(iter(models)).replace("/", "__")
+    for value in (*task_ids, model_directory, run_id):
         _safe_component(value)
+    if any(prediction["instance_id"] != task_id for task_id, prediction in predictions.items()):
+        raise ValueError("Prediction key and instance_id must match")
     check_docker_host(docker_host)
     runner = Path(os.environ.get("PYROMIND_HARNESS_RUNNER", __file__)).resolve()
     if not runner.is_file():
@@ -99,8 +121,8 @@ def grade_predictions(
         os.environ.get("HARNESS_PYTHON", sys.executable), str(runner),
         "--dataset_name", DATASET_NAME,
         "--predictions_path", str(predictions_path.resolve()),
-        "--instance_ids", task_id,
-        "--max_workers", "1", "--run_id", run_id,
+        "--instance_ids", *task_ids,
+        "--max_workers", str(min(max_workers, len(task_ids))), "--run_id", run_id,
         "--report_dir", str(output_dir.resolve()),
     ]
     environment = os.environ.copy()
@@ -115,14 +137,17 @@ def grade_predictions(
                 returncode = process.wait(timeout=14400)
             except BaseException as exc:
                 _terminate_process_group(process)
-                _cleanup_task_containers(docker_host, task_id, run_id, output_dir / "cleanup.log")
+                _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
                 if isinstance(exc, subprocess.TimeoutExpired):
                     raise RuntimeError(f"SWE-bench harness timed out; see {log_path}") from exc
                 raise
             if returncode:
-                _cleanup_task_containers(docker_host, task_id, run_id, output_dir / "cleanup.log")
+                _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
                 raise RuntimeError(f"SWE-bench harness failed; see {log_path}")
-    return read_grading_result(output_dir, task_id, model_directory, run_id)
+    return {
+        task_id: read_grading_result(output_dir, task_id, model_directory, run_id)
+        for task_id in task_ids
+    }
 
 
 def read_grading_result(output_dir: Path, task_id: str, model_directory: str, run_id: str) -> dict:

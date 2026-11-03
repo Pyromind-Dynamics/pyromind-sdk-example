@@ -11,18 +11,19 @@
 - [x] Add a Python `subprocess` launcher for the SWE-bench Verified prediction phase.
 - [x] Call the prediction launcher from the `eval_benchmark` node entry.
 - [x] Use the supplied endpoint without starting a model server or offload adapter.
-- [x] Limit the node entry to one SWE-bench Verified task with `--slice 0:1`.
+- [x] Default to one SWE-bench Verified task; allow `num_tasks` and `start_index` to select a batch.
 
 ## Remaining
 
-- [x] Choose SWE-bench Verified (`--slice 0:1`) for prediction and `SWE-bench/SWE-bench_Verified` for the 5.0.2 verifier. The dataset is fetched by the tools, not bundled here.
+- [x] Choose SWE-bench Verified for prediction and `SWE-bench/SWE-bench_Verified` for the 5.0.2 verifier. The dataset is fetched by the tools, not bundled here.
 - [ ] Confirm that benchmark sandboxes can reach the endpoint and that the supplied model ID is served there.
 - [ ] Confirm the Pod can install the Docker CLI, start docker-rt, access benchmark images, and import the evaluator's Python dependencies.
 - [x] Implement a verifier invocation and capture its score and per-task results; live execution is still unverified.
 - [x] Convert saved chat-completions user, agent, tool, and observation events into ATIF-v1.8 steps; place verifier results in `final_metrics.extra`.
 - [x] Validate against Harbor 0.25.0's ATIF reference models and return the ATIF file path as `output_file_path`.
 - [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
-- [ ] For a multi-task benchmark, write one ATIF document per task and decide how the workflow should expose the collection of artifacts.
+- [x] For multiple tasks, run the verifier once, write one validated ATIF per task and expose their paths/scores through `manifest.json`; preserve direct ATIF output for one task.
+- [x] Verify multi-task selection, concurrency, task/report association, aggregate scores, and failure handling with synthetic artifacts and mocked calls.
 - [x] Use unique output directories, preserve failure artifacts, reject incomplete/infra-error grading, and set a verifier subprocess timeout.
 - [x] Add an inference-free CLI to grade saved predictions or replay existing harness reports, including PyroDash's flattened layout.
 - [x] Require SDK 0.1.15 and check the actual docker-rt CLI capabilities; install and verify Docker CLI 27.5.1 locally.

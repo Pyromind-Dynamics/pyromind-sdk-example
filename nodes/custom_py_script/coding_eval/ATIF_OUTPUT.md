@@ -35,14 +35,28 @@ Example shape (illustrative, not an output of the current scaffold):
 }
 ```
 
-A full benchmark has multiple independent task trajectories. The future runner should create one ATIF-v1.8 document per task. The workflow output contract for exposing that collection is still to be decided.
+A multi-task run writes one independent ATIF-v1.8 document per task, never an
+array disguised as one ATIF trajectory. For more than one task,
+`output_file_path` points to `manifest.json` with
+`schema_version: "EvalBenchmarkManifest-v1"`. This index is **not an ATIF
+document**; `tasks[].output_file_path` references each validated ATIF file.
+The index records task IDs, per-task scores, resolved counts and the mean
+score. All task trajectories share a run/session ID and have distinct
+`trajectory_id` values and their own step numbering starting at one.
 
-## Implemented single-task export
+For one task, the previous output contract is unchanged:
+`output_file_path` points directly to `trajectory.atif.json`. The actual number
+of predictions determines the output shape, including dataset slices that
+contain fewer tasks than requested.
+
+## Implemented export
 
 `eval_benchmark.py` keeps the existing inference invocation, runs the official
 SWE-bench 5.0.2 verifier, and returns
 `output_dir/eval-<uuid>/trajectory.atif.json`. Each file is validated with Harbor
 0.25.0's `Trajectory` model and uses exactly `ATIF-v1.8`.
+For multiple tasks the files instead live under
+`output_dir/eval-<uuid>/trajectories/<task_id>.atif.json`, alongside the manifest.
 
 The exporter reads `runs/<instance_id>/<instance_id>.traj.json`. Assistant tool
 calls retain their native IDs; tool results are associated by ID, including
@@ -66,8 +80,17 @@ the remaining Pod/region validation requirements.
 
 `finish_evaluation.py` joins grading/report replay with ATIF export without
 invoking inference. It validates the native trace before starting any verifier.
+For multiple predictions every trace is validated before invoking the verifier
+once with all selected task IDs and bounded worker concurrency.
 Report replay requires the original harness run ID and accepts either nested
 or PyroDash-flattened task reports. The normalized result is also saved as
 `benchmark.json`. Explicit Docker grading first checks the supplied daemon;
 it never starts a daemon implicitly. Synthetic reports remain synthetic even
 when their structure passes the same validators as real reports.
+
+`atif_export.py --task-id <id>` can export one task from a batch prediction
+file. With a multi-task `benchmark.json`, the same flag selects that task's
+normalized grading result. Missing/invalid traces and incomplete, missing or
+infrastructure-error grading results fail the run rather than fabricating
+partial success or silently omitting tasks. Ordinary unresolved tasks are
+valid results with score zero.

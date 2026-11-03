@@ -15,42 +15,78 @@ def finish_evaluation(
     predictions_path: Path, output_dir: Path, *, model_name: str, run_id: str,
     docker_host: str | None = None, grading_dir: Path | None = None,
     grading_run_id: str | None = None,
+    max_workers: int = 1,
 ) -> Path:
     if grading_dir is None and not docker_host:
         raise ValueError("Provide an existing grading directory or an explicit Docker host")
     if grading_dir is not None and (docker_host or not grading_run_id):
         raise ValueError("Report replay requires grading_run_id and no Docker host")
+    if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
+        raise ValueError("max_workers must be a positive integer")
     scripts = Path(__file__).parent
     exporter = runpy.run_path(str(scripts / "atif_export.py"))
     grader = runpy.run_path(str(scripts / "run_harness.py"))
     predictions_path = predictions_path.resolve()
     output_dir = output_dir.resolve()
-    prediction = exporter["read_single_prediction"](predictions_path)
-    task_id = prediction["instance_id"]
-    native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
-    # Validate the complete trace before starting a costly verifier subprocess.
-    native = json.loads(native_path.read_text(encoding="utf-8"))
-    exporter["convert_to_atif"](
-        native, task_id=task_id, model_name=model_name, session_id=run_id,
-    )
-    if grading_dir is not None:
-        benchmark = grader["read_grading_result"](
-            grading_dir.resolve(), task_id,
-            prediction["model_name_or_path"].replace("/", "__"), grading_run_id,
+    predictions = exporter["read_predictions"](predictions_path)
+    # Validate EVERY trace before starting a costly verifier subprocess.
+    for task_id in predictions:
+        native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
+        native = json.loads(native_path.read_text(encoding="utf-8"))
+        exporter["convert_to_atif"](
+            native, task_id=task_id, model_name=model_name, session_id=run_id,
         )
-    else:
-        benchmark = grader["grade_predictions"](
+    if grading_dir is not None:
+        benchmarks = {
+            task_id: grader["read_grading_result"](
+                grading_dir.resolve(), task_id,
+                prediction["model_name_or_path"].replace("/", "__"), grading_run_id,
+            )
+            for task_id, prediction in predictions.items()
+        }
+    elif len(predictions) == 1:
+        task_id, prediction = next(iter(predictions.items()))
+        benchmarks = {task_id: grader["grade_predictions"](
             predictions_path, prediction, output_dir / "verified",
             run_id=run_id, docker_host=docker_host,
+        )}
+    else:
+        benchmarks = grader["grade_batch_predictions"](
+            predictions_path, predictions, output_dir / "verified",
+            run_id=run_id, docker_host=docker_host, max_workers=max_workers,
         )
-    output = exporter["export_atif"](
-        predictions_path, output_dir / "trajectory.atif.json",
-        model_name=model_name, session_id=run_id, benchmark=benchmark,
-    )
+    tasks = []
+    single_task = len(predictions) == 1
+    for task_id in predictions:
+        benchmark = benchmarks[task_id]
+        target = (output_dir / "trajectory.atif.json" if single_task else
+                  output_dir / "trajectories" / f"{task_id}.atif.json")
+        output = exporter["export_prediction_atif"](
+            predictions[task_id], predictions_path.parent, target,
+            model_name=model_name, session_id=run_id, benchmark=benchmark,
+        )
+        tasks.append({"task_id": task_id, "output_file_path": str(output),
+                      "score": benchmark["score"], "resolved": benchmark.get("resolved")})
+    summary = {
+        "total_tasks": len(tasks),
+        "resolved_tasks": sum(task["resolved"] is True for task in tasks),
+        "mean_score": sum(task["score"] for task in tasks) / len(tasks),
+    }
     (output_dir / "benchmark.json").write_text(
-        json.dumps(benchmark, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+        json.dumps(benchmarks[tasks[0]["task_id"]] if single_task else
+                   {"summary": summary, "tasks": benchmarks},
+                   ensure_ascii=False, indent=2, allow_nan=False) + "\n",
         encoding="utf-8",
     )
+    if single_task:
+        return output
+    manifest = {
+        "schema_version": "EvalBenchmarkManifest-v1", "trajectory_schema_version": "ATIF-v1.8",
+        "session_id": run_id, "benchmark": "SWE-bench Verified", "model_name": model_name,
+        "summary": summary, "tasks": tasks,
+    }
+    output = output_dir / "manifest.json"
+    output.write_text(json.dumps(manifest, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     return output
 
 
@@ -59,6 +95,7 @@ def main():
     parser.add_argument("predictions", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--model-name", required=True)
+    parser.add_argument("--workers", type=int, default=1, help="Verifier concurrency for multiple tasks")
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--grading-dir", type=Path, help="Replay existing harness reports offline")
     source.add_argument("--docker-host", help="Run only grading against this existing Docker host")
@@ -72,6 +109,7 @@ def main():
         model_name=args.model_name, run_id=run_id,
         docker_host=args.docker_host, grading_dir=args.grading_dir,
         grading_run_id=args.grading_run_id,
+        max_workers=args.workers,
     )
     print(json.dumps({"output_file_path": str(output)}, ensure_ascii=False))
 

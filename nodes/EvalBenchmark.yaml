@@ -1,5 +1,5 @@
 name: EvalBenchmark
-description: Run one SWE-bench Verified task against an OpenAI-compatible endpoint, grade its patch, and return a validated ATIF-v1.8 trajectory file path.
+description: Run selected SWE-bench Verified tasks, grade their patches, and return an ATIF-v1.8 file for one task or a manifest of ATIF files for multiple tasks.
 display_name: EvalBenchmark
 base_class: PodExecutionNode
 python_code: /workspace/nodes/custom_py_script/coding_eval/eval_benchmark.py
@@ -34,6 +34,14 @@ parameters:
     dtype: STRING
     type: input
     required_type: required
+  - name: num_tasks
+    dtype: INT
+    type: input
+    required_type: optional
+  - name: start_index
+    dtype: INT
+    type: input
+    required_type: optional
   - name: output_file_path
     dtype: STRING
     type: output

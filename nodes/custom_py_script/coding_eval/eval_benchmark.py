@@ -1,4 +1,4 @@
-"""Run one SWE-bench task, grade its patch, and return an ATIF-v1.8 file."""
+"""Run selected SWE-bench tasks and return ATIF-v1.8 files or their manifest."""
 
 import json
 import os
@@ -7,6 +7,14 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
+
+
+def _task_slice(num_tasks: int, start_index: int) -> str:
+    if isinstance(num_tasks, bool) or not isinstance(num_tasks, int) or num_tasks < 1:
+        raise ValueError("num_tasks must be a positive integer")
+    if isinstance(start_index, bool) or not isinstance(start_index, int) or start_index < 0:
+        raise ValueError("start_index must be a nonnegative integer")
+    return f"{start_index}:{start_index + num_tasks}"
 
 
 def _api_base(endpoint: str) -> str:
@@ -27,13 +35,16 @@ def launch_mini_extra_swebench(
     output_dir: str,
     *,
     docker_host: str | None = None,
+    num_tasks: int = 1,
+    start_index: int = 0,
 ) -> Path:
-    """Run one SWE-bench Verified task and return the native preds.json path.
+    """Run selected SWE-bench Verified tasks and return the native preds.json.
 
     num_of_sandbox controls concurrent mini-extra workers. The supplied endpoint
     must be reachable from the benchmark containers as well as from this process.
     """
-    if isinstance(num_of_sandbox, bool) or num_of_sandbox < 1:
+    slice_spec = _task_slice(num_tasks, start_index)
+    if isinstance(num_of_sandbox, bool) or not isinstance(num_of_sandbox, int) or num_of_sandbox < 1:
         raise ValueError("num_of_sandbox must be a positive integer")
     if not output_dir.strip():
         raise ValueError("output_dir must not be empty")
@@ -63,7 +74,7 @@ def launch_mini_extra_swebench(
         "-c", "environment.pull_timeout=7200",
         "--subset", "verified",
         "--split", "test",
-        "--slice", "0:1",
+        "--slice", slice_spec,
         "-w", str(num_of_sandbox),
         "-o", str(runs_dir),
     ]
@@ -90,10 +101,13 @@ def eval_benchmark(
     cluster: str,
     num_of_sandbox: int,
     output_dir: str,
+    num_tasks: int = 1,
+    start_index: int = 0,
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
     if not output_dir.strip():
         raise ValueError("output_dir must not be empty")
+    _task_slice(num_tasks, start_index)
     _api_base(endpoint)
     for name, value in (("model_name", model_name), ("api_key", api_key),
                         ("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
@@ -123,10 +137,12 @@ def eval_benchmark(
         predictions = launch_mini_extra_swebench(
             endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
             docker_host=docker_host,
+            num_tasks=num_tasks, start_index=start_index,
         )
         output_path = finisher["finish_evaluation"](
             predictions, run_dir, model_name=model_name, run_id=run_id,
             docker_host=docker_host,
+            max_workers=num_of_sandbox,
         )
         return {"output_file_path": str(output_path)}
     finally:
