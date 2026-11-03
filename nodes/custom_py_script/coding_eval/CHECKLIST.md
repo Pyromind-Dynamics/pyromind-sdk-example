@@ -26,6 +26,7 @@
 - [x] Verify multi-task selection, concurrency, task/report association, aggregate scores, and failure handling with synthetic artifacts and mocked calls.
 - [x] Include LiteLLM's MCP extra and validate its actual tool-calling import path before sandbox creation; verify Mini SWE Agent tool-call parsing with LiteLLM's built-in mock response.
 - [x] Read `/v1/models` before sandbox allocation, check exact served model IDs, and resolve only unique short-name aliases to complete IDs; fail clearly on ambiguity, service/auth failures, or unrelated models.
+- [x] Make model_name optional: discover the unique served model from the connected endpoint when omitted/empty, and require a choice for zero or multiple served IDs.
 - [x] Use unique output directories, preserve failure artifacts, reject incomplete/infra-error grading, and set a verifier subprocess timeout.
 - [x] Add an inference-free CLI to grade saved predictions or replay existing harness reports, including PyroDash's flattened layout.
 - [x] Require SDK 0.1.15 and check the actual docker-rt CLI capabilities; install and verify Docker CLI 27.5.1 locally.
