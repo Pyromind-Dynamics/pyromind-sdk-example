@@ -12,6 +12,7 @@ nodes/
 │   └── coding_eval/
 │       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
 │       ├── run_harness.py      # 对已生成的预测补丁运行官方评分
+│       ├── finish_evaluation.py # 不调用推理：评分或读取已有报告，再导出 ATIF
 │       ├── atif_export.py      # 原始交互轨迹转换与 Harbor 格式校验
 │       ├── requirements.txt   # 评测环境依赖（Python 3.12+）
 │       ├── docker-ctx-prep.py  # Docker CLI 与 docker-rt 启动准备
@@ -91,8 +92,10 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 EvalBenchmark 的 Harbor 校验依赖 Python 3.12+；项目其他 SDK 示例的最低版本仍为 Python 3.10。请在节点实际使用的 `python3` 环境中安装依赖，或将 YAML 的 `python_command` 指向相应解释器：
 
 ```bash
-python3.12 -m pip install -r nodes/custom_py_script/coding_eval/requirements.txt
+python3.12 -m pip install -e . -r nodes/custom_py_script/coding_eval/requirements.txt
 ```
+
+SDK 已固定为 `0.1.15`，提供本节点需要的 `docker-rt --sock/--pid-file` 功能；旧的 `0.1.9` 没有 `docker-rt` 子命令。可用 `python3.12 -m pyromind_sdk.cli docker-rt --help` 检查命令能力，该命令不会启动 daemon。
 
 在仓库根目录使用已有的推理产物验证转换，不启动模型、Docker 或评分程序。将下列路径和模型名称替换为实际值，预测文件同目录下需有 `<task_id>/<task_id>.traj.json`：
 
@@ -105,11 +108,42 @@ python3.12 nodes/custom_py_script/coding_eval/atif_export.py \
 
 此命令仅转换已有文件；未提供评分报告时，`final_metrics.extra.benchmark.status` 为 `not_run`，不生成虚假成绩。可通过 `--grading-report path/to/benchmark.json` 传入 `run_harness.read_grading_result()` 返回的标准化结果（包含匹配的 `task_id`），不是原始 harness 汇总报告。
 
+### 不重新推理，完成评分与 ATIF 导出
+
+`finish_evaluation.py` 提供两个入口，均不调用推理或启动 docker-rt。两种方式都会先校验原始轨迹，再创建独立输出目录，生成 `trajectory.atif.json` 与标准化评分 `benchmark.json`。
+
+读取已有 harness 报告（不连接 Docker，也不重新评分）：
+
+```bash
+python3.12 nodes/custom_py_script/coding_eval/finish_evaluation.py \
+  /path/to/runs/preds.json \
+  --model-name your-served-model \
+  --output-dir /path/to/output \
+  --grading-dir /path/to/verified \
+  --grading-run-id original-harness-run-id
+```
+
+`--grading-run-id` 对应原始报告文件名中的 run ID。支持 harness 的嵌套任务报告，以及 PyroDash 整理后的 `verified/<task_id>/report.json`。
+
+使用已运行的 Docker daemon 对已有预测评分，再导出 ATIF：
+
+```bash
+python3.12 nodes/custom_py_script/coding_eval/finish_evaluation.py \
+  /path/to/runs/preds.json \
+  --model-name your-served-model \
+  --output-dir /path/to/output \
+  --docker-host unix:///path/to/existing/docker.sock
+```
+
+实际评分前会 ping Docker；连接不可用时直接报错，不开始下载数据集。CLI 最后输出 `{"output_file_path": ".../trajectory.atif.json"}`。合成报告只能用于验证文件读取和导出，不能作为真实评测成绩。
+
 实际运行时，每次创建一个独立目录：
 
 ```text
 output_dir/eval-<uuid>/
 ├── docker-rt.log
+├── docker-rt-state.json       # 本次 daemon 的 socket、PID 文件及状态，不含密钥
+├── docker-config/            # 本次运行独立的 Docker CLI 配置
 ├── runs/
 │   ├── preds.json
 │   └── <task_id>/<task_id>.traj.json
@@ -117,9 +151,11 @@ output_dir/eval-<uuid>/
 └── trajectory.atif.json      # output_file_path 指向这里
 ```
 
-评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程沿用 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。
+评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程使用本次运行的 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。超时会终止本次 verifier 进程组，并尝试清理名称匹配该任务和 run ID 的评分容器。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。
 
-内置评分入口只包含通用 Docker 超时适配，没有复制 PyroDash 的上海镜像、GitHub 缓存及 docker-rt 特殊兼容补丁。需要原有区域适配时，在同一运行环境部署相应脚本及其 `shanghai/` 目录，再设置 `PYROMIND_HARNESS_RUNNER` 指向该 `run_harness.py`；其 `CLUSTER=shanghai` 等环境变量与节点的 SDK 集群参数分别配置。真实 Pod 中的镜像访问、区域兼容性和端到端运行仍需验证。Docker 准备逻辑保留现状，使用共享 `/tmp/docker-rt.sock`；独立输出目录不代表 Docker daemon 也已隔离。
+每次节点运行创建私有 `/tmp/pyromind-eval-*/docker.sock`、独立 PID 文件及 Docker 配置目录。节点在 `finally` 中尝试停止自己启动的 daemon；不接管共享 `/tmp/docker-rt.sock`，不执行全局容器或镜像 prune。清理异常写入 `cleanup.log` 并发出警告。没有本次运行的 PID 文件时，不调用 SDK 的进程扫描回退。实际远程沙箱清理效果仍需在真实环境验收。
+
+当前仅使用通用评分入口，区域兼容暂不在本次范围内。`PYROMIND_HARNESS_RUNNER` 仍可指定同环境中其他评分入口。真实 Pod 的镜像访问、评分执行及平台工作流尚待验证；当前工作区的解释器路径也需要在部署目标环境中确认。
 
 ## 自定义评估指标（custom_metrics.py）
 

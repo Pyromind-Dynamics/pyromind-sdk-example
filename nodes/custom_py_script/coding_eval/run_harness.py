@@ -6,12 +6,79 @@ SWE-bench 5.x invocation and extended Docker API timeout.
 
 import json
 import os
+import runpy
+import signal
 import subprocess
 import sys
+import warnings
 from pathlib import Path
 
 
 DATASET_NAME = "SWE-bench/SWE-bench_Verified"
+
+
+def _safe_component(value: str) -> None:
+    if not value or value in {".", ".."} or "/" in value or "\\" in value:
+        raise ValueError("Invalid harness artifact path component")
+
+
+def check_docker_host(docker_host: str) -> None:
+    """Fail before fetching datasets if the explicitly supplied daemon is absent."""
+    import docker
+
+    client = None
+    try:
+        client = docker.DockerClient(base_url=docker_host, timeout=5)
+        if not client.ping():
+            raise RuntimeError("Docker ping failed")
+    except (docker.errors.DockerException, OSError, RuntimeError) as exc:
+        raise RuntimeError("Docker host is unavailable; start or supply an existing daemon before grading") from exc
+    finally:
+        if client is not None:
+            client.close()
+
+
+def _terminate_process_group(process) -> None:
+    if process.poll() is not None:
+        return
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+        process.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid, signal.SIGKILL)
+        process.wait(timeout=10)
+    except ProcessLookupError:
+        process.wait(timeout=10)
+
+
+def _cleanup_task_containers(docker_host: str, task_id: str, run_id: str, log_path: Path) -> None:
+    """Best effort cleanup of this exact run's verifier containers, never prune."""
+    client = None
+    try:
+        import docker
+
+        client = docker.DockerClient(base_url=docker_host, timeout=10)
+        prefix = f"sweb.eval.{task_id.lower()}.{run_id}"
+        for row in client.api.containers(all=True):
+            names = row.get("Names") or [row.get("name", "")]
+            owned = any(
+                name.lstrip("/") == prefix
+                or (name.lstrip("/").startswith(prefix + ".")
+                    and name.lstrip("/")[len(prefix) + 1:].isdigit())
+                for name in names
+            )
+            if owned:
+                client.api.remove_container(row.get("Id") or row["id"], force=True)
+    except Exception as exc:
+        with log_path.open("a", encoding="utf-8") as log:
+            log.write(f"Verifier container cleanup failed: {type(exc).__name__}\n")
+        warnings.warn(f"Verifier cleanup incomplete; see {log_path}", RuntimeWarning)
+    finally:
+        if client is not None:
+            try:
+                client.close()
+            except Exception:
+                pass
 
 
 def grade_predictions(
@@ -22,8 +89,9 @@ def grade_predictions(
     output_dir.mkdir(parents=True, exist_ok=True)
     task_id = prediction["instance_id"]
     model_directory = prediction["model_name_or_path"].replace("/", "__")
-    if model_directory in {".", ".."} or "\\" in model_directory:
-        raise ValueError("Invalid prediction model name")
+    for value in (task_id, model_directory, run_id):
+        _safe_component(value)
+    check_docker_host(docker_host)
     runner = Path(os.environ.get("PYROMIND_HARNESS_RUNNER", __file__)).resolve()
     if not runner.is_file():
         raise FileNotFoundError(f"Harness runner not found: {runner}")
@@ -39,17 +107,27 @@ def grade_predictions(
     environment["DOCKER_HOST"] = docker_host
     log_path = output_dir / "harness.log"
     with log_path.open("w", encoding="utf-8") as log:
-        try:
-            subprocess.run(
-                command, env=environment, cwd=output_dir, stdout=log,
-                stderr=subprocess.STDOUT, check=True, timeout=14400,
-            )
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
-            raise RuntimeError(f"SWE-bench harness failed; see {log_path}") from exc
+        with subprocess.Popen(
+            command, env=environment, cwd=output_dir, stdout=log,
+            stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True,
+        ) as process:
+            try:
+                returncode = process.wait(timeout=14400)
+            except BaseException as exc:
+                _terminate_process_group(process)
+                _cleanup_task_containers(docker_host, task_id, run_id, output_dir / "cleanup.log")
+                if isinstance(exc, subprocess.TimeoutExpired):
+                    raise RuntimeError(f"SWE-bench harness timed out; see {log_path}") from exc
+                raise
+            if returncode:
+                _cleanup_task_containers(docker_host, task_id, run_id, output_dir / "cleanup.log")
+                raise RuntimeError(f"SWE-bench harness failed; see {log_path}")
     return read_grading_result(output_dir, task_id, model_directory, run_id)
 
 
 def read_grading_result(output_dir: Path, task_id: str, model_directory: str, run_id: str) -> dict:
+    for value in (task_id, model_directory, run_id):
+        _safe_component(value)
     report_path = output_dir / f"{model_directory}.{run_id}.json"
     report = json.loads(report_path.read_text(encoding="utf-8"))
     if any(task_id in report.get(key, []) for key in (
@@ -74,6 +152,9 @@ def read_grading_result(output_dir: Path, task_id: str, model_directory: str, ru
             output_dir / "logs" / "run_evaluation" / run_id
             / model_directory / task_id / "report.json"
         )
+        if not task_report_path.is_file():
+            # PyroDash's eval.sh flattens task reports after the verifier exits.
+            task_report_path = output_dir / task_id / "report.json"
         task_report = json.loads(task_report_path.read_text(encoding="utf-8"))
         result = task_report.get(task_id)
         if not isinstance(result, dict) or result.get("resolved") is not resolved:
@@ -86,8 +167,6 @@ def read_grading_result(output_dir: Path, task_id: str, model_directory: str, ru
 def main() -> None:
     # Imported only by the harness subprocess. ATIF-only conversion and tests
     # do not need Docker, datasets, or a running daemon.
-    import runpy
-
     import docker
     from docker.client import DockerClient
 

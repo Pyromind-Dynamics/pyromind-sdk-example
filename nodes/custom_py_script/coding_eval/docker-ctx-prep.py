@@ -1,14 +1,17 @@
 """Prepare a Docker CLI and start the PyroMind docker-rt daemon for SWE-bench."""
 
 import os
+import json
+import shutil
 import subprocess
+import sys
 import tempfile
+import warnings
 from pathlib import Path
 
 
 DOCKER_CLI_URL = "https://download.docker.com/linux/static/stable/x86_64/docker-27.5.1.tgz"
 DOCKER_CLI_PATH = Path("/usr/local/bin/docker")
-DOCKER_RT_SOCKET = "/tmp/docker-rt.sock"
 
 
 def _install_docker_cli() -> None:
@@ -18,10 +21,12 @@ def _install_docker_cli() -> None:
 
     with tempfile.TemporaryDirectory(prefix="docker-cli-") as temporary_dir:
         archive = Path(temporary_dir) / "docker.tgz"
-        with archive.open("wb") as destination:
-            subprocess.run(["curl", "-fsSL", DOCKER_CLI_URL], stdout=destination, check=True)
         subprocess.run(
-            ["tar", "-xz", "-C", temporary_dir, "docker/docker"], check=True
+            ["curl", "-fsSL", "--retry", "3", "--connect-timeout", "15",
+             "--max-time", "300", "--output", str(archive), DOCKER_CLI_URL], check=True,
+        )
+        subprocess.run(
+            ["tar", "-xzf", str(archive), "-C", temporary_dir, "docker/docker"], check=True
         )
 
         command = ["install", "-m", "755", str(Path(temporary_dir) / "docker/docker"), str(DOCKER_CLI_PATH)]
@@ -31,7 +36,7 @@ def _install_docker_cli() -> None:
 
 
 def prepare_docker_context(pyromind_api_key: str, cluster: str = "us-west-1#pre", log_file: str = "/workspace/docker-watch.log") -> str:
-    """Start docker-rt and return the Docker host URL for benchmark subprocesses."""
+    """Start an owned daemon with a private socket and Docker config directory."""
     if not pyromind_api_key.strip():
         raise ValueError("pyromind_api_key must not be empty")
     if not cluster.strip():
@@ -41,21 +46,118 @@ def prepare_docker_context(pyromind_api_key: str, cluster: str = "us-west-1#pre"
 
     log_path = Path(log_file).expanduser().resolve()
     log_path.parent.mkdir(parents=True, exist_ok=True)
+    capability = subprocess.run(
+        [sys.executable, "-m", "pyromind_sdk.cli", "docker-rt", "--help"],
+        capture_output=True, text=True, timeout=30, check=False,
+    )
+    if capability.returncode or "--sock" not in capability.stdout or "--pid-file" not in capability.stdout:
+        raise RuntimeError("The node requires pyromind-sdk==0.1.15 with docker-rt socket/PID support")
     _install_docker_cli()
+
+    # Unix-domain socket paths have a small length limit. A private /tmp
+    # directory works even when output_dir is deeply nested on a shared volume.
+    socket_dir = Path(tempfile.mkdtemp(prefix="pyromind-eval-"))
+    socket_path = socket_dir / "docker.sock"
+    pid_path = log_path.parent / "docker-rt.pid"
+    config_path = log_path.parent / "docker-config"
+    config_path.mkdir(mode=0o700, exist_ok=True)
+    state = {"socket_dir": str(socket_dir), "socket": str(socket_path),
+             "pid_file": str(pid_path), "docker_config": str(config_path), "status": "starting"}
+    state_path = log_path.parent / "docker-rt-state.json"
+    state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
     environment = os.environ.copy()
     environment["PATH"] = f"{DOCKER_CLI_PATH.parent}{os.pathsep}{environment.get('PATH', '')}"
-    environment["DOCKER_RT_SOCK"] = DOCKER_RT_SOCKET
+    environment["DOCKER_RT_SOCK"] = str(socket_path)
+    environment["DOCKER_RT_PID_FILE"] = str(pid_path)
+    environment["DOCKER_CONFIG"] = str(config_path)
+    environment["PYROMIND_API_KEY"] = pyromind_api_key.strip()
+    environment["PYROMIND_CLUSTER"] = cluster.strip()
     environment.pop("DOCKER_HOST", None)
+    environment.pop("DOCKER_RT_HOST", None)
     environment["PYROMIND_DOCKER_RT_SKIP_WRAPPER_PROMPT"] = "1"
     command = [
-        "pyromind", "docker-rt", "--daemon",
-        "--apikey", pyromind_api_key.strip(),
-        "--cluster", cluster.strip(),
+        sys.executable, "-m", "pyromind_sdk.cli", "docker-rt", "--daemon",
+        "--sock", str(socket_path), "--pid-file", str(pid_path),
         "--log-file", str(log_path),
     ]
-    result = subprocess.run(command, env=environment, check=False)
-    if result.returncode != 0:
-        # Avoid including the API key from command in an exception message.
-        raise RuntimeError(f"docker-rt failed to start; see {log_path}")
-    return f"unix://{DOCKER_RT_SOCKET}"
+    host = f"unix://{socket_path}"
+    try:
+        with log_path.open("a", encoding="utf-8") as log:
+            result = subprocess.run(
+                command, env=environment, check=False, timeout=180,
+                stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
+            )
+        if result.returncode != 0:
+            raise RuntimeError(f"docker-rt failed to start; see {log_path}")
+        state["status"] = "started"
+        state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+        return host
+    except BaseException:
+        stop_docker_context(host, str(log_path))
+        raise
+
+
+def stop_docker_context(docker_host: str, log_file: str) -> None:
+    """Stop only this run's daemon; preserve errors in a separate cleanup log."""
+    run_dir = Path(log_file).expanduser().resolve().parent
+    state_path = run_dir / "docker-rt-state.json"
+    try:
+        if not state_path.is_file():
+            return
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        if state.get("status") == "stopped":
+            return
+        if docker_host != f"unix://{state['socket']}":
+            raise ValueError("Cleanup socket does not belong to this run")
+        pid_file = Path(state["pid_file"])
+        if pid_file.is_file():
+            # A malformed/missing PID would make the SDK scan other processes.
+            # Validate ownership and give it a stable private copy instead.
+            pid = int(pid_file.read_text(encoding="utf-8").strip())
+            if pid <= 1:
+                raise ValueError("Invalid owned daemon PID")
+            if not _pid_uses_socket(pid, state["socket"]):
+                pid_file.unlink(missing_ok=True)
+            else:
+                _stop_owned_pid(pid, state, run_dir)
+                pid_file.unlink(missing_ok=True)
+        elif Path(state["socket"]).exists():
+            raise RuntimeError("Socket exists without an owned PID file; manual cleanup is required")
+        shutil.rmtree(state["socket_dir"])
+        state["status"] = "stopped"
+        state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    except Exception as exc:
+        with (run_dir / "cleanup.log").open("a", encoding="utf-8") as log:
+            log.write(f"Cleanup failed: {type(exc).__name__}\n")
+        warnings.warn(f"Docker cleanup incomplete; see {run_dir / 'cleanup.log'}", RuntimeWarning)
+
+
+def _pid_uses_socket(pid: int, socket_path: str) -> bool:
+    try:
+        environment = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
+    except FileNotFoundError:
+        return False
+    if f"DOCKER_RT_SOCK={socket_path}".encode() not in environment:
+        raise RuntimeError("Daemon PID belongs to a different socket; refusing cleanup")
+    return True
+
+
+def _stop_owned_pid(pid: int, state: dict, run_dir: Path) -> None:
+    stop_pid_file = Path(state["socket_dir"]) / "stop.pid"
+    stop_pid_file.write_text(str(pid), encoding="utf-8")
+    try:
+        environment = os.environ.copy()
+        environment["DOCKER_RT_SOCK"] = state["socket"]
+        environment["DOCKER_CONFIG"] = state["docker_config"]
+        with (run_dir / "cleanup.log").open("a", encoding="utf-8") as log:
+            result = subprocess.run(
+                [sys.executable, "-m", "pyromind_sdk.docker_rt.server", "--stop",
+                 "--sock", state["socket"], "--pid-file", str(stop_pid_file)],
+                env=environment, stdout=log, stderr=subprocess.STDOUT,
+                stdin=subprocess.DEVNULL, timeout=30, check=False,
+            )
+        if result.returncode:
+            raise RuntimeError("Owned docker-rt daemon did not stop")
+    finally:
+        stop_pid_file.unlink(missing_ok=True)
