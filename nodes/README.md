@@ -7,7 +7,7 @@
 ```
 nodes/
 ├── install.sh                  # 部署脚本：复制文件并调用 reload API
-├── EvalBenchmark.yaml          # 单任务 SWE-bench 评测节点定义
+├── EvalBenchmark.yaml          # 单条/多条 SWE-bench 评测节点定义
 ├── custom_py_script/
 │   └── coding_eval/
 │       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
@@ -75,9 +75,19 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str, num_tasks: int = 1, start_index: int = 0)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。
 
-节点保留现有 `mini-extra swebench --slice 0:1` 推理调用，然后使用 SWE-bench 官方 harness 对补丁评分，并从实际保存的交互轨迹生成、校验 ATIF-v1.8。`output_file_path` 返回最终 ATIF 文件路径，原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
+节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| `num_tasks` | `1` | 本次运行的任务数量，必须为正整数 |
+| `start_index` | `0` | 从任务集哪个位置开始，必须为非负整数 |
+| `num_of_sandbox` | 必填 | 推理并发 worker 数；同时用于评分并发上限，实际评分并发不超过任务数 |
+
+例如 `num_tasks=10, start_index=0, num_of_sandbox=2` 表示选择前 10 条任务（`--slice 0:10`），并发上限为 2。`start_index=10` 则选择后面的第 11～20 条。实际数量受数据集剩余任务数限制；没有选中任务或没有有效预测时会报错。
+
+当实际产物为 1 条任务时，`output_file_path` 仍直接指向 ATIF JSON。多条时，它指向 `manifest.json` 索引，索引中的 `tasks[].output_file_path` 才是每条任务的 ATIF-v1.8 文件路径。索引本身不是 ATIF 文档。更改节点 YAML 后需 reload 才会在平台出现新的输入参数。
 
 注意：`python_code` 路径需与 Pod 内实际路径一致，通常为 `/workspace/nodes/...`。
 
@@ -110,7 +120,7 @@ python3.12 nodes/custom_py_script/coding_eval/atif_export.py \
 
 ### 不重新推理，完成评分与 ATIF 导出
 
-`finish_evaluation.py` 提供两个入口，均不调用推理或启动 docker-rt。两种方式都会先校验原始轨迹，再创建独立输出目录，生成 `trajectory.atif.json` 与标准化评分 `benchmark.json`。
+`finish_evaluation.py` 提供两个入口，均不调用推理或启动 docker-rt。两种方式都会先校验所有原始轨迹，再创建独立输出目录，生成每条任务的 ATIF 与标准化评分 `benchmark.json`。多任务另生成 `manifest.json`。
 
 读取已有 harness 报告（不连接 Docker，也不重新评分）：
 
@@ -125,6 +135,8 @@ python3.12 nodes/custom_py_script/coding_eval/finish_evaluation.py \
 
 `--grading-run-id` 对应原始报告文件名中的 run ID。支持 harness 的嵌套任务报告，以及 PyroDash 整理后的 `verified/<task_id>/report.json`。
 
+预测文件可包含多条任务；程序会逐条校验轨迹和报告，并为每条任务单独生成 ATIF。所有任务必须来自同一模型。轨迹缺失、报告缺失或任何任务的基础设施错误会使本次节点报错，原始文件与日志保留；正常测试未通过的任务仍导出，成绩为零。
+
 使用已运行的 Docker daemon 对已有预测评分，再导出 ATIF：
 
 ```bash
@@ -132,10 +144,11 @@ python3.12 nodes/custom_py_script/coding_eval/finish_evaluation.py \
   /path/to/runs/preds.json \
   --model-name your-served-model \
   --output-dir /path/to/output \
-  --docker-host unix:///path/to/existing/docker.sock
+  --docker-host unix:///path/to/existing/docker.sock \
+  --workers 2
 ```
 
-实际评分前会 ping Docker；连接不可用时直接报错，不开始下载数据集。CLI 最后输出 `{"output_file_path": ".../trajectory.atif.json"}`。合成报告只能用于验证文件读取和导出，不能作为真实评测成绩。
+实际评分前会 ping Docker；连接不可用时直接报错，不开始下载数据集。CLI 最后输出 `{"output_file_path": ".../trajectory.atif.json"}`，多任务时该路径为 `.../manifest.json`。合成报告只能用于验证文件读取和导出，不能作为真实评测成绩。
 
 实际运行时，每次创建一个独立目录：
 
@@ -148,7 +161,10 @@ output_dir/eval-<uuid>/
 │   ├── preds.json
 │   └── <task_id>/<task_id>.traj.json
 ├── verified/                 # harness 日志、汇总报告和任务测试详情
-└── trajectory.atif.json      # output_file_path 指向这里
+├── benchmark.json            # 标准化的单条成绩或全部任务成绩与汇总
+├── trajectory.atif.json      # 单任务时 output_file_path 指向这里
+├── trajectories/             # 多任务时每条任务一个 <task_id>.atif.json
+└── manifest.json             # 多任务时 output_file_path 指向此索引
 ```
 
 评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程使用本次运行的 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。超时会终止本次 verifier 进程组，并尝试清理名称匹配该任务和 run ID 的评分容器。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。

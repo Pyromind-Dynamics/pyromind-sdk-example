@@ -28,23 +28,29 @@ def trajectory_model():
     return Trajectory
 
 
-def read_single_prediction(predictions_path: Path) -> dict:
+def read_predictions(predictions_path: Path) -> dict[str, dict]:
     predictions = json.loads(predictions_path.read_text(encoding="utf-8"))
-    if not isinstance(predictions, dict) or len(predictions) != 1:
-        raise ValueError("EvalBenchmark requires exactly one prediction")
-    task_id, prediction = next(iter(predictions.items()))
-    if (
-        not isinstance(task_id, str) or not task_id
-        or task_id in {".", ".."} or "/" in task_id or "\\" in task_id
-    ):
-        raise ValueError("Invalid prediction task ID")
-    if not isinstance(prediction, dict) or prediction.get("instance_id") != task_id:
-        raise ValueError("Prediction key and instance_id must match")
-    if not isinstance(prediction.get("model_patch"), str):
-        raise ValueError("Prediction model_patch must be a string")
-    if not isinstance(prediction.get("model_name_or_path"), str) or not prediction["model_name_or_path"]:
-        raise ValueError("Prediction must identify its model_name_or_path")
-    return prediction
+    if not isinstance(predictions, dict) or not predictions:
+        raise ValueError("EvalBenchmark requires at least one prediction")
+    for task_id, prediction in predictions.items():
+        if not task_id or task_id in {".", ".."} or "/" in task_id or "\\" in task_id:
+            raise ValueError("Invalid prediction task ID")
+        if not isinstance(prediction, dict) or prediction.get("instance_id") != task_id:
+            raise ValueError("Prediction key and instance_id must match")
+        if not isinstance(prediction.get("model_patch"), str):
+            raise ValueError("Prediction model_patch must be a string")
+        if not isinstance(prediction.get("model_name_or_path"), str) or not prediction["model_name_or_path"]:
+            raise ValueError("Prediction must identify its model_name_or_path")
+    if len({prediction["model_name_or_path"] for prediction in predictions.values()}) != 1:
+        raise ValueError("All predictions in a run must use the same model")
+    return dict(sorted(predictions.items()))
+
+
+def read_single_prediction(predictions_path: Path) -> dict:
+    predictions = read_predictions(predictions_path)
+    if len(predictions) != 1:
+        raise ValueError("Select a task_id when exporting a multi-task prediction file")
+    return next(iter(predictions.values()))
 
 
 def _content(value):
@@ -205,10 +211,32 @@ def convert_to_atif(
 def export_atif(
     predictions_path: Path, output_path: Path, *, model_name: str,
     session_id: str, benchmark: dict | None = None,
+    task_id: str | None = None,
 ) -> Path:
-    prediction = read_single_prediction(predictions_path)
+    if task_id is None:
+        prediction = read_single_prediction(predictions_path)
+    else:
+        predictions = read_predictions(predictions_path)
+        if task_id not in predictions:
+            raise ValueError("Selected task_id is not in the prediction file")
+        prediction = predictions[task_id]
+    return export_prediction_atif(
+        prediction, predictions_path.parent, output_path,
+        model_name=model_name, session_id=session_id, benchmark=benchmark,
+    )
+
+
+def export_prediction_atif(
+    prediction: dict, runs_dir: Path, output_path: Path, *, model_name: str,
+    session_id: str, benchmark: dict | None = None,
+) -> Path:
+    """Export a prediction already validated by read_predictions.
+
+    Batch callers reuse that parsed collection rather than re-reading every
+    task's patch for each individual trajectory.
+    """
     task_id = prediction["instance_id"]
-    native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
+    native_path = runs_dir / task_id / f"{task_id}.traj.json"
     if not native_path.is_file():
         raise FileNotFoundError(f"Original interaction trajectory is required: {native_path}")
     native = json.loads(native_path.read_text(encoding="utf-8"))
@@ -235,10 +263,13 @@ if __name__ == "__main__":
     parser.add_argument("predictions", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--model-name", required=True)
+    parser.add_argument("--task-id", help="Select one task from a multi-task prediction file")
     parser.add_argument("--grading-report", type=Path, help="Existing normalized benchmark result JSON")
     args = parser.parse_args()
     benchmark = json.loads(args.grading_report.read_text(encoding="utf-8")) if args.grading_report else None
+    if benchmark and args.task_id and "tasks" in benchmark:
+        benchmark = benchmark["tasks"][args.task_id]
     print(export_atif(
         args.predictions.resolve(), args.output.resolve(), model_name=args.model_name,
-        session_id=uuid4().hex, benchmark=benchmark,
+        session_id=uuid4().hex, benchmark=benchmark, task_id=args.task_id,
     ))
