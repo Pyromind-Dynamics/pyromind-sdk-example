@@ -7,9 +7,13 @@
 ```
 nodes/
 ├── install.sh                  # 部署脚本：复制文件并调用 reload API
-├── CustomNode.yaml             # 节点定义（示例）
+├── EvalBenchmark.yaml          # 评测节点定义（待实现）
 ├── custom_py_script/
-│   └── custom_node.py          # 自定义节点 Python 实现
+│   └── coding_eval/
+│       ├── eval_benchmark.py   # 评测节点 Python 入口（待实现）
+│       ├── docker-ctx-prep.py  # Docker CLI 与 docker-rt 启动准备
+│       ├── ATIF_OUTPUT.md      # ATIF-v1.8 输出约定
+│       └── CHECKLIST.md        # 后续实现清单
 └── custom_entry/
     ├── custom_metrics.py       # 评估指标插件
     └── custom_rewards.py       # GRPO 奖励函数插件
@@ -45,7 +49,7 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 1. 编写节点定义（YAML）
 
-每个节点对应一个 `*.yaml` 文件，放在 `nodes/` 根目录。示例见 `CustomNode.yaml`：
+每个节点对应一个 `*.yaml` 文件，放在 `nodes/` 根目录。示例见 `EvalBenchmark.yaml`：
 
 | 字段 | 说明 |
 |------|------|
@@ -67,12 +71,7 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数：
-
-```python
-def custom_function(name: str = "World") -> dict:
-    return {"message": f"Hello, {name}! This is a custom node."}
-```
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`），docker-rt 日志写入 `output_dir/docker-rt.log`。节点先准备 Docker CLI 并启动 docker-rt，再通过 `--slice 0:1` 运行一条 SWE-bench Verified 样本，返回原生 `preds.json` 路径；评分与 ATIF-v1.8 导出仍待实现。目标输出格式见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
 注意：`python_code` 路径需与 Pod 内实际路径一致，通常为 `/workspace/nodes/...`。
 

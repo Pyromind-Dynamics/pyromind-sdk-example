@@ -1,0 +1,39 @@
+name: EvalBenchmark
+description: Evaluate a single model through an OpenAI-compatible endpoint and write ATIF-v1.8 results (implementation pending).
+display_name: EvalBenchmark
+base_class: PodExecutionNode
+python_code: /workspace/nodes/custom_py_script/coding_eval/eval_benchmark.py
+function_name: eval_benchmark
+python_command: python3
+parameters:
+  - name: endpoint
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: model_name
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: api_key
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: pyromind_api_key
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: cluster
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: num_of_sandbox
+    dtype: INT
+    type: input
+    required_type: required
+  - name: output_dir
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: output_file_path
+    dtype: STRING
+    type: output
