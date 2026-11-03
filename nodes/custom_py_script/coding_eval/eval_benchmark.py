@@ -6,7 +6,9 @@ import runpy
 import subprocess
 from importlib import import_module
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
 from uuid import uuid4
 
 
@@ -38,6 +40,50 @@ def _api_base(endpoint: str) -> str:
     if parsed.query or parsed.fragment or parsed.path not in {"", "/v1"}:
         raise ValueError("endpoint must be a server URL or an OpenAI API base ending in /v1")
     return endpoint if parsed.path == "/v1" else f"{endpoint}/v1"
+
+
+def resolve_model_name(endpoint: str, model_name: str, api_key: str) -> str:
+    """Read served IDs without inference and resolve only unambiguous aliases."""
+    requested = model_name.strip()
+    request = Request(
+        f"{_api_base(endpoint)}/models",
+        headers={"Accept": "application/json", "Authorization": f"Bearer {api_key.strip()}"},
+    )
+    try:
+        with urlopen(request, timeout=10) as response:
+            payload = json.load(response)
+    except HTTPError as exc:
+        raise RuntimeError(
+            f"Model service /v1/models returned HTTP {exc.code}; "
+            "check the endpoint and model service API key before starting evaluation."
+        ) from exc
+    except (URLError, TimeoutError, OSError) as exc:
+        raise RuntimeError(
+            "Cannot read model service /v1/models; check that the service is ready "
+            "and reachable from the evaluation Pod."
+        ) from exc
+    except (ValueError, UnicodeError) as exc:
+        raise ValueError("Model service /v1/models did not return valid JSON") from exc
+    if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+        raise ValueError("Model service /v1/models must return a data array")
+    ids = sorted({
+        item["id"] for item in payload["data"]
+        if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"]
+    })
+    if requested in ids:
+        return requested
+    # A short directory/model name is a common UI input. Never override an
+    # explicitly supplied full ID or select an unrelated sole available model.
+    matches = [value for value in ids if value.rstrip("/").rsplit("/", 1)[-1] == requested]
+    if "/" not in requested and len(matches) == 1:
+        resolved = matches[0]
+        print(f"Resolved model_name {requested!r} to served ID {resolved!r}", flush=True)
+        return resolved
+    available = ", ".join(repr(value) for value in ids) or "(none)"
+    raise ValueError(
+        f"model_name {requested!r} is not an exact or unambiguous served ID. "
+        f"Available model IDs: {available}. Use the exact data[].id from /v1/models."
+    )
 
 
 def launch_mini_extra_swebench(
@@ -135,6 +181,7 @@ def eval_benchmark(
     finisher = runpy.run_path(str(script_dir / "finish_evaluation.py"))
     exporter["trajectory_model"]()
     check_model_dependencies()
+    model_name = resolve_model_name(endpoint, model_name, api_key)
     run_id = f"eval-{uuid4().hex}"
     run_dir = Path(output_dir).expanduser().resolve() / run_id
     run_dir.mkdir(parents=True)
