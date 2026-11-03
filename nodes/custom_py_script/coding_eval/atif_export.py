@@ -183,7 +183,14 @@ def convert_to_atif(
                 calls[call_id] = step
         steps.append(step)
     agents = [step for step in steps if step["source"] == "agent"]
-    if not agents or not any(step["source"] == "user" for step in steps):
+    if not agents:
+        raise ValueError(
+            f"Task {task_id} produced no model responses "
+            f"(agent exit_status={info.get('exit_status', 'unknown')}). "
+            "Check info.exception_str in the native trajectory for the upstream failure; "
+            "grading and ATIF export cannot continue."
+        )
+    if not any(step["source"] == "user" for step in steps):
         raise ValueError("A task trajectory must contain user and agent messages")
     final_metrics = {
         "total_steps": len(steps),

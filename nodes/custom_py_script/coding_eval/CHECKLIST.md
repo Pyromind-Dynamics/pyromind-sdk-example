@@ -24,6 +24,7 @@
 - [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
 - [x] For multiple tasks, run the verifier once, write one validated ATIF per task and expose their paths/scores through `manifest.json`; preserve direct ATIF output for one task.
 - [x] Verify multi-task selection, concurrency, task/report association, aggregate scores, and failure handling with synthetic artifacts and mocked calls.
+- [x] Include LiteLLM's MCP extra and validate its actual tool-calling import path before sandbox creation; verify Mini SWE Agent tool-call parsing with LiteLLM's built-in mock response.
 - [x] Use unique output directories, preserve failure artifacts, reject incomplete/infra-error grading, and set a verifier subprocess timeout.
 - [x] Add an inference-free CLI to grade saved predictions or replay existing harness reports, including PyroDash's flattened layout.
 - [x] Require SDK 0.1.15 and check the actual docker-rt CLI capabilities; install and verify Docker CLI 27.5.1 locally.
@@ -40,6 +41,8 @@ real model inference, Docker startup, benchmark grading, or deployment was used
 for offline validation. Pinning dependencies does not establish live Pod compatibility.
 
 The current workspace has Python 3.12.11, SDK 0.1.15 and a working Docker CLI.
-There is no running Docker socket, no platform key in environment variables,
-and no real prediction artifacts here. Full scoring and deployment therefore
-remain unverified; report replay with synthetic fixtures is not a live score.
+A real node attempt downloaded the 500-task Verified dataset and started the
+benchmark container, but failed before producing a model response because the
+MCP dependency was missing. The dependency fix is locally validated with a
+mocked tool response. Successful real prediction, scoring and full workflow
+execution remain unverified; report replay is not a live score.

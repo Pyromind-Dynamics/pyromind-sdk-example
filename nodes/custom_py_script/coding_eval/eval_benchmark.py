@@ -4,9 +4,22 @@ import json
 import os
 import runpy
 import subprocess
+from importlib import import_module
 from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
+
+
+def check_model_dependencies() -> None:
+    """Validate the tool-calling import path before creating a remote sandbox."""
+    try:
+        import_module("litellm.responses.mcp.chat_completions_handler")
+    except ImportError as exc:
+        raise RuntimeError(
+            "Model tool-calling dependencies are incomplete. Install "
+            "coding_eval/requirements.txt in this interpreter "
+            "(requires litellm[mcp]==1.106.6) before starting evaluation."
+        ) from exc
 
 
 def _task_slice(num_tasks: int, start_index: int) -> str:
@@ -121,6 +134,7 @@ def eval_benchmark(
     exporter = runpy.run_path(str(script_dir / "atif_export.py"))
     finisher = runpy.run_path(str(script_dir / "finish_evaluation.py"))
     exporter["trajectory_model"]()
+    check_model_dependencies()
     run_id = f"eval-{uuid4().hex}"
     run_dir = Path(output_dir).expanduser().resolve() / run_id
     run_dir.mkdir(parents=True)

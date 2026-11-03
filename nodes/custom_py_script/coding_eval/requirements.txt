@@ -2,6 +2,8 @@
 # API inference is not performed during installation or ATIF-only conversion.
 pyromind-sdk==0.1.15
 mini-swe-agent==2.4.6
+# LiteLLM imports its MCP handler for ordinary function tools as well.
+litellm[mcp]==1.106.6
 swebench==5.0.2
 harbor==0.25.0
 docker>=7.0.0
