@@ -17,7 +17,7 @@ parameters:
   - name: api_key
     dtype: STRING
     type: input
-    required_type: required
+    required_type: optional
   - name: pyromind_api_key
     dtype: STRING
     type: input

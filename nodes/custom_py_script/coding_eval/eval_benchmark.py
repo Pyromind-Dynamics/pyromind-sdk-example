@@ -42,12 +42,16 @@ def _api_base(endpoint: str) -> str:
     return endpoint if parsed.path == "/v1" else f"{endpoint}/v1"
 
 
-def resolve_model_name(endpoint: str, model_name: str | None, api_key: str) -> str:
+def resolve_model_name(endpoint: str, model_name: str | None, api_key: str | None = "") -> str:
     """Read served IDs without inference and resolve only unambiguous aliases."""
     requested = (model_name or "").strip()
+    headers = {"Accept": "application/json"}
+    service_key = (api_key or "").strip()
+    if service_key:
+        headers["Authorization"] = f"Bearer {service_key}"
     request = Request(
         f"{_api_base(endpoint)}/models",
-        headers={"Accept": "application/json", "Authorization": f"Bearer {api_key.strip()}"},
+        headers=headers,
     )
     try:
         with urlopen(request, timeout=10) as response:
@@ -97,7 +101,7 @@ def resolve_model_name(endpoint: str, model_name: str | None, api_key: str) -> s
 def launch_mini_extra_swebench(
     endpoint: str,
     model_name: str,
-    api_key: str,
+    api_key: str | None,
     num_of_sandbox: int,
     output_dir: str,
     *,
@@ -117,8 +121,6 @@ def launch_mini_extra_swebench(
         raise ValueError("output_dir must not be empty")
     if not model_name.strip():
         raise ValueError("model_name must not be empty")
-    if not api_key.strip():
-        raise ValueError("api_key must not be empty")
 
     api_base = _api_base(endpoint)
     litellm_model = f"openai/{model_name.strip()}"
@@ -147,7 +149,9 @@ def launch_mini_extra_swebench(
     ]
 
     environment = os.environ.copy()
-    environment["OPENAI_API_KEY"] = api_key.strip()
+    # OpenAI-compatible clients require a nonempty key even for unprotected
+    # local servers. Override inherited credentials with an inert placeholder.
+    environment["OPENAI_API_KEY"] = (api_key or "").strip() or "dummy"
     if docker_host:
         environment["DOCKER_HOST"] = docker_host
     environment["TTY_COMPATIBLE"] = "0"
@@ -176,8 +180,7 @@ def eval_benchmark(
         raise ValueError("output_dir must not be empty")
     _task_slice(num_tasks, start_index)
     _api_base(endpoint)
-    for name, value in (("api_key", api_key),
-                        ("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
+    for name, value in (("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
         if not value.strip():
             raise ValueError(f"{name} must not be empty")
     if isinstance(num_of_sandbox, bool) or not isinstance(num_of_sandbox, int) or num_of_sandbox < 1:
