@@ -79,6 +79,8 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
+创建沙箱前，节点会用模型服务密钥读取同一 endpoint 的 `GET /v1/models`，检查服务连通性及模型 ID。`model_name` 优先精确匹配服务返回的 `data[].id`。例如只填写 `Qwen3.5-4B`，而服务唯一匹配的 ID 为 `/workspace/.root/models/Qwen3.5-4B` 时，会自动使用完整 ID，并将其记录到评测和 ATIF 元数据。不存在、歧义、鉴权失败、接口不可用或返回无效数据时，会在分配沙箱前报错；不会自动选用名称不相关的模型，也不会改写显式填写的完整 ID。无需手动额外添加 `openai/` 前缀。
+
 | 参数 | 默认值 | 说明 |
 |---|---|---|
 | `num_tasks` | `1` | 本次运行的任务数量，必须为正整数 |
