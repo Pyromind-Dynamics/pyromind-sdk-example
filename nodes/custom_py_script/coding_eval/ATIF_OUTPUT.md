@@ -1,0 +1,38 @@
+# EvalBenchmark output contract
+
+`EvalBenchmark.yaml` declares one output, `output_file_path` (`STRING`). For one benchmark task, its value must be the path to a JSON file containing **one complete ATIF-v1.8 trajectory object**. The file is the interaction trace for that task, not a plain score or a JSON array. The native `preds.json` produced by `mini-extra swebench` does not satisfy this contract.
+
+The contract follows the [Harbor ATIF specification](https://github.com/harbor-framework/harbor/blob/main/rfcs/0001-trajectory-format.md). The required root fields are `schema_version`, `agent`, and `steps`. Set `schema_version` to `ATIF-v1.8`; include `session_id` and `trajectory_id` for traceability. The `agent` object needs `name` and `version`. Each step needs a sequential `step_id` starting at 1, `source` (`system`, `user`, or `agent`), and `message`. Record tool calls and their observations in the corresponding agent steps when they occur.
+
+ATIF has no dedicated benchmark-score field. Put task identity and verifier results in `final_metrics.extra`, alongside standard token totals in `final_metrics` when they are available. Do not invent missing model usage or tool events.
+
+Example shape (illustrative, not an output of the current scaffold):
+
+```json
+{
+  "schema_version": "ATIF-v1.8",
+  "session_id": "benchmark-run-001",
+  "trajectory_id": "benchmark-task-001",
+  "agent": {
+    "name": "benchmark-agent",
+    "version": "1.0.0",
+    "model_name": "served-model"
+  },
+  "steps": [
+    {"step_id": 1, "source": "user", "message": "Task instructions"},
+    {"step_id": 2, "source": "agent", "message": "Agent response"}
+  ],
+  "final_metrics": {
+    "total_steps": 2,
+    "extra": {
+      "benchmark": {
+        "name": "benchmark-name",
+        "task_id": "task-001",
+        "score": 1.0
+      }
+    }
+  }
+}
+```
+
+A full benchmark has multiple independent task trajectories. The future runner should create one ATIF-v1.8 document per task. The workflow output contract for exposing that collection is still to be decided.
