@@ -7,10 +7,13 @@
 ```
 nodes/
 ├── install.sh                  # 部署脚本：复制文件并调用 reload API
-├── EvalBenchmark.yaml          # 评测节点定义（待实现）
+├── EvalBenchmark.yaml          # 单任务 SWE-bench 评测节点定义
 ├── custom_py_script/
 │   └── coding_eval/
-│       ├── eval_benchmark.py   # 评测节点 Python 入口（待实现）
+│       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
+│       ├── run_harness.py      # 对已生成的预测补丁运行官方评分
+│       ├── atif_export.py      # 原始交互轨迹转换与 Harbor 格式校验
+│       ├── requirements.txt   # 评测环境依赖（Python 3.12+）
 │       ├── docker-ctx-prep.py  # Docker CLI 与 docker-rt 启动准备
 │       ├── ATIF_OUTPUT.md      # ATIF-v1.8 输出约定
 │       └── CHECKLIST.md        # 后续实现清单
@@ -71,7 +74,9 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`），docker-rt 日志写入 `output_dir/docker-rt.log`。节点先准备 Docker CLI 并启动 docker-rt，再通过 `--slice 0:1` 运行一条 SWE-bench Verified 样本，返回原生 `preds.json` 路径；评分与 ATIF-v1.8 导出仍待实现。目标输出格式见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。
+
+节点保留现有 `mini-extra swebench --slice 0:1` 推理调用，然后使用 SWE-bench 官方 harness 对补丁评分，并从实际保存的交互轨迹生成、校验 ATIF-v1.8。`output_file_path` 返回最终 ATIF 文件路径，原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
 注意：`python_code` 路径需与 Pod 内实际路径一致，通常为 `/workspace/nodes/...`。
 
@@ -80,6 +85,41 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 1. 在 `custom_py_script/` 下新增 Python 文件并实现入口函数
 2. 在 `nodes/` 根目录新增对应的 `YourNode.yaml`
 3. 运行 `./install.sh` 部署并 reload
+
+### EvalBenchmark 的环境与离线验证
+
+EvalBenchmark 的 Harbor 校验依赖 Python 3.12+；项目其他 SDK 示例的最低版本仍为 Python 3.10。请在节点实际使用的 `python3` 环境中安装依赖，或将 YAML 的 `python_command` 指向相应解释器：
+
+```bash
+python3.12 -m pip install -r nodes/custom_py_script/coding_eval/requirements.txt
+```
+
+在仓库根目录使用已有的推理产物验证转换，不启动模型、Docker 或评分程序。将下列路径和模型名称替换为实际值，预测文件同目录下需有 `<task_id>/<task_id>.traj.json`：
+
+```bash
+python3.12 nodes/custom_py_script/coding_eval/atif_export.py \
+  /path/to/runs/preds.json \
+  /path/to/output/trajectory.atif.json \
+  --model-name your-served-model
+```
+
+此命令仅转换已有文件；未提供评分报告时，`final_metrics.extra.benchmark.status` 为 `not_run`，不生成虚假成绩。可通过 `--grading-report path/to/benchmark.json` 传入 `run_harness.read_grading_result()` 返回的标准化结果（包含匹配的 `task_id`），不是原始 harness 汇总报告。
+
+实际运行时，每次创建一个独立目录：
+
+```text
+output_dir/eval-<uuid>/
+├── docker-rt.log
+├── runs/
+│   ├── preds.json
+│   └── <task_id>/<task_id>.traj.json
+├── verified/                 # harness 日志、汇总报告和任务测试详情
+└── trajectory.atif.json      # output_file_path 指向这里
+```
+
+评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程沿用 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。
+
+内置评分入口只包含通用 Docker 超时适配，没有复制 PyroDash 的上海镜像、GitHub 缓存及 docker-rt 特殊兼容补丁。需要原有区域适配时，在同一运行环境部署相应脚本及其 `shanghai/` 目录，再设置 `PYROMIND_HARNESS_RUNNER` 指向该 `run_harness.py`；其 `CLUSTER=shanghai` 等环境变量与节点的 SDK 集群参数分别配置。真实 Pod 中的镜像访问、区域兼容性和端到端运行仍需验证。Docker 准备逻辑保留现状，使用共享 `/tmp/docker-rt.sock`；独立输出目录不代表 Docker daemon 也已隔离。
 
 ## 自定义评估指标（custom_metrics.py）
 
