@@ -42,9 +42,9 @@ def _api_base(endpoint: str) -> str:
     return endpoint if parsed.path == "/v1" else f"{endpoint}/v1"
 
 
-def resolve_model_name(endpoint: str, model_name: str, api_key: str) -> str:
+def resolve_model_name(endpoint: str, model_name: str | None, api_key: str) -> str:
     """Read served IDs without inference and resolve only unambiguous aliases."""
-    requested = model_name.strip()
+    requested = (model_name or "").strip()
     request = Request(
         f"{_api_base(endpoint)}/models",
         headers={"Accept": "application/json", "Authorization": f"Bearer {api_key.strip()}"},
@@ -70,6 +70,15 @@ def resolve_model_name(endpoint: str, model_name: str, api_key: str) -> str:
         item["id"] for item in payload["data"]
         if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"]
     })
+    available = ", ".join(repr(value) for value in ids) or "(none)"
+    if not requested:
+        if len(ids) == 1:
+            print(f"Discovered served model ID {ids[0]!r}", flush=True)
+            return ids[0]
+        raise ValueError(
+            "model_name may be omitted only when /v1/models returns exactly one model. "
+            f"Available model IDs: {available}. Fill model_name to choose a model."
+        )
     if requested in ids:
         return requested
     # A short directory/model name is a common UI input. Never override an
@@ -79,7 +88,6 @@ def resolve_model_name(endpoint: str, model_name: str, api_key: str) -> str:
         resolved = matches[0]
         print(f"Resolved model_name {requested!r} to served ID {resolved!r}", flush=True)
         return resolved
-    available = ", ".join(repr(value) for value in ids) or "(none)"
     raise ValueError(
         f"model_name {requested!r} is not an exact or unambiguous served ID. "
         f"Available model IDs: {available}. Use the exact data[].id from /v1/models."
@@ -154,12 +162,12 @@ def launch_mini_extra_swebench(
 
 def eval_benchmark(
     endpoint: str,
-    model_name: str,
-    api_key: str,
-    pyromind_api_key: str,
-    cluster: str,
-    num_of_sandbox: int,
-    output_dir: str,
+    model_name: str = "",
+    api_key: str = "",
+    pyromind_api_key: str = "",
+    cluster: str = "",
+    num_of_sandbox: int = 1,
+    output_dir: str = "",
     num_tasks: int = 1,
     start_index: int = 0,
 ) -> dict:
@@ -168,7 +176,7 @@ def eval_benchmark(
         raise ValueError("output_dir must not be empty")
     _task_slice(num_tasks, start_index)
     _api_base(endpoint)
-    for name, value in (("model_name", model_name), ("api_key", api_key),
+    for name, value in (("api_key", api_key),
                         ("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
         if not value.strip():
             raise ValueError(f"{name} must not be empty")

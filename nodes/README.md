@@ -75,11 +75,11 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark(endpoint: str, model_name: str, api_key: str, pyromind_api_key: str, cluster: str, num_of_sandbox: int, output_dir: str, num_tasks: int = 1, start_index: int = 0)`。`model_name` 填写服务端模型 ID，`api_key` 填写模型端点密钥；无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark()`。`model_name` 是可选的服务端模型 ID，留空时从服务查询；`api_key` 填写模型端点密钥，无需鉴权的端点可填写 `dummy`。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。除 `model_name`、`num_tasks`、`start_index` 外，其余输入仍由 YAML 标为必填，并在入口校验；Python 函数保留了原有位置参数顺序。
 
 节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
-创建沙箱前，节点会用模型服务密钥读取同一 endpoint 的 `GET /v1/models`，检查服务连通性及模型 ID。`model_name` 优先精确匹配服务返回的 `data[].id`。例如只填写 `Qwen3.5-4B`，而服务唯一匹配的 ID 为 `/workspace/.root/models/Qwen3.5-4B` 时，会自动使用完整 ID，并将其记录到评测和 ATIF 元数据。不存在、歧义、鉴权失败、接口不可用或返回无效数据时，会在分配沙箱前报错；不会自动选用名称不相关的模型，也不会改写显式填写的完整 ID。无需手动额外添加 `openai/` 前缀。
+创建沙箱前，节点会用模型服务密钥读取同一 endpoint 的 `GET /v1/models`，检查服务连通性及模型 ID。Inference 节点输出的 `endpoint` 是服务地址，不单独包含模型名称。`model_name` 不传或留空时，服务返回唯一模型 ID 则自动使用；没有模型或有多个模型时会列出可用名称，要求明确选择。有填写值时，优先精确匹配 `data[].id`。例如只填写 `Qwen3.5-4B`，而服务唯一匹配的 ID 为 `/workspace/.root/models/Qwen3.5-4B` 时，会自动使用完整 ID，并将其记录到评测和 ATIF 元数据。不存在、歧义、鉴权失败、接口不可用或返回无效数据时，会在分配沙箱前报错；不会替换名称不相关的显式模型，也不会改写显式填写的完整 ID。无需手动额外添加 `openai/` 前缀。可选输入的界面变化需重新加载节点定义。
 
 | 参数 | 默认值 | 说明 |
 |---|---|---|
