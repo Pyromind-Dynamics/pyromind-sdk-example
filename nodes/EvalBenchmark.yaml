@@ -9,7 +9,7 @@ parameters:
   - name: endpoint
     dtype: STRING
     type: input
-    required_type: required
+    required_type: optional
   - name: model_name
     dtype: STRING
     type: input

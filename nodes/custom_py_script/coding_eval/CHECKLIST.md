@@ -5,6 +5,7 @@
 - [x] Remove the copied offload routing and adapter helpers.
 - [x] Rename the custom node to `EvalBenchmark`.
 - [x] Accept an existing HTTP(S) model endpoint as the node input.
+- [x] Make endpoint optional in the node form; accept a connected Inference output and report a missing runtime address before allocating sandboxes.
 - [x] Accept the served model name and API key as node inputs.
 - [x] Prepare a Docker CLI and start docker-rt with a separate PyroMind API key, cluster, and log file before prediction.
 - [x] Define `output_file_path` as a path to an ATIF-v1.8 trajectory JSON file; see `ATIF_OUTPUT.md`.

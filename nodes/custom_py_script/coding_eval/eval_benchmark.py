@@ -33,6 +33,13 @@ def _task_slice(num_tasks: int, start_index: int) -> str:
 
 
 def _api_base(endpoint: str) -> str:
+    if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
+        raise ValueError(
+            "endpoint is empty; connect the Inference node's endpoint output "
+            "or enter the model service HTTP(S) URL before running evaluation."
+        )
+    if not isinstance(endpoint, str):
+        raise ValueError("endpoint must be an HTTP(S) URL")
     endpoint = endpoint.strip().rstrip("/")
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
@@ -165,7 +172,7 @@ def launch_mini_extra_swebench(
 
 
 def eval_benchmark(
-    endpoint: str,
+    endpoint: str = "",
     model_name: str = "",
     api_key: str = "",
     pyromind_api_key: str = "",
