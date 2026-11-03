@@ -1,0 +1,7 @@
+# Install in the node's Python 3.12+ environment (Harbor requires Python >=3.12).
+# API inference is not performed during installation or ATIF-only conversion.
+mini-swe-agent==2.4.6
+swebench==5.0.2
+harbor==0.25.0
+docker>=7.0.0
+datasets>=4.4.0

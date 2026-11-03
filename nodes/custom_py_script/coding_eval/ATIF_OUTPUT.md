@@ -36,3 +36,30 @@ Example shape (illustrative, not an output of the current scaffold):
 ```
 
 A full benchmark has multiple independent task trajectories. The future runner should create one ATIF-v1.8 document per task. The workflow output contract for exposing that collection is still to be decided.
+
+## Implemented single-task export
+
+`eval_benchmark.py` keeps the existing inference invocation, runs the official
+SWE-bench 5.0.2 verifier, and returns
+`output_dir/eval-<uuid>/trajectory.atif.json`. Each file is validated with Harbor
+0.25.0's `Trajectory` model and uses exactly `ATIF-v1.8`.
+
+The exporter reads `runs/<instance_id>/<instance_id>.traj.json`. Assistant tool
+calls retain their native IDs; tool results are associated by ID, including
+parallel calls whose results arrive out of order. Native exit records become
+system steps marked with `extra.native_role = "exit"`. Tool return codes are
+kept in observation-result metadata. Export currently supports the launcher's
+saved text/chat-completions format; unknown roles and unsupported non-text
+content are rejected rather than silently removed.
+
+Only recorded usage is exported. Aggregate usage is omitted when any agent
+step lacks that metric. Zero costs from `ignore_errors` are omitted because
+they can indicate an unknown price. Task success comes from harness results,
+not the agent's exit status; missing/error/infra-failure reports are errors.
+Ordinary unresolved tasks and empty patches produce a real score of zero.
+
+`atif_export.py` also provides an offline CLI for converting saved artifacts.
+Without a normalized grading result, it marks grading as `not_run` and omits
+the score. Local offline validation does not establish
+real inference or verifier execution; see `nodes/README.md` for commands and
+the remaining Pod/region validation requirements.

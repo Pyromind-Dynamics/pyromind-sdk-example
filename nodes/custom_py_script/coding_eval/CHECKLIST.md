@@ -15,14 +15,22 @@
 
 ## Remaining
 
-- [ ] Choose the first benchmark and define how its dataset or task set is provided to the node. No coding benchmark dataset is bundled here.
+- [x] Choose SWE-bench Verified (`--slice 0:1`) for prediction and `SWE-bench/SWE-bench_Verified` for the 5.0.2 verifier. The dataset is fetched by the tools, not bundled here.
 - [ ] Confirm that benchmark sandboxes can reach the endpoint and that the supplied model ID is served there.
 - [ ] Confirm the Pod can install the Docker CLI, start docker-rt, access benchmark images, and import the evaluator's Python dependencies.
-- [ ] Run the benchmark verifier and capture its score and per-task results.
-- [ ] Convert the actual user, agent, tool, and observation events into ATIF-v1.8 steps; place verifier results in `final_metrics.extra`.
-- [ ] Validate each trajectory against Harbor's ATIF reference models and return its file path as `output_file_path`.
+- [x] Implement a verifier invocation and capture its score and per-task results; live execution is still unverified.
+- [x] Convert saved chat-completions user, agent, tool, and observation events into ATIF-v1.8 steps; place verifier results in `final_metrics.extra`.
+- [x] Validate against Harbor 0.25.0's ATIF reference models and return the ATIF file path as `output_file_path`.
+- [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
 - [ ] For a multi-task benchmark, write one ATIF document per task and decide how the workflow should expose the collection of artifacts.
-- [ ] Handle run failure, timeouts, cleanup, and unique output directories.
+- [x] Use unique output directories, preserve failure artifacts, reject incomplete/infra-error grading, and set a verifier subprocess timeout.
+- [ ] Validate Docker resource cleanup, shared socket behavior, and regional docker-rt compatibility in a real Pod.
 - [ ] Verify one-task execution end to end, then expand to the full benchmark.
 
-The node entry currently returns the path to MiniSweAgent's native `preds.json`. Grading and ATIF generation are still pending, so this intermediate output does not yet satisfy the ATIF output contract.
+The node entry retains the existing prediction call, invokes the verifier, then
+returns a validated `trajectory.atif.json`. The original `preds.json` and
+`<instance_id>/<instance_id>.traj.json` remain as intermediate artifacts. Current
+conversion supports the saved text/chat-completions trace used by the existing
+launcher; unsupported message roles or non-text content fail explicitly. No
+real model inference, Docker startup, benchmark grading, or deployment was used
+for offline validation. Pinning dependencies does not establish live Pod compatibility.

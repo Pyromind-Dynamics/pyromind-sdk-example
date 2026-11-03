@@ -1,7 +1,4 @@
-"""Launch the SWE-bench agent against an existing OpenAI-compatible endpoint.
-
-This module runs the prediction phase only. Grading and ATIF export are pending.
-"""
+"""Run one SWE-bench task, grade its patch, and return an ATIF-v1.8 file."""
 
 import json
 import os
@@ -9,6 +6,7 @@ import runpy
 import subprocess
 from pathlib import Path
 from urllib.parse import urlsplit
+from uuid import uuid4
 
 
 def _api_base(endpoint: str) -> str:
@@ -93,23 +91,43 @@ def eval_benchmark(
     num_of_sandbox: int,
     output_dir: str,
 ) -> dict:
-    """Run one SWE-bench Verified task and return the native prediction file path.
-
-    Grading and ATIF export remain to be implemented.
-    """
+    """Keep the prediction launcher, then grade and export the actual trace."""
     if not output_dir.strip():
         raise ValueError("output_dir must not be empty")
-    runs_dir = Path(output_dir).expanduser().resolve()
+    # Load helpers by file path, like docker-ctx-prep.py, so Pod loaders do not
+    # need this directory on sys.path or installed as a Python package.
+    script_dir = Path(__file__).parent
+    exporter = runpy.run_path(str(script_dir / "atif_export.py"))
+    grader = runpy.run_path(str(script_dir / "run_harness.py"))
+    exporter["trajectory_model"]()
+    run_id = f"eval-{uuid4().hex}"
+    run_dir = Path(output_dir).expanduser().resolve() / run_id
+    run_dir.mkdir(parents=True)
+    runs_dir = run_dir / "runs"
     prepare_docker_context = runpy.run_path(
         str(Path(__file__).with_name("docker-ctx-prep.py"))
     )["prepare_docker_context"]
     docker_host = prepare_docker_context(
-        pyromind_api_key, cluster, str(runs_dir / "docker-rt.log")
+        pyromind_api_key, cluster, str(run_dir / "docker-rt.log")
     )
     print("docker-rt launched")
 
     predictions = launch_mini_extra_swebench(
-        endpoint, model_name, api_key, num_of_sandbox, output_dir,
+        endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
         docker_host=docker_host,
     )
-    return {"output_file_path": str(predictions)}
+    prediction = exporter["read_single_prediction"](predictions)
+    # Fail before invoking the verifier if prediction produced no trace.
+    task_id = prediction["instance_id"]
+    native_path = predictions.parent / task_id / f"{task_id}.traj.json"
+    if not native_path.is_file():
+        raise FileNotFoundError(f"Original interaction trajectory is required: {native_path}")
+    benchmark = grader["grade_predictions"](
+        predictions, prediction, run_dir / "verified",
+        run_id=run_id, docker_host=docker_host,
+    )
+    output_path = exporter["export_atif"](
+        predictions, run_dir / "trajectory.atif.json",
+        model_name=model_name, session_id=run_id, benchmark=benchmark,
+    )
+    return {"output_file_path": str(output_path)}
