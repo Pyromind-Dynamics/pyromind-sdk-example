@@ -107,6 +107,8 @@ python3.12 -m pip install -e . -r nodes/custom_py_script/coding_eval/requirement
 
 SDK 已固定为 `0.1.15`，提供本节点需要的 `docker-rt --sock/--pid-file` 功能；旧的 `0.1.9` 没有 `docker-rt` 子命令。可用 `python3.12 -m pyromind_sdk.cli docker-rt --help` 检查命令能力，该命令不会启动 daemon。
 
+工具调用依赖固定为 `litellm[mcp]==1.106.6`。该版本即使处理普通 bash function tool，也会导入 MCP handler；仅安装基础 LiteLLM 可能在第一次请求前报 `No module named 'mcp'`。节点会在创建沙箱前导入同一 handler，缺少依赖时立即提示安装本目录的 requirements。对于当前工作区的 uv 环境，使用 `uv pip install --python .venv/bin/python -r nodes/custom_py_script/coding_eval/requirements.txt` 更新依赖；更新的是 EvalBenchmark 使用的解释器，而非模型服务容器。
+
 在仓库根目录使用已有的推理产物验证转换，不启动模型、Docker 或评分程序。将下列路径和模型名称替换为实际值，预测文件同目录下需有 `<task_id>/<task_id>.traj.json`：
 
 ```bash
