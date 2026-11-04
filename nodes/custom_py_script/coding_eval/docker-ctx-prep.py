@@ -37,13 +37,6 @@ def _install_docker_cli() -> None:
 
 def prepare_docker_context(pyromind_api_key: str, cluster: str = "us-west-1#pre", log_file: str = "/workspace/docker-watch.log") -> str:
     """Start an owned daemon with a private socket and Docker config directory."""
-    if not pyromind_api_key.strip():
-        raise ValueError("pyromind_api_key must not be empty")
-    if not cluster.strip():
-        raise ValueError("cluster must not be empty")
-    if not log_file.strip():
-        raise ValueError("log_file must not be empty")
-
     log_path = Path(log_file).expanduser().resolve()
     log_path.parent.mkdir(parents=True, exist_ok=True)
     capability = subprocess.run(

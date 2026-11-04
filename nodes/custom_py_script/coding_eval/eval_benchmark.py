@@ -47,13 +47,6 @@ def launch_mini_extra_swebench(
     must be reachable from the benchmark containers as well as from this process.
     """
     slice_spec = _task_slice(num_tasks, start_index)
-    if isinstance(num_of_sandbox, bool) or not isinstance(num_of_sandbox, int) or num_of_sandbox < 1:
-        raise ValueError("num_of_sandbox must be a positive integer")
-    if not output_dir.strip():
-        raise ValueError("output_dir must not be empty")
-    if not model_name.strip():
-        raise ValueError("model_name must not be empty")
-
     litellm_model = f"openai/{model_name.strip()}"
     runs_dir = Path(output_dir).expanduser().resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
@@ -107,8 +100,6 @@ def eval_benchmark(
     start_index: int = 0,
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
-    if not output_dir.strip():
-        raise ValueError("output_dir must not be empty")
     _task_slice(num_tasks, start_index)
     if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
         raise ValueError(
@@ -121,14 +112,7 @@ def eval_benchmark(
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
         raise ValueError("endpoint must be an HTTP(S) API base URL without query parameters or fragments")
-    if not isinstance(model_name, str) or not model_name.strip():
-        raise ValueError("model_name must not be empty; enter the model ID served by the model service")
     model_name = model_name.strip()
-    for name, value in (("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
-        if not value.strip():
-            raise ValueError(f"{name} must not be empty")
-    if isinstance(num_of_sandbox, bool) or not isinstance(num_of_sandbox, int) or num_of_sandbox < 1:
-        raise ValueError("num_of_sandbox must be a positive integer")
     # Load helpers by file path, like docker-ctx-prep.py, so Pod loaders do not
     # need this directory on sys.path or installed as a Python package.
     script_dir = Path(__file__).parent
