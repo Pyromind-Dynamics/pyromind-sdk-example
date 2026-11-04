@@ -113,18 +113,6 @@ def _cleanup_task_containers(docker_host: str, task_id: str | list[str], run_id:
                 pass
 
 
-def grade_predictions(
-    predictions_path: Path, prediction: dict, output_dir: Path, *,
-    run_id: str, docker_host: str,
-) -> dict:
-    """Backward-compatible entry point for grading one prediction."""
-    task_id = prediction["instance_id"]
-    return grade_batch_predictions(
-        predictions_path, {task_id: prediction}, output_dir,
-        run_id=run_id, docker_host=docker_host,
-    )[task_id]
-
-
 def grade_batch_predictions(
     predictions_path: Path, predictions: dict[str, dict], output_dir: Path, *,
     run_id: str, docker_host: str, max_workers: int = 1,

@@ -21,8 +21,6 @@ def finish_evaluation(
         raise ValueError("Provide an existing grading directory or an explicit Docker host")
     if grading_dir is not None and (docker_host or not grading_run_id):
         raise ValueError("Report replay requires grading_run_id and no Docker host")
-    if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
-        raise ValueError("max_workers must be a positive integer")
     scripts = Path(__file__).parent
     exporter = runpy.run_path(str(scripts / "atif_export.py"))
     grader = runpy.run_path(str(scripts / "run_harness.py"))
@@ -47,12 +45,6 @@ def finish_evaluation(
             )
             for task_id, prediction in predictions.items()
         }
-    elif len(predictions) == 1:
-        task_id, prediction = next(iter(predictions.items()))
-        benchmarks = {task_id: grader["grade_predictions"](
-            predictions_path, prediction, output_dir / "verified",
-            run_id=run_id, docker_host=docker_host,
-        )}
     else:
         benchmarks = grader["grade_batch_predictions"](
             predictions_path, predictions, output_dir / "verified",

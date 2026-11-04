@@ -38,16 +38,15 @@ def launch_mini_extra_swebench(
     output_dir: str,
     *,
     docker_host: str | None = None,
-    num_tasks: int = 1,
-    start_index: int = 0,
+    slice_spec: str = "0:1",
 ) -> Path:
     """Run selected SWE-bench Verified tasks and return the native preds.json.
 
-    num_of_sandbox controls concurrent mini-extra workers. The supplied endpoint
+    slice_spec is prepared by the node entry point. num_of_sandbox controls
+    concurrent mini-extra workers. The supplied endpoint
     must be reachable from the benchmark containers as well as from this process.
     """
-    slice_spec = _task_slice(num_tasks, start_index)
-    litellm_model = f"openai/{model_name.strip()}"
+    litellm_model = f"openai/{model_name}"
     runs_dir = Path(output_dir).expanduser().resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
 
@@ -100,7 +99,7 @@ def eval_benchmark(
     start_index: int = 0,
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
-    _task_slice(num_tasks, start_index)
+    slice_spec = _task_slice(num_tasks, start_index)
     if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
         raise ValueError(
             "endpoint is empty; connect the Inference node's endpoint output "
@@ -136,7 +135,7 @@ def eval_benchmark(
         predictions = launch_mini_extra_swebench(
             endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
             docker_host=docker_host,
-            num_tasks=num_tasks, start_index=start_index,
+            slice_spec=slice_spec,
         )
         output_path = finisher["finish_evaluation"](
             predictions, run_dir, model_name=model_name, run_id=run_id,

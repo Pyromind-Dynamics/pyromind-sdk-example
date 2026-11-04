@@ -26,6 +26,7 @@
 - [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
 - [x] For multiple tasks, run the verifier once, write one validated ATIF per task and expose their paths/scores through `manifest.json`; preserve direct ATIF output for one task.
 - [x] Verify multi-task selection, concurrency, task/report association, aggregate scores, and failure handling with synthetic artifacts and mocked calls.
+- [x] Prepare task selection and normalize the model name once at node entry; use one batch grader for both single and multiple tasks, validating worker count only in the grader.
 - [x] Include LiteLLM's MCP extra and validate its actual tool-calling import path before sandbox creation; verify Mini SWE Agent tool-call parsing with LiteLLM's built-in mock response.
 - [x] Require model_name in the node form and rely on platform required-field validation; keep required YAML parameters before optional parameters.
 - [x] Use the supplied model ID directly for inference and ATIF metadata without requesting `/models`, discovering models, or rewriting aliases.
