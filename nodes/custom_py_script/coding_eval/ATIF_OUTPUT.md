@@ -71,6 +71,9 @@ step lacks that metric. Zero costs from `ignore_errors` are omitted because
 they can indicate an unknown price. Task success comes from harness results,
 not the agent's exit status; missing/error/infra-failure reports are errors.
 Ordinary unresolved tasks and empty patches produce a real score of zero.
+Before grading, whitespace-only patches are normalized to empty strings in a
+separate `verified/preds.harness.json`; native predictions and nonempty diffs
+are preserved. These tasks receive the harness's ordinary empty-patch score.
 
 `atif_export.py` also provides an offline CLI for converting saved artifacts.
 Without a normalized grading result, it marks grading as `not_run` and omits

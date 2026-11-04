@@ -118,7 +118,7 @@ def grade_batch_predictions(
     predictions_path: Path, predictions: dict[str, dict], output_dir: Path, *,
     run_id: str, docker_host: str, max_workers: int = 1,
 ) -> dict[str, dict]:
-    """Grade predictions validated by read_predictions in one verifier invocation."""
+    """Grade saved predictions, treating whitespace-only patches as empty."""
     if max_workers < 1:
         raise ValueError("max_workers must be a positive integer")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -130,10 +130,21 @@ def grade_batch_predictions(
     runner = Path(os.environ.get("PYROMIND_HARNESS_RUNNER", __file__)).resolve()
     if not runner.is_file():
         raise FileNotFoundError(f"Harness runner not found: {runner}")
+    # Preserve the native predictions and all whitespace in nonempty diffs.
+    harness_predictions = {}
+    for task_id, prediction in predictions.items():
+        patch = prediction["model_patch"]
+        harness_predictions[task_id] = {
+            **prediction, "model_patch": patch if patch and patch.strip() else "",
+        }
+    harness_predictions_path = output_dir / f"{predictions_path.stem}.harness.json"
+    harness_predictions_path.write_text(
+        json.dumps(harness_predictions, indent=2) + "\n", encoding="utf-8",
+    )
     command = [
         os.environ.get("HARNESS_PYTHON", sys.executable), str(runner),
         "--dataset_name", DATASET_NAME,
-        "--predictions_path", str(predictions_path.resolve()),
+        "--predictions_path", str(harness_predictions_path.resolve()),
         "--instance_ids", *task_ids,
         "--max_workers", str(min(max_workers, len(task_ids))), "--run_id", run_id,
         "--report_dir", str(output_dir.resolve()),
