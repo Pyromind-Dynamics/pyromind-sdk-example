@@ -138,8 +138,8 @@ def _pid_uses_socket(pid: int, socket_path: str) -> bool:
 
 def _stop_owned_pid(pid: int, state: dict, run_dir: Path) -> None:
     stop_pid_file = Path(state["socket_dir"]) / "stop.pid"
-    stop_pid_file.write_text(str(pid), encoding="utf-8")
     try:
+        stop_pid_file.write_text(str(pid), encoding="utf-8")
         environment = os.environ.copy()
         environment["DOCKER_RT_SOCK"] = state["socket"]
         environment["DOCKER_CONFIG"] = state["docker_config"]

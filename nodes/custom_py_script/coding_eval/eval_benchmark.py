@@ -2,12 +2,15 @@
 
 import json
 import os
-import runpy
 import subprocess
 from importlib import import_module
 from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
+
+from atif_export import trajectory_model
+from docker_ctx_prep import prepare_docker_context, stop_docker_context
+from finish_evaluation import finish_evaluation
 
 
 def check_model_dependencies() -> None:
@@ -33,7 +36,7 @@ def _task_slice(num_tasks: int, start_index: int) -> str:
 def launch_mini_extra_swebench(
     endpoint: str,
     model_name: str,
-    api_key: str | None,
+    api_key: str,
     num_of_sandbox: int,
     output_dir: str,
     *,
@@ -72,9 +75,8 @@ def launch_mini_extra_swebench(
     ]
 
     environment = os.environ.copy()
-    # OpenAI-compatible clients require a nonempty key even for unprotected
-    # local servers. Override inherited credentials with an inert placeholder.
-    environment["OPENAI_API_KEY"] = (api_key or "").strip() or "dummy"
+    # Use the supplied model-service key instead of an inherited credential.
+    environment["OPENAI_API_KEY"] = api_key.strip()
     if docker_host:
         environment["DOCKER_HOST"] = docker_host
     environment["TTY_COMPATIBLE"] = "0"
@@ -105,21 +107,13 @@ def eval_benchmark(
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
         raise ValueError("endpoint must be an HTTP(S) API base URL without query parameters or fragments")
     model_name = model_name.strip()
-    # Load helpers by file path, like docker-ctx-prep.py, so Pod loaders do not
-    # need this directory on sys.path or installed as a Python package.
-    script_dir = Path(__file__).parent
-    exporter = runpy.run_path(str(script_dir / "atif_export.py"))
-    finisher = runpy.run_path(str(script_dir / "finish_evaluation.py"))
-    exporter["trajectory_model"]()
+    trajectory_model()
     check_model_dependencies()
     run_id = f"eval-{uuid4().hex}"
     run_dir = Path(output_dir).expanduser().resolve() / run_id
     run_dir.mkdir(parents=True)
     runs_dir = run_dir / "runs"
-    docker_context = runpy.run_path(
-        str(Path(__file__).with_name("docker-ctx-prep.py"))
-    )
-    docker_host = docker_context["prepare_docker_context"](
+    docker_host = prepare_docker_context(
         pyromind_api_key, cluster, str(run_dir / "docker-rt.log")
     )
     print("docker-rt launched")
@@ -130,11 +124,11 @@ def eval_benchmark(
             docker_host=docker_host,
             slice_spec=slice_spec,
         )
-        output_path = finisher["finish_evaluation"](
+        output_path = finish_evaluation(
             predictions, run_dir, model_name=model_name, run_id=run_id,
             docker_host=docker_host,
             max_workers=num_of_sandbox,
         )
         return {"output_file_path": str(output_path)}
     finally:
-        docker_context["stop_docker_context"](docker_host, str(run_dir / "docker-rt.log"))
+        stop_docker_context(docker_host, str(run_dir / "docker-rt.log"))

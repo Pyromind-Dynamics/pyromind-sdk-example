@@ -4,7 +4,7 @@ display_name: EvalBenchmark
 base_class: PodExecutionNode
 python_code: /workspace/nodes/custom_py_script/coding_eval/eval_benchmark.py
 function_name: eval_benchmark
-python_command: python3
+python_command: /root/pyromind-sdk-example/.venv/bin/pyromind-node-python
 parameters:
   - name: endpoint
     dtype: STRING

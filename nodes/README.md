@@ -15,7 +15,7 @@ nodes/
 │       ├── finish_evaluation.py # 不调用推理：评分或读取已有报告，再导出 ATIF
 │       ├── atif_export.py      # 原始交互轨迹转换与 Harbor 格式校验
 │       ├── requirements.txt   # 评测环境依赖（Python 3.12+）
-│       ├── docker-ctx-prep.py  # Docker CLI 与 docker-rt 启动准备
+│       ├── docker_ctx_prep.py  # Docker CLI 与 docker-rt 启动准备
 │       ├── ATIF_OUTPUT.md      # ATIF-v1.8 输出约定
 │       └── CHECKLIST.md        # 后续实现清单
 └── custom_entry/
