@@ -1,0 +1,75 @@
+{
+  "id": "169a6f97-564a-450d-9716-4a14f93f731d",
+  "name": "Unsaved Workflow",
+  "nodes": [
+    {
+      "id": 1,
+      "type": "default",
+      "position": {
+        "x": 503.52941176470586,
+        "y": 304.7058823529412
+      },
+      "data": {
+        "display_name": "Early Fusion Config Builder",
+        "nodeType": "EarlyFusionConfigBuilderNode",
+        "libraryNodeId": "20307",
+        "nodeDefinition": {
+          "input": {
+            "required": {},
+            "optional": {
+              "data_channels": [
+                "INT",
+                {
+                  "default": 6
+                }
+              ],
+              "model_channels": [
+                "INT",
+                {
+                  "default": 3
+                }
+              ]
+            }
+          },
+          "output": [
+            "STRING"
+          ],
+          "output_is_list": [
+            false
+          ],
+          "output_name": [
+            "early_fusion_config"
+          ],
+          "category": "",
+          "output_node": false,
+          "experimental": false,
+          "deprecated": false,
+          "python_module": "test_nodes",
+          "id": 20307,
+          "node_type": "share",
+          "created_at": "2026-11-04 07:32:20",
+          "updated_at": "2026-11-04 07:32:20",
+          "version": 1,
+          "description": "Early-fusion Nx3→3 config for ModelTrainYoloNode. Set data_channels = 3 * num_views (2 views→6, 3 views→9, 4 views→12). Wire into ModelTrainYoloNode.early_fusion_config; leave disconnected for native 3-channel (single-view) training. Train prefers dataset.yaml channels when present.\n",
+          "is_enabled": true,
+          "metanode_deleted": false
+        },
+        "config": {
+          "data_channels": 6,
+          "model_channels": 3
+        },
+        "width": 300
+      },
+      "style": {
+        "width": 300
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.85
+  },
+  "timestamp": "2026-11-04T08:41:47.185Z"
+}

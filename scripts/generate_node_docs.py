@@ -82,6 +82,26 @@ OVERVIEWS_EN: dict[str, str] = {
     "DatasetToJsonlNode": (
         "Converts a HuggingFace dataset directory to a JSONL file path."
     ),
+    "ModelTrainYoloNode": (
+        "Runs YOLO detection / segment / classify training with the same shared "
+        "`dataset_config`, `training_config`, and `model_config` pattern as SFT/GRPO. "
+        "YOLO-only knobs come from **YOLO Training Extra Config Builder**; "
+        "wire **Early Fusion Config Builder** for multi-view (3N→3) fusion, or leave it "
+        "disconnected for native 3-channel single-view training. "
+        "`dataset_config.train_data_path` should point at a `train.jsonl` "
+        "(optional `val_data_path`); weights come from `model_config.model_path`."
+    ),
+    "YoloTrainingExtraConfigBuilderNode": (
+        "Builds `yolo_extra_config` YAML (imgsz, patience, freeze, task, …) for "
+        "**YOLO Training** — same role as GRPO Training Extra Config. "
+        "Does not set weights; wire Download/Clone Model → Model Config Builder → "
+        "`ModelTrainYoloNode.model_config`."
+    ),
+    "EarlyFusionConfigBuilderNode": (
+        "Builds early-fusion config YAML (`data_channels = 3 × num_views`) for "
+        "**YOLO Training**. Example: 2 views → 6, 3 views → 9. "
+        "Connect to `ModelTrainYoloNode.early_fusion_config`; omit for single-view 3ch."
+    ),
 }
 
 OVERVIEWS_ZH: dict[str, str] = {
@@ -149,6 +169,26 @@ OVERVIEWS_ZH: dict[str, str] = {
     "DatasetToJsonlNode": (
         "将 HuggingFace 数据集目录转换为 JSONL 文件路径。"
     ),
+    "ModelTrainYoloNode": (
+        "按 SFT/GRPO 相同的共享配置风格运行 YOLO（detect / segment / classify）训练："
+        "`dataset_config`、`training_config`、`model_config`。"
+        "YOLO 专用参数来自 **YOLO Training Extra Config Builder**；"
+        "多视图 Early Fusion（3N→3）请接 **Early Fusion Config Builder**，"
+        "不接则为原生 3 通道单图训练。"
+        "`train_data_path` 指向 `train.jsonl`（可选 `val_data_path`）；"
+        "权重来自 `model_config.model_path`。"
+    ),
+    "YoloTrainingExtraConfigBuilderNode": (
+        "构建 `yolo_extra_config` YAML（imgsz、patience、freeze、task 等），"
+        "供 **YOLO Training** 使用，对标 GRPO Training Extra Config。"
+        "本节点不设置权重；请用 Download/Clone Model → Model Config Builder "
+        "接到 `ModelTrainYoloNode.model_config`。"
+    ),
+    "EarlyFusionConfigBuilderNode": (
+        "构建 Early Fusion 配置 YAML（`data_channels = 3 × 视图数`），"
+        "供 **YOLO Training** 使用。例如 2 视图→6，3 视图→9。"
+        "接到 `ModelTrainYoloNode.early_fusion_config`；单图 3ch 训练可不接。"
+    ),
 }
 
 DISPLAY_TITLES_EN: dict[str, str] = {
@@ -162,6 +202,9 @@ DISPLAY_TITLES_EN: dict[str, str] = {
     "RewardItemBuilderCustomNode": "Reward Item Builder (Custom Entry)",
     "ModelEvalApiNode": "Benchmark By API",
     "ModelTrainOPDNode": "OPD Training",
+    "ModelTrainYoloNode": "YOLO Training",
+    "YoloTrainingExtraConfigBuilderNode": "YOLO Training Extra Config Builder",
+    "EarlyFusionConfigBuilderNode": "Early Fusion Config Builder",
 }
 
 DISPLAY_TITLES_ZH: dict[str, str] = {
@@ -175,6 +218,9 @@ DISPLAY_TITLES_ZH: dict[str, str] = {
     "RewardItemBuilderCustomNode": "Reward Item Builder（自定义入口）",
     "ModelEvalApiNode": "Benchmark By API 离线评测",
     "ModelTrainOPDNode": "OPD 训练",
+    "ModelTrainYoloNode": "YOLO 训练",
+    "YoloTrainingExtraConfigBuilderNode": "YOLO Training Extra Config Builder 节点",
+    "EarlyFusionConfigBuilderNode": "Early Fusion Config Builder 节点",
 }
 
 DEPRECATED_DOCS = {
@@ -293,6 +339,19 @@ PARAM_DESC_EN: dict[str, str] = {
     "reward_item_5": "Reward item YAML #5",
     "file_path": "File path to load or save",
     "content_to_save": "Content to write to file",
+    "yolo_extra_config": "YOLO-only extra training config YAML",
+    "early_fusion_config": "Early-fusion config YAML",
+    "early_fusion": "Whether early fusion was enabled for this training run",
+    "imgsz": "Training / inference image size",
+    "patience": "Early-stop patience in epochs (0 disables)",
+    "freeze": "Freeze first N backbone layers (string int or comma-separated indices)",
+    "workers": "DataLoader worker processes",
+    "device": "CUDA device id(s), e.g. `0` or `0,1` (empty = auto)",
+    "exist_ok": "Allow overwriting an existing `output_path` run directory",
+    "task": "YOLO task",
+    "pretrained": "Initialize from pretrained weights at `model_config.model_path`",
+    "data_channels": "Stacked input channels (`3 × num_views`, e.g. 6 for two RGB views)",
+    "model_channels": "Channels after early fusion into the YOLO backbone (usually 3)",
 }
 
 PARAM_DESC_ZH: dict[str, str] = {
@@ -404,6 +463,19 @@ PARAM_DESC_ZH: dict[str, str] = {
     "reward_item_5": "Reward item YAML #5",
     "file_path": "加载或保存的文件路径",
     "content_to_save": "写入文件的内容",
+    "yolo_extra_config": "YOLO 专用额外训练配置 YAML",
+    "early_fusion_config": "Early Fusion 配置 YAML",
+    "early_fusion": "本次训练是否启用了 Early Fusion",
+    "imgsz": "训练 / 推理图像边长",
+    "patience": "Early-stop 耐心 epoch 数（0 表示关闭）",
+    "freeze": "冻结骨干前 N 层（整数字符串，或逗号分隔层索引）",
+    "workers": "DataLoader worker 数",
+    "device": "CUDA 设备，如 `0` 或 `0,1`（空表示自动）",
+    "exist_ok": "若 `output_path` 已存在是否允许覆盖",
+    "task": "YOLO 任务类型",
+    "pretrained": "是否用 `model_config.model_path` 的预训练权重初始化",
+    "data_channels": "堆叠输入通道数（`3 × 视图数`，如双 RGB 为 6）",
+    "model_channels": "Early Fusion 后进入 YOLO 骨干的通道数（通常为 3）",
 }
 
 
