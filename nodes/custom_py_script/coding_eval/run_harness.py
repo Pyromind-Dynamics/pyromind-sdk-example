@@ -118,7 +118,7 @@ def grade_batch_predictions(
     run_id: str, docker_host: str, max_workers: int = 1,
 ) -> dict[str, dict]:
     """Grade predictions validated by read_predictions in one verifier invocation."""
-    if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
+    if max_workers < 1:
         raise ValueError("max_workers must be a positive integer")
     output_dir.mkdir(parents=True, exist_ok=True)
     task_ids = sorted(predictions)
