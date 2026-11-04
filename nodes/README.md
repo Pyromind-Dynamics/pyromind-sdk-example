@@ -75,7 +75,7 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark()`。`endpoint` 在界面上选填，可直接连接 Inference 节点输出，无需手填；运行时仍需连线传入或手动填写服务地址，缺少地址会在创建沙箱前报错。`model_name` 是必填的服务端模型 ID，直接使用填写值；`api_key` 是可选的模型端点密钥，无需鉴权时可不填，开启鉴权时填写真实密钥。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，仍为必填，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。除 `endpoint`、`api_key`、`num_tasks`、`start_index` 外，其余输入由 YAML 标为必填；必填字段的空值检查交由平台处理，主入口和推理启动函数不再检查 `num_of_sandbox` 的正整数范围，请填写大于零的整数。YAML 中必填输入排在选填输入前，Python 函数保留了原有位置参数顺序。
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark()`。`endpoint` 在界面上必填，可直接连接 Inference 节点输出或手动填写完整 API 基础地址，入口保留基本 URL 格式检查。`model_name` 是必填的服务端模型 ID，直接使用填写值；`api_key` 是可选的模型端点密钥，无需鉴权时可不填，开启鉴权时填写真实密钥。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，仍为必填，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。除 `api_key`、`num_tasks`、`start_index` 外，其余输入由 YAML 标为必填；必填字段的空值检查交由平台处理，主入口和推理启动函数不再检查 `num_of_sandbox` 的正整数范围，请填写大于零的整数。YAML 中必填输入排在选填输入前，Python 函数保留了原有位置参数顺序。
 
 节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
