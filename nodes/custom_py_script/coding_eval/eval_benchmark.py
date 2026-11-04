@@ -44,9 +44,9 @@ def _api_base(endpoint: str) -> str:
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise ValueError("endpoint must be an HTTP(S) URL")
-    if parsed.query or parsed.fragment or parsed.path not in {"", "/v1"}:
+    if parsed.query or parsed.fragment or (parsed.path and not parsed.path.endswith("/v1")):
         raise ValueError("endpoint must be a server URL or an OpenAI API base ending in /v1")
-    return endpoint if parsed.path == "/v1" else f"{endpoint}/v1"
+    return endpoint if parsed.path else f"{endpoint}/v1"
 
 
 def resolve_model_name(endpoint: str, model_name: str | None, api_key: str | None = "") -> str:
