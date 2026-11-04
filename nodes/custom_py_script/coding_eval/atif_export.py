@@ -41,8 +41,6 @@ def read_predictions(predictions_path: Path) -> dict[str, dict]:
             raise ValueError("Prediction model_patch must be a string")
         if not isinstance(prediction.get("model_name_or_path"), str) or not prediction["model_name_or_path"]:
             raise ValueError("Prediction must identify its model_name_or_path")
-    if len({prediction["model_name_or_path"] for prediction in predictions.values()}) != 1:
-        raise ValueError("All predictions in a run must use the same model")
     return dict(sorted(predictions.items()))
 
 
