@@ -93,12 +93,13 @@ def _cleanup_task_containers(docker_host: str, task_id: str | list[str], run_id:
         prefixes = {f"sweb.eval.{value.lower()}.{run_id}" for value in task_ids}
         for row in client.api.containers(all=True):
             names = row.get("Names") or [row.get("name", "")]
-            owned = any(
-                name.lstrip("/") in prefixes
-                or (name.lstrip("/").rsplit(".", 1)[0] in prefixes
-                    and name.rsplit(".", 1)[-1].isdigit())
-                for name in names
-            )
+            owned = False
+            for name in names:
+                normalized_name = name.lstrip("/")
+                base_name, _, retry = normalized_name.rpartition(".")
+                if normalized_name in prefixes or (base_name in prefixes and retry.isdigit()):
+                    owned = True
+                    break
             if owned:
                 client.api.remove_container(row.get("Id") or row["id"], force=True)
     except Exception as exc:

@@ -30,17 +30,6 @@ def trajectory_model():
 
 def read_predictions(predictions_path: Path) -> dict[str, dict]:
     predictions = json.loads(predictions_path.read_text(encoding="utf-8"))
-    if not isinstance(predictions, dict) or not predictions:
-        raise ValueError("EvalBenchmark requires at least one prediction")
-    for task_id, prediction in predictions.items():
-        if not task_id or task_id in {".", ".."} or "/" in task_id or "\\" in task_id:
-            raise ValueError("Invalid prediction task ID")
-        if not isinstance(prediction, dict) or prediction.get("instance_id") != task_id:
-            raise ValueError("Prediction key and instance_id must match")
-        if not isinstance(prediction.get("model_patch"), str):
-            raise ValueError("Prediction model_patch must be a string")
-        if not isinstance(prediction.get("model_name_or_path"), str) or not prediction["model_name_or_path"]:
-            raise ValueError("Prediction must identify its model_name_or_path")
     return dict(sorted(predictions.items()))
 
 
@@ -99,29 +88,11 @@ def _metrics(message: dict) -> dict:
     return metrics
 
 
-def convert_to_atif(
-    native: dict, *, task_id: str, model_name: str, session_id: str,
-    benchmark: dict | None = None,
-) -> dict:
-    """Convert saved chat-completions messages without synthesizing events."""
-    if native.get("trajectory_format") != "mini-swe-agent-1.1":
-        raise ValueError("Unsupported native trajectory format")
-    if native.get("instance_id") != task_id:
-        raise ValueError("Native trajectory and prediction task IDs must match")
-    messages = native.get("messages")
-    if not isinstance(messages, list) or not messages:
-        raise ValueError("Native trajectory must contain actual messages")
-    info = native.get("info") or {}
-    version = info.get("mini_version")
-    if not version:
-        raise ValueError("Native trajectory is missing the agent version")
-    if benchmark is not None and benchmark.get("task_id") != task_id:
-        raise ValueError("Grading result and trajectory task IDs must match")
+def _steps_from_messages(messages: list) -> list[dict]:
+    """Build steps and attach each tool observation to its agent call."""
     steps = []
-    calls = {}
+    call_owners = {}
     for index, message in enumerate(messages):
-        if not isinstance(message, dict):
-            raise ValueError(f"Invalid native message at index {index}")
         role = message.get("role")
         extra = message.get("extra") or {}
         content = _content(message.get("content"))
@@ -131,7 +102,10 @@ def convert_to_atif(
         )
         if is_feedback:
             call_id = message.get("tool_call_id")
-            owner = calls.get(call_id) if call_id else (steps[-1] if steps else None)
+            if call_id:
+                owner = call_owners.get(call_id)
+            else:
+                owner = steps[-1] if steps else None
             if owner is None or owner["source"] != "agent":
                 raise ValueError(f"Native observation at index {index} has no matching agent call")
             result = {"content": content}
@@ -144,8 +118,6 @@ def convert_to_atif(
                 result["extra"] = metadata
             owner.setdefault("observation", {"results": []})["results"].append(result)
             continue
-        if role not in {"system", "user", "assistant", "exit"}:
-            raise ValueError(f"Unsupported native message role at index {index}")
         step = {
             "step_id": len(steps) + 1,
             "source": {"assistant": "agent", "exit": "system"}.get(role, role),
@@ -170,14 +142,32 @@ def convert_to_atif(
                 if isinstance(arguments, str):
                     arguments = json.loads(arguments)
                 call_id = call.get("id")
-                if not isinstance(call_id, str) or not call_id or call_id in calls:
+                if not isinstance(call_id, str) or not call_id or call_id in call_owners:
                     raise ValueError("Native tool call IDs must be nonempty and unique")
                 step.setdefault("tool_calls", []).append({
                     "tool_call_id": call_id,
                     "function_name": function["name"], "arguments": arguments,
                 })
-                calls[call_id] = step
+                call_owners[call_id] = step
         steps.append(step)
+    return steps
+
+
+def convert_to_atif(
+    native: dict, *, task_id: str, model_name: str, session_id: str,
+    benchmark: dict | None = None,
+) -> dict:
+    """Convert saved chat-completions messages without synthesizing events."""
+    if native.get("trajectory_format") != "mini-swe-agent-1.1":
+        raise ValueError("Unsupported native trajectory format")
+    if native.get("instance_id") != task_id:
+        raise ValueError("Native trajectory and prediction task IDs must match")
+    messages = native.get("messages")
+    info = native.get("info") or {}
+    version = info.get("mini_version")
+    if benchmark is not None and benchmark.get("task_id") != task_id:
+        raise ValueError("Grading result and trajectory task IDs must match")
+    steps = _steps_from_messages(messages)
     agents = [step for step in steps if step["source"] == "agent"]
     if not agents:
         raise ValueError(
