@@ -117,9 +117,7 @@ def grade_batch_predictions(
     predictions_path: Path, predictions: dict[str, dict], output_dir: Path, *,
     run_id: str, docker_host: str, max_workers: int = 1,
 ) -> dict[str, dict]:
-    """Grade every selected task in one verifier invocation."""
-    if not predictions:
-        raise ValueError("At least one prediction is required for grading")
+    """Grade predictions validated by read_predictions in one verifier invocation."""
     if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
         raise ValueError("max_workers must be a positive integer")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -127,8 +125,6 @@ def grade_batch_predictions(
     model_directory = predictions[task_ids[0]]["model_name_or_path"].replace("/", "__")
     for value in (*task_ids, model_directory, run_id):
         _safe_component(value)
-    if any(prediction["instance_id"] != task_id for task_id, prediction in predictions.items()):
-        raise ValueError("Prediction key and instance_id must match")
     check_docker_host(docker_host)
     runner = Path(os.environ.get("PYROMIND_HARNESS_RUNNER", __file__)).resolve()
     if not runner.is_file():

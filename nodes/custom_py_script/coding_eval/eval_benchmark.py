@@ -100,8 +100,6 @@ def eval_benchmark(
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
     slice_spec = _task_slice(num_tasks, start_index)
-    if not isinstance(endpoint, str):
-        raise ValueError("endpoint must be an HTTP(S) API base URL")
     endpoint = endpoint.strip().rstrip("/")
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
