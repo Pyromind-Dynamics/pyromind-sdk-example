@@ -6,9 +6,7 @@ import runpy
 import subprocess
 from importlib import import_module
 from pathlib import Path
-from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
 from uuid import uuid4
 
 
@@ -30,62 +28,6 @@ def _task_slice(num_tasks: int, start_index: int) -> str:
     if isinstance(start_index, bool) or not isinstance(start_index, int) or start_index < 0:
         raise ValueError("start_index must be a nonnegative integer")
     return f"{start_index}:{start_index + num_tasks}"
-
-
-def resolve_model_name(endpoint: str, model_name: str | None, api_key: str | None = "") -> str:
-    """Read served IDs without inference and resolve only unambiguous aliases."""
-    requested = (model_name or "").strip()
-    headers = {"Accept": "application/json"}
-    service_key = (api_key or "").strip()
-    if service_key:
-        headers["Authorization"] = f"Bearer {service_key}"
-    request = Request(
-        f"{endpoint}/models",
-        headers=headers,
-    )
-    try:
-        with urlopen(request, timeout=10) as response:
-            payload = json.load(response)
-    except HTTPError as exc:
-        raise RuntimeError(
-            f"Model service /v1/models returned HTTP {exc.code}; "
-            "check the endpoint and model service API key before starting evaluation."
-        ) from exc
-    except (URLError, TimeoutError, OSError) as exc:
-        raise RuntimeError(
-            "Cannot read model service /v1/models; check that the service is ready "
-            "and reachable from the evaluation Pod."
-        ) from exc
-    except (ValueError, UnicodeError) as exc:
-        raise ValueError("Model service /v1/models did not return valid JSON") from exc
-    if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
-        raise ValueError("Model service /v1/models must return a data array")
-    ids = sorted({
-        item["id"] for item in payload["data"]
-        if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"]
-    })
-    available = ", ".join(repr(value) for value in ids) or "(none)"
-    if not requested:
-        if len(ids) == 1:
-            print(f"Discovered served model ID {ids[0]!r}", flush=True)
-            return ids[0]
-        raise ValueError(
-            "model_name may be omitted only when /v1/models returns exactly one model. "
-            f"Available model IDs: {available}. Fill model_name to choose a model."
-        )
-    if requested in ids:
-        return requested
-    # A short directory/model name is a common UI input. Never override an
-    # explicitly supplied full ID or select an unrelated sole available model.
-    matches = [value for value in ids if value.rstrip("/").rsplit("/", 1)[-1] == requested]
-    if "/" not in requested and len(matches) == 1:
-        resolved = matches[0]
-        print(f"Resolved model_name {requested!r} to served ID {resolved!r}", flush=True)
-        return resolved
-    raise ValueError(
-        f"model_name {requested!r} is not an exact or unambiguous served ID. "
-        f"Available model IDs: {available}. Use the exact data[].id from /v1/models."
-    )
 
 
 def launch_mini_extra_swebench(
@@ -179,6 +121,9 @@ def eval_benchmark(
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
         raise ValueError("endpoint must be an HTTP(S) API base URL without query parameters or fragments")
+    if not isinstance(model_name, str) or not model_name.strip():
+        raise ValueError("model_name must not be empty; enter the model ID served by the model service")
+    model_name = model_name.strip()
     for name, value in (("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
         if not value.strip():
             raise ValueError(f"{name} must not be empty")
@@ -191,7 +136,6 @@ def eval_benchmark(
     finisher = runpy.run_path(str(script_dir / "finish_evaluation.py"))
     exporter["trajectory_model"]()
     check_model_dependencies()
-    model_name = resolve_model_name(endpoint, model_name, api_key)
     run_id = f"eval-{uuid4().hex}"
     run_dir = Path(output_dir).expanduser().resolve() / run_id
     run_dir.mkdir(parents=True)

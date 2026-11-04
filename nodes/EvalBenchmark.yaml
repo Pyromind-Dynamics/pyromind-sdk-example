@@ -6,6 +6,10 @@ python_code: /workspace/nodes/custom_py_script/coding_eval/eval_benchmark.py
 function_name: eval_benchmark
 python_command: python3
 parameters:
+  - name: model_name
+    dtype: STRING
+    type: input
+    required_type: required
   - name: pyromind_api_key
     dtype: STRING
     type: input
@@ -23,10 +27,6 @@ parameters:
     type: input
     required_type: required
   - name: endpoint
-    dtype: STRING
-    type: input
-    required_type: optional
-  - name: model_name
     dtype: STRING
     type: input
     required_type: optional
