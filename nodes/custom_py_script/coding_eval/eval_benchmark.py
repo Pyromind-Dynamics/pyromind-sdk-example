@@ -100,11 +100,6 @@ def eval_benchmark(
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
     slice_spec = _task_slice(num_tasks, start_index)
-    if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
-        raise ValueError(
-            "endpoint is empty; connect the Inference node's endpoint output "
-            "or enter the model service HTTP(S) API base URL before running evaluation."
-        )
     if not isinstance(endpoint, str):
         raise ValueError("endpoint must be an HTTP(S) API base URL")
     endpoint = endpoint.strip().rstrip("/")
