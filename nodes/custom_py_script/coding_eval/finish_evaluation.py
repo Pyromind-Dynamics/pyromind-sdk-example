@@ -97,8 +97,6 @@ def main():
     source.add_argument("--docker-host", help="Run only grading against this existing Docker host")
     parser.add_argument("--grading-run-id", help="Original harness run ID, required for report replay")
     args = parser.parse_args()
-    if args.grading_dir is not None and not args.grading_run_id:
-        parser.error("--grading-run-id is required with --grading-dir")
     run_id = f"eval-{uuid4().hex}"
     output = finish_evaluation(
         args.predictions, args.output_dir / run_id,

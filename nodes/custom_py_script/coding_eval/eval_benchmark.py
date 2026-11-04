@@ -23,9 +23,9 @@ def check_model_dependencies() -> None:
 
 
 def _task_slice(num_tasks: int, start_index: int) -> str:
-    if isinstance(num_tasks, bool) or not isinstance(num_tasks, int) or num_tasks < 1:
+    if num_tasks < 1:
         raise ValueError("num_tasks must be a positive integer")
-    if isinstance(start_index, bool) or not isinstance(start_index, int) or start_index < 0:
+    if start_index < 0:
         raise ValueError("start_index must be a nonnegative integer")
     return f"{start_index}:{start_index + num_tasks}"
 
