@@ -134,12 +134,9 @@ def grade_batch_predictions(
         raise ValueError("At least one prediction is required for grading")
     if isinstance(max_workers, bool) or not isinstance(max_workers, int) or max_workers < 1:
         raise ValueError("max_workers must be a positive integer")
-    models = {prediction["model_name_or_path"] for prediction in predictions.values()}
-    if len(models) != 1:
-        raise ValueError("All predictions in a run must use the same model")
     output_dir.mkdir(parents=True, exist_ok=True)
     task_ids = sorted(predictions)
-    model_directory = next(iter(models)).replace("/", "__")
+    model_directory = predictions[task_ids[0]]["model_name_or_path"].replace("/", "__")
     for value in (*task_ids, model_directory, run_id):
         _safe_component(value)
     if any(prediction["instance_id"] != task_id for task_id, prediction in predictions.items()):

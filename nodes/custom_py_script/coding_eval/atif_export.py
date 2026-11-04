@@ -115,7 +115,7 @@ def convert_to_atif(
         raise ValueError("Native trajectory must contain actual messages")
     info = native.get("info") or {}
     version = info.get("mini_version")
-    if not isinstance(version, str) or not version:
+    if not version:
         raise ValueError("Native trajectory is missing the agent version")
     if benchmark is not None and benchmark.get("task_id") != task_id:
         raise ValueError("Grading result and trajectory task IDs must match")
@@ -171,8 +171,6 @@ def convert_to_atif(
                 arguments = function["arguments"]
                 if isinstance(arguments, str):
                     arguments = json.loads(arguments)
-                if not isinstance(arguments, dict):
-                    raise ValueError("Tool call arguments must be a JSON object")
                 call_id = call.get("id")
                 if not isinstance(call_id, str) or not call_id or call_id in calls:
                     raise ValueError("Native tool call IDs must be nonempty and unique")
@@ -252,6 +250,11 @@ def export_prediction_atif(
         session_id=session_id, benchmark=benchmark,
     )
     document["extra"]["native_trajectory_path"] = str(native_path.resolve())
+    return write_atif(document, output_path)
+
+
+def write_atif(document: dict, output_path: Path) -> Path:
+    """Atomically write an already validated ATIF document."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = output_path.with_name(f".{output_path.name}.{uuid4().hex}.tmp")
     try:
