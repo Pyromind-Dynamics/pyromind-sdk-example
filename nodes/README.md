@@ -79,7 +79,9 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
-创建沙箱前，节点会用模型服务密钥读取同一 endpoint 的 `GET /v1/models`，检查服务连通性及模型 ID。Inference 节点输出的 `endpoint` 是服务地址，不单独包含模型名称。`model_name` 不传或留空时，服务返回唯一模型 ID 则自动使用；没有模型或有多个模型时会列出可用名称，要求明确选择。有填写值时，优先精确匹配 `data[].id`。例如只填写 `Qwen3.5-4B`，而服务唯一匹配的 ID 为 `/workspace/.root/models/Qwen3.5-4B` 时，会自动使用完整 ID，并将其记录到评测和 ATIF 元数据。不存在、歧义、鉴权失败、接口不可用或返回无效数据时，会在分配沙箱前报错；不会替换名称不相关的显式模型，也不会改写显式填写的完整 ID。无需手动额外添加 `openai/` 前缀。可选输入的界面变化需重新加载节点定义。
+`endpoint` 支持服务根地址或以 `/v1` 结尾的 API 基础地址，包括 `https://服务域名/inference/服务ID/v1`、`https://服务域名/compatible-mode/v1` 等带前缀的路径。根地址会补上 `/v1`；已提供的完整基础地址会保留路径，模型列表请求追加 `/models`，推理调用使用同一基础地址。不要填写 `/chat/completions` 等具体接口地址，也不要把密钥放在 URL 查询参数中。
+
+创建沙箱前，节点会用模型服务密钥读取同一 endpoint 的模型列表接口，检查服务连通性及模型 ID。Inference 节点输出的 `endpoint` 是服务地址，不单独包含模型名称。`model_name` 不传或留空时，服务返回唯一模型 ID 则自动使用；没有模型或有多个模型时会列出可用名称，要求明确选择。有填写值时，优先精确匹配 `data[].id`。例如只填写 `Qwen3.5-4B`，而服务唯一匹配的 ID 为 `/workspace/.root/models/Qwen3.5-4B` 时，会自动使用完整 ID，并将其记录到评测和 ATIF 元数据。不存在、歧义、鉴权失败、接口不可用或返回无效数据时，会在分配沙箱前报错；不会替换名称不相关的显式模型，也不会改写显式填写的完整 ID。无需手动额外添加 `openai/` 前缀。可选输入的界面变化需重新加载节点定义。
 
 `api_key` 留空时，模型元数据查询不发送 Authorization 头；推理客户端内部使用无效的 `dummy` 占位值满足 OpenAI 客户端要求，并覆盖继承环境中的 `OPENAI_API_KEY`，不会借用已有的真实密钥。填写了密钥时，元数据查询和推理都使用该密钥。开启鉴权的服务仍必须填写正确密钥。
 
