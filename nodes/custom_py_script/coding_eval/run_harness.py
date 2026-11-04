@@ -11,10 +11,41 @@ import signal
 import subprocess
 import sys
 import warnings
+from functools import wraps
+from inspect import signature
 from pathlib import Path
 
 
 DATASET_NAME = "SWE-bench/SWE-bench_Verified"
+
+
+def configure_docker_rt_root_exec() -> None:
+    """Avoid a redundant root switch when docker-rt's default identity is root.
+
+    SDK 0.1.15 translates an explicit exec user into setpriv --init-groups,
+    which can fail in a sandbox that already runs as root but cannot setgroups.
+    Verify the actual default UID/GID before using it; never change privileges.
+    This adapter is installed only in the verifier subprocess using docker-rt.
+    """
+    from docker.models.containers import Container
+
+    original = Container.exec_run
+    parameters = signature(original)
+
+    @wraps(original)
+    def exec_run(container, *args, **kwargs):
+        bound = parameters.bind(container, *args, **kwargs)
+        if bound.arguments.get("user") in {"root", "0", "root:root", "0:0"}:
+            identity = original(container, ["/bin/sh", "-c", "id -u; id -g"])
+            if identity.exit_code != 0 or identity.output.split() != [b"0", b"0"]:
+                raise RuntimeError(
+                    "docker-rt harness requires the sandbox's default UID and GID to be 0; "
+                    "the current sandbox cannot use the root exec compatibility adapter."
+                )
+            bound.arguments["user"] = ""
+        return original(*bound.args, **bound.kwargs)
+
+    Container.exec_run = exec_run
 
 
 def _safe_component(value: str) -> None:
@@ -209,6 +240,12 @@ def main() -> None:
 
     docker.from_env = from_env
     DockerClient.from_env = client_from_env
+    client = docker.from_env()
+    try:
+        if client.version().get("GitCommit") == "docker-rt":
+            configure_docker_rt_root_exec()
+    finally:
+        client.close()
     sys.argv = ["swebench.harness.run_evaluation", *sys.argv[1:]]
     runpy.run_module("swebench.harness.run_evaluation", run_name="__main__", alter_sys=True)
 
