@@ -29,13 +29,16 @@ def finish_evaluation(
     predictions_path = predictions_path.resolve()
     output_dir = output_dir.resolve()
     predictions = exporter["read_predictions"](predictions_path)
-    # Validate EVERY trace before starting a costly verifier subprocess.
+    # Convert and validate every trace once before starting the verifier.
+    documents = {}
     for task_id in predictions:
         native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
         native = json.loads(native_path.read_text(encoding="utf-8"))
-        exporter["convert_to_atif"](
+        document = exporter["convert_to_atif"](
             native, task_id=task_id, model_name=model_name, session_id=run_id,
         )
+        document["extra"]["native_trajectory_path"] = str(native_path.resolve())
+        documents[task_id] = document
     if grading_dir is not None:
         benchmarks = {
             task_id: grader["read_grading_result"](
@@ -59,12 +62,13 @@ def finish_evaluation(
     single_task = len(predictions) == 1
     for task_id in predictions:
         benchmark = benchmarks[task_id]
+        if benchmark.get("task_id") != task_id:
+            raise ValueError("Grading result and trajectory task IDs must match")
         target = (output_dir / "trajectory.atif.json" if single_task else
                   output_dir / "trajectories" / f"{task_id}.atif.json")
-        output = exporter["export_prediction_atif"](
-            predictions[task_id], predictions_path.parent, target,
-            model_name=model_name, session_id=run_id, benchmark=benchmark,
-        )
+        document = documents.pop(task_id)
+        document["final_metrics"]["extra"]["benchmark"] = benchmark
+        output = exporter["write_atif"](document, target)
         tasks.append({"task_id": task_id, "output_file_path": str(output),
                       "score": benchmark["score"], "resolved": benchmark.get("resolved")})
     summary = {

@@ -22,6 +22,7 @@
 - [x] Implement a verifier invocation and capture its score and per-task results; live execution is still unverified.
 - [x] Convert saved chat-completions user, agent, tool, and observation events into ATIF-v1.8 steps; place verifier results in `final_metrics.extra`.
 - [x] Validate against Harbor 0.25.0's ATIF reference models and return the ATIF file path as `output_file_path`.
+- [x] Delegate tool argument and agent version type validation to Harbor; reuse each validated trajectory when attaching grading results and writing the final ATIF.
 - [x] Verify conversion, result handling and node orchestration with synthetic artifacts and mocked inference/verifier/Docker calls.
 - [x] For multiple tasks, run the verifier once, write one validated ATIF per task and expose their paths/scores through `manifest.json`; preserve direct ATIF output for one task.
 - [x] Verify multi-task selection, concurrency, task/report association, aggregate scores, and failure handling with synthetic artifacts and mocked calls.
