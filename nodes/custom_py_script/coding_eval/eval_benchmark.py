@@ -32,23 +32,6 @@ def _task_slice(num_tasks: int, start_index: int) -> str:
     return f"{start_index}:{start_index + num_tasks}"
 
 
-def _api_base(endpoint: str) -> str:
-    if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
-        raise ValueError(
-            "endpoint is empty; connect the Inference node's endpoint output "
-            "or enter the model service HTTP(S) URL before running evaluation."
-        )
-    if not isinstance(endpoint, str):
-        raise ValueError("endpoint must be an HTTP(S) URL")
-    endpoint = endpoint.strip().rstrip("/")
-    parsed = urlsplit(endpoint)
-    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
-        raise ValueError("endpoint must be an HTTP(S) URL")
-    if parsed.query or parsed.fragment or (parsed.path and not parsed.path.endswith("/v1")):
-        raise ValueError("endpoint must be a server URL or an OpenAI API base ending in /v1")
-    return endpoint if parsed.path else f"{endpoint}/v1"
-
-
 def resolve_model_name(endpoint: str, model_name: str | None, api_key: str | None = "") -> str:
     """Read served IDs without inference and resolve only unambiguous aliases."""
     requested = (model_name or "").strip()
@@ -57,7 +40,7 @@ def resolve_model_name(endpoint: str, model_name: str | None, api_key: str | Non
     if service_key:
         headers["Authorization"] = f"Bearer {service_key}"
     request = Request(
-        f"{_api_base(endpoint)}/models",
+        f"{endpoint}/models",
         headers=headers,
     )
     try:
@@ -129,7 +112,6 @@ def launch_mini_extra_swebench(
     if not model_name.strip():
         raise ValueError("model_name must not be empty")
 
-    api_base = _api_base(endpoint)
     litellm_model = f"openai/{model_name.strip()}"
     runs_dir = Path(output_dir).expanduser().resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
@@ -141,7 +123,7 @@ def launch_mini_extra_swebench(
         "-c", f"model.model_name={json.dumps(litellm_model)}",
         "-c", "model.cost_tracking=ignore_errors",
         "-c", "model.model_kwargs.custom_llm_provider=openai",
-        "-c", f"model.model_kwargs.api_base={json.dumps(api_base)}",
+        "-c", f"model.model_kwargs.api_base={json.dumps(endpoint)}",
         "-c", "model.model_kwargs.drop_params=true",
         "-c", "model.model_kwargs.timeout=300",
         "-c", "agent.cost_limit=9999",
@@ -186,7 +168,17 @@ def eval_benchmark(
     if not output_dir.strip():
         raise ValueError("output_dir must not be empty")
     _task_slice(num_tasks, start_index)
-    _api_base(endpoint)
+    if endpoint is None or (isinstance(endpoint, str) and not endpoint.strip()):
+        raise ValueError(
+            "endpoint is empty; connect the Inference node's endpoint output "
+            "or enter the model service HTTP(S) API base URL before running evaluation."
+        )
+    if not isinstance(endpoint, str):
+        raise ValueError("endpoint must be an HTTP(S) API base URL")
+    endpoint = endpoint.strip().rstrip("/")
+    parsed = urlsplit(endpoint)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
+        raise ValueError("endpoint must be an HTTP(S) API base URL without query parameters or fragments")
     for name, value in (("pyromind_api_key", pyromind_api_key), ("cluster", cluster)):
         if not value.strip():
             raise ValueError(f"{name} must not be empty")
