@@ -10,8 +10,9 @@ from urllib.parse import urlsplit
 from uuid import uuid4
 
 from atif_export import trajectory_model
-from docker_ctx_prep import prepare_docker_context, stop_docker_context
+from docker_ctx_prep import DOCKER_CLI_PATH, prepare_docker_context, stop_docker_context
 from finish_evaluation import finish_evaluation
+from sandbox_tracking import write_agent_docker_launcher
 
 
 def check_model_dependencies() -> None:
@@ -41,6 +42,7 @@ def launch_mini_extra_swebench(
     works: int,
     output_dir: str,
     *,
+    run_id: str,
     docker_host: str | None = None,
     slice_spec: str = "0:1",
 ) -> Path:
@@ -53,6 +55,7 @@ def launch_mini_extra_swebench(
     litellm_model = f"openai/{model_name}"
     runs_dir = Path(output_dir).expanduser().resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
+    docker_launcher = write_agent_docker_launcher(runs_dir, run_id, DOCKER_CLI_PATH)
 
     command = [
         sys.executable, "-m", "minisweagent.run.utilities.mini_extra",
@@ -68,6 +71,7 @@ def launch_mini_extra_swebench(
         "-c", "agent.wall_time_limit_seconds=7000",
         "-c", "agent.step_limit=150",
         "-c", "environment.pull_timeout=7200",
+        "-c", f"environment.executable={json.dumps(str(docker_launcher))}",
         "--subset", "verified",
         "--split", "test",
         "--slice", slice_spec,
@@ -121,6 +125,7 @@ def eval_benchmark(
     try:
         predictions = launch_mini_extra_swebench(
             endpoint, model_name, api_key, works, str(runs_dir),
+            run_id=run_id,
             docker_host=docker_host,
             slice_spec=slice_spec,
         )

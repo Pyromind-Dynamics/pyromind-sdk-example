@@ -15,8 +15,29 @@ from functools import wraps
 from inspect import signature
 from pathlib import Path
 
+from sandbox_tracking import container_belongs_to_run, record_container
 
 DATASET_NAME = "SWE-bench/SWE-bench_Verified"
+
+
+def configure_container_tracking(run_dir: Path, run_id: str) -> None:
+    """Record verifier IDs as soon as Docker creates them, before startup."""
+    from docker.api.container import ContainerApiMixin
+
+    original = ContainerApiMixin.create_container_from_config
+    parameters = signature(original)
+
+    @wraps(original)
+    def create_container(api, *args, **kwargs):
+        bound = parameters.bind(api, *args, **kwargs)
+        name = bound.arguments.get("name") or ""
+        if not container_belongs_to_run(name, run_id):
+            raise ValueError("Verifier container name does not belong to this run")
+        result = original(api, *args, **kwargs)
+        record_container(run_dir, name, result["Id"])
+        return result
+
+    ContainerApiMixin.create_container_from_config = create_container
 
 
 def configure_docker_rt_root_exec() -> None:
@@ -151,6 +172,8 @@ def grade_batch_predictions(
     ]
     environment = os.environ.copy()
     environment["DOCKER_HOST"] = docker_host
+    environment["PYROMIND_EVAL_RUN_DIR"] = str(output_dir.resolve().parent)
+    environment["PYROMIND_EVAL_RUN_ID"] = run_id
     log_path = output_dir / "harness.log"
     with log_path.open("w", encoding="utf-8") as log:
         with subprocess.Popen(
@@ -218,6 +241,9 @@ def main() -> None:
     # do not need Docker, datasets, or a running daemon.
     import docker
     from docker.client import DockerClient
+
+    if run_dir := os.environ.get("PYROMIND_EVAL_RUN_DIR"):
+        configure_container_tracking(Path(run_dir), os.environ["PYROMIND_EVAL_RUN_ID"])
 
     original_from_env = docker.from_env
     original_client_from_env = DockerClient.from_env
