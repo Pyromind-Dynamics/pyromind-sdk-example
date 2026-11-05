@@ -86,8 +86,10 @@ invoking inference. It validates the native trace before starting any verifier.
 For multiple predictions every trace is validated before invoking the verifier
 once with all selected task IDs and bounded worker concurrency.
 Report replay requires the original harness run ID and accepts either nested
-or PyroDash-flattened task reports. The normalized result is also saved as
-`benchmark.json`. Explicit Docker grading first checks the supplied daemon;
+or PyroDash-flattened task reports. A compact `benchmark.json` always contains
+`summary` (`total_tasks`, `resolved_tasks`, `mean_score`) and a task-ID-keyed
+`tasks` object whose values contain only `status`, `resolved`, and `score`.
+This shape is the same for one or multiple tasks. Explicit Docker grading first checks the supplied daemon;
 it never starts a daemon implicitly. Synthetic reports remain synthetic even
 when their structure passes the same validators as real reports.
 

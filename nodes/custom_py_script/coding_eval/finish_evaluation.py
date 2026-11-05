@@ -72,9 +72,16 @@ def finish_evaluation(
         "resolved_tasks": sum(task["resolved"] is True for task in tasks),
         "mean_score": sum(task["score"] for task in tasks) / len(tasks),
     }
+    scores = {}
+    for task_id, benchmark in benchmarks.items():
+        scores[task_id] = {
+            "status": benchmark["status"],
+            "resolved": benchmark["resolved"],
+            "score": benchmark["score"],
+        }
     (output_dir / "benchmark.json").write_text(
         json.dumps(
-            benchmarks[tasks[0]["task_id"]] if single_task else {"summary": summary, "tasks": benchmarks},
+            {"summary": summary, "tasks": scores},
             ensure_ascii=False, indent=2, allow_nan=False,
         ) + "\n",
         encoding="utf-8",
