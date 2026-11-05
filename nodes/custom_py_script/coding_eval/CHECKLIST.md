@@ -37,6 +37,7 @@
 - [x] Require SDK 0.1.15 and check the actual docker-rt CLI capabilities; install and verify Docker CLI 27.5.1 locally.
 - [x] In the verifier subprocess, detect docker-rt and omit redundant root exec user switching only after confirming the sandbox's default UID/GID are both 0.
 - [x] Use private sockets, PID files and Docker configs; stop the owned daemon in finally and attempt scoped verifier-container cleanup on failure/timeout.
+- [x] Record created Agent and verifier container IDs with run-owned names; final cleanup checks both identities and never deletes from a global container inventory.
 - [ ] Validate remote sandbox cleanup and daemon behavior in a real Pod. Regional compatibility is outside the current scope.
 - [ ] Verify one-task execution end to end, then expand to the full benchmark.
 

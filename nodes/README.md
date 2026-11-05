@@ -20,6 +20,7 @@ nodes/
 │       ├── atif_export.py      # 原始交互轨迹转换与 Harbor 格式校验
 │       ├── requirements.txt   # 评测环境依赖（Python 3.12+）
 │       ├── docker_ctx_prep.py  # Docker CLI 与 docker-rt 启动准备
+│       ├── sandbox_tracking.py # 本次沙箱的命名、ID 记录与 Agent Docker 入口
 │       ├── ATIF_OUTPUT.md      # ATIF-v1.8 输出约定
 │       └── CHECKLIST.md        # 后续实现清单
 └── custom_entry/
@@ -185,7 +186,9 @@ output_dir/eval-<uuid>/
 ├── docker-rt.log
 ├── docker-rt-state.json       # 本次 daemon 的 socket、PID 文件及状态，不含密钥
 ├── docker-config/            # 本次运行独立的 Docker CLI 配置
+├── sandbox-containers/       # 每个容器一个 <容器名>.cid，记录实际创建的 ID
 ├── runs/
+│   ├── docker-agent          # 带运行 ID 命名并通过 --cidfile 记录 Agent 容器的入口
 │   ├── preds.json
 │   └── <task_id>/<task_id>.traj.json
 ├── verified/                 # harness 日志、汇总报告和任务测试详情
@@ -197,7 +200,9 @@ output_dir/eval-<uuid>/
 
 评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程使用本次运行的 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。超时会终止本次 verifier 进程组，并尝试清理名称匹配该任务和 run ID 的评分容器。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。
 
-每次节点运行创建私有 `/tmp/pyromind-eval-*/docker.sock`、独立 PID 文件及 Docker 配置目录。节点在 `finally` 中尝试停止自己启动的 daemon；不接管共享 `/tmp/docker-rt.sock`，不执行全局容器或镜像 prune。清理异常写入 `cleanup.log` 并发出警告。没有本次运行的 PID 文件时，不调用 SDK 的进程扫描回退。实际远程沙箱清理效果仍需在真实环境验收。
+每次节点运行创建私有 `/tmp/pyromind-eval-*/docker.sock`、独立 PID 文件及 Docker 配置目录。独立 daemon 不代表远程沙箱列表隔离，因此收尾清理不通过全量容器列表判断归属。Agent 容器名称包含本次 run ID，Docker CLI 在创建后、启动前通过 `--cidfile` 记录 ID；harness 同样在创建评分容器后立即记录 ID。各容器使用独立文件，支持多 worker 并发写入。
+
+节点在 `finally` 中只读取本次 `sandbox-containers/*.cid`，逐个检查完整 ID 和实际容器名称是否与记录及 run ID 一致，然后尝试删除容器及匿名卷，最后停止自己启动的 daemon。已经删除的容器直接跳过，归属不匹配或记录损坏时保留容器并写入 `cleanup.log`、发出警告。没有清单时不自动扫描删除其他容器，旧运行的遗留沙箱也不会自动接管。节点不接管共享 `/tmp/docker-rt.sock`，不执行全局容器或镜像 prune。没有本次运行的 PID 文件时，不调用 SDK 的进程扫描回退。实际远程沙箱清理效果仍需在真实环境验收。
 
 当前仅使用通用评分入口，区域兼容暂不在本次范围内。`PYROMIND_HARNESS_RUNNER` 仍可指定同环境中其他评分入口。真实 Pod 的镜像访问、评分执行及平台工作流尚待验证；当前工作区的解释器路径也需要在部署目标环境中确认。
 

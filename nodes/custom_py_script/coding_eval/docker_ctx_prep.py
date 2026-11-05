@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -9,6 +10,7 @@ import tempfile
 import warnings
 from pathlib import Path
 
+from sandbox_tracking import CONTAINER_RECORDS_DIR, container_belongs_to_run
 
 DOCKER_CLI_URL = "https://download.docker.com/linux/static/stable/x86_64/docker-27.5.1.tgz"
 DOCKER_CLI_PATH = Path("/usr/local/bin/docker")
@@ -128,21 +130,34 @@ def stop_docker_context(docker_host: str, log_file: str) -> None:
 
 
 def _remove_sandbox_containers(docker_host: str, run_dir: Path) -> None:
-    """Remove all containers owned by this run's private Docker daemon."""
+    """Remove recorded IDs only after checking their exact run-owned names."""
+    records = list((run_dir / CONTAINER_RECORDS_DIR).glob("*.cid"))
+    if not records:
+        return
     client = None
     errors = []
     try:
         import docker
 
         client = docker.DockerClient(base_url=docker_host, timeout=30)
-        for container in client.api.containers(all=True):
-            container_id = container.get("Id") or container["id"]
+        for record in records:
             try:
+                name = record.stem
+                container_id = record.read_text(encoding="utf-8").strip()
+                if not container_belongs_to_run(name, run_dir.name):
+                    raise ValueError(f"{record.name}: name does not belong to this run")
+                if not re.fullmatch(r"[0-9a-f]{64}", container_id):
+                    raise ValueError(f"{record.name}: invalid container ID")
+                container = client.api.inspect_container(container_id)
+                if container["Id"] != container_id or container["Name"].lstrip("/") != name:
+                    raise ValueError(f"{record.name}: container identity does not match its record")
                 client.api.remove_container(container_id, force=True, v=True)
+            except docker.errors.NotFound:
+                continue
             except Exception as exc:
-                errors.append(type(exc).__name__)
+                errors.append(f"{type(exc).__name__}: {exc}")
     except Exception as exc:
-        errors.append(type(exc).__name__)
+        errors.append(f"{type(exc).__name__}: {exc}")
     finally:
         if client is not None:
             client.close()
