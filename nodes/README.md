@@ -145,11 +145,13 @@ python3.12 nodes/custom_py_script/coding_eval/atif_export.py \
   --model-name your-served-model
 ```
 
-此命令仅转换已有文件；未提供评分报告时，`final_metrics.extra.benchmark.status` 为 `not_run`，不生成虚假成绩。可通过 `--grading-report path/to/benchmark.json` 传入 `run_harness.read_grading_result()` 返回的标准化结果（包含匹配的 `task_id`），不是原始 harness 汇总报告。
+此命令仅转换已有文件；未提供评分报告时，`final_metrics.extra.benchmark.status` 为 `not_run`，不生成虚假成绩。可通过 `--grading-report path/to/benchmark.json` 传入评分汇总；多任务使用 `--task-id` 选择对应结果，单任务自动选择唯一预测任务。也支持包含匹配 `task_id` 的旧版单任务标准化结果。
 
 ### 不重新推理，完成评分与 ATIF 导出
 
-`finish_evaluation.py` 提供两个入口，均不调用推理或启动 docker-rt。两种方式都会先校验所有原始轨迹，再创建独立输出目录，生成每条任务的 ATIF 与标准化评分 `benchmark.json`。多任务另生成 `manifest.json`。
+`finish_evaluation.py` 提供两个入口，均不调用推理或启动 docker-rt。两种方式都会先校验所有原始轨迹，再创建独立输出目录，生成每条任务的 ATIF 与评分汇总 `benchmark.json`。多任务另生成 `manifest.json`。
+
+`benchmark.json` 在单任务和多任务时统一只包含 `summary` 和 `tasks`。`summary` 包含 `total_tasks`、`resolved_tasks`、`mean_score`；`tasks` 以任务 ID 为键，每条结果仅保留 `status`、`resolved`、`score`。
 
 读取已有 harness 报告（不连接 Docker，也不重新评分）：
 
@@ -192,7 +194,7 @@ output_dir/eval-<uuid>/
 │   ├── preds.json
 │   └── <task_id>/<task_id>.traj.json
 ├── verified/                 # harness 日志、汇总报告和任务测试详情
-├── benchmark.json            # 标准化的单条成绩或全部任务成绩与汇总
+├── benchmark.json            # 统一的 summary 和 tasks，任务仅含 status/resolved/score
 ├── trajectory.atif.json      # 单任务时 output_file_path 指向这里
 ├── trajectories/             # 多任务时每条任务一个 <task_id>.atif.json
 └── manifest.json             # 多任务时 output_file_path 指向此索引

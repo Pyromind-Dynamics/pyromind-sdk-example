@@ -213,6 +213,9 @@ def export_atif(
         if task_id not in predictions:
             raise ValueError("Selected task_id is not in the prediction file")
         prediction = predictions[task_id]
+    if benchmark is not None and "tasks" in benchmark:
+        selected_task = prediction["instance_id"]
+        benchmark = {"task_id": selected_task, **benchmark["tasks"][selected_task]}
     return export_prediction_atif(
         prediction, predictions_path.parent, output_path,
         model_name=model_name, session_id=session_id, benchmark=benchmark,
@@ -265,8 +268,6 @@ if __name__ == "__main__":
     parser.add_argument("--grading-report", type=Path, help="Existing normalized benchmark result JSON")
     args = parser.parse_args()
     benchmark = json.loads(args.grading_report.read_text(encoding="utf-8")) if args.grading_report else None
-    if benchmark and args.task_id and "tasks" in benchmark:
-        benchmark = benchmark["tasks"][args.task_id]
     print(export_atif(
         args.predictions.resolve(), args.output.resolve(), model_name=args.model_name,
         session_id=uuid4().hex, benchmark=benchmark, task_id=args.task_id,
