@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+import sys
 from importlib import import_module
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -37,7 +38,7 @@ def launch_mini_extra_swebench(
     endpoint: str,
     model_name: str,
     api_key: str,
-    num_of_sandbox: int,
+    works: int,
     output_dir: str,
     *,
     docker_host: str | None = None,
@@ -45,7 +46,7 @@ def launch_mini_extra_swebench(
 ) -> Path:
     """Run selected SWE-bench Verified tasks and return the native preds.json.
 
-    slice_spec is prepared by the node entry point. num_of_sandbox controls
+    slice_spec is prepared by the node entry point. works controls
     concurrent mini-extra workers. The supplied endpoint
     must be reachable from the benchmark containers as well as from this process.
     """
@@ -54,7 +55,7 @@ def launch_mini_extra_swebench(
     runs_dir.mkdir(parents=True, exist_ok=True)
 
     command = [
-        "mini-extra",
+        sys.executable, "-m", "minisweagent.run.utilities.mini_extra",
         "swebench",
         "-c", "swebench.yaml",
         "-c", f"model.model_name={json.dumps(litellm_model)}",
@@ -70,7 +71,7 @@ def launch_mini_extra_swebench(
         "--subset", "verified",
         "--split", "test",
         "--slice", slice_spec,
-        "-w", str(num_of_sandbox),
+        "-w", str(works),
         "-o", str(runs_dir),
     ]
 
@@ -90,23 +91,22 @@ def launch_mini_extra_swebench(
 
 
 def eval_benchmark(
-    endpoint: str = "",
-    model_name: str = "",
-    api_key: str = "",
+    inference_config: str = "",
+    rollout_config: str = "",
     pyromind_api_key: str = "",
-    cluster: str = "",
-    num_of_sandbox: int = 1,
     output_dir: str = "",
-    num_tasks: int = 1,
-    start_index: int = 0,
 ) -> dict:
     """Keep the prediction launcher, then grade and export the actual trace."""
-    slice_spec = _task_slice(num_tasks, start_index)
-    endpoint = endpoint.strip().rstrip("/")
+    rollout = json.loads(rollout_config)
+    works = rollout["works"]
+    slice_spec = _task_slice(rollout["num_tasks"], rollout["start_index"])
+    config = json.loads(inference_config)
+    endpoint = config["endpoint"].strip().rstrip("/")
     parsed = urlsplit(endpoint)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.query or parsed.fragment:
         raise ValueError("endpoint must be an HTTP(S) API base URL without query parameters or fragments")
-    model_name = model_name.strip()
+    model_name = config["model_name"].strip()
+    api_key = config["api_key"]
     trajectory_model()
     check_model_dependencies()
     run_id = f"eval-{uuid4().hex}"
@@ -114,20 +114,20 @@ def eval_benchmark(
     run_dir.mkdir(parents=True)
     runs_dir = run_dir / "runs"
     docker_host = prepare_docker_context(
-        pyromind_api_key, cluster, str(run_dir / "docker-rt.log")
+        pyromind_api_key, "us-west-1#pre", str(run_dir / "docker-rt.log")
     )
     print("docker-rt launched")
 
     try:
         predictions = launch_mini_extra_swebench(
-            endpoint, model_name, api_key, num_of_sandbox, str(runs_dir),
+            endpoint, model_name, api_key, works, str(runs_dir),
             docker_host=docker_host,
             slice_spec=slice_spec,
         )
         output_path = finish_evaluation(
             predictions, run_dir, model_name=model_name, run_id=run_id,
             docker_host=docker_host,
-            max_workers=num_of_sandbox,
+            max_workers=works,
         )
         return {"output_file_path": str(output_path)}
     finally:

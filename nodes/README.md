@@ -7,8 +7,12 @@
 ```
 nodes/
 ├── install.sh                  # 部署脚本：复制文件并调用 reload API
-├── EvalBenchmark.yaml          # 单条/多条 SWE-bench 评测节点定义
+├── InferenceConfig.yaml        # 模型服务配置节点定义
+├── RolloutConfig.yaml          # 并发与任务选择配置节点定义
+├── minisweBenchmark.yaml       # 单条/多条 SWE-bench 评测节点定义
 ├── custom_py_script/
+│   ├── inference_config.py     # 打包 endpoint、model_name、api_key
+│   ├── rollout_config.py       # 打包 works、num_tasks、start_index
 │   └── coding_eval/
 │       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
 │       ├── run_harness.py      # 对已生成的预测补丁运行官方评分
@@ -53,7 +57,7 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 1. 编写节点定义（YAML）
 
-每个节点对应一个 `*.yaml` 文件，放在 `nodes/` 根目录。示例见 `EvalBenchmark.yaml`：
+每个节点对应一个 `*.yaml` 文件，放在 `nodes/` 根目录。示例见 `minisweBenchmark.yaml`：
 
 | 字段 | 说明 |
 |------|------|
@@ -75,7 +79,21 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 ### 2. 编写 Python 实现
 
-在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。`EvalBenchmark` 的入口为 `eval_benchmark()`。`endpoint` 在界面上必填，可直接连接 Inference 节点输出或手动填写完整 API 基础地址，入口保留基本 URL 格式检查。`model_name` 是必填的服务端模型 ID，直接使用填写值；`api_key` 是可选的模型端点密钥，无需鉴权时可不填，开启鉴权时填写真实密钥。`pyromind_api_key` 是 docker-rt 使用的 PyroMind 平台密钥，仍为必填，与模型端点密钥分开；`cluster` 填写 SDK 集群代码（如 `cn-east-1`）。除 `api_key`、`num_tasks`、`start_index` 外，其余输入由 YAML 标为必填；必填字段的空值检查交由平台处理，主入口和推理启动函数不再检查 `num_of_sandbox` 的正整数范围，请填写大于零的整数。YAML 中必填输入排在选填输入前，Python 函数保留了原有位置参数顺序。
+在 `custom_py_script/`（或任意子目录）中实现入口函数。函数参数对应 YAML 中的 **input** 参数，返回值 `dict` 的 key 对应 **output** 参数。
+
+`inference_config` 节点集中填写模型服务配置：`endpoint` 和 `model_name` 必填，`api_key` 选填。`endpoint` 可连接现有 Inference 节点输出，也可手动填写完整 API 基础地址；`model_name` 填写服务端模型 ID；`api_key` 无需鉴权时留空，开启鉴权时填写真实密钥。该节点只把三个字段打包为 JSON 字符串，通过 `inference_config` 输出端口传递。
+
+将这个输出连接到 `minisweBenchmark` 的必填 `inference_config` 输入端口。`minisweBenchmark` 的入口 `eval_benchmark()` 读取配置后继续执行推理、评分和 ATIF 导出，保留基本 URL 格式检查。原来直接连接到 `minisweBenchmark.endpoint` 的连线需要改接到 `inference_config.endpoint`：
+
+`rollout_config` 节点集中填写推理并发数和任务范围：`works` 必填，`num_tasks` 默认 `1`，`start_index` 默认 `0`。三个字段打包为 JSON 字符串，通过 `rollout_config` 输出端口连接到 `minisweBenchmark` 的同名必填输入；评测节点不再单独接收这三个字段。
+
+```text
+Inference.endpoint → inference_config.endpoint
+inference_config.inference_config → minisweBenchmark.inference_config
+rollout_config.rollout_config → minisweBenchmark.rollout_config
+```
+
+`pyromind_api_key` 仍在 `minisweBenchmark` 中填写，是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开。集群固定为 `us-west-1#pre`，节点不提供 `cluster` 输入。`minisweBenchmark` 的 `inference_config`、`rollout_config`、`pyromind_api_key`、`output_dir` 均为必填。必填字段的空值检查交由平台处理，`rollout_config.works` 请填写大于零的整数。YAML 中必填输入排在选填输入前。
 
 节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
@@ -83,15 +101,17 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 节点不请求 `/models`，不自动发现、匹配或改写模型名称。`model_name` 直接传给推理客户端并记录到 ATIF 元数据，因此需要填写服务端实际接受的模型 ID，例如服务以 `--served-model-name default` 启动时填写 `default`。无需手动额外添加 `openai/` 前缀。模型名称、鉴权和服务连通性问题由实际推理请求返回。输入必填状态的界面变化需重新加载节点定义。
 
-`api_key` 留空时，推理客户端内部使用无效的 `dummy` 占位值满足 OpenAI 客户端要求，并覆盖继承环境中的 `OPENAI_API_KEY`，不会借用已有的真实密钥。填写了密钥时，推理使用该密钥。开启鉴权的服务仍必须填写正确密钥。
+`inference_config.api_key` 留空时，传入空密钥并覆盖继承环境中的 `OPENAI_API_KEY`。填写了密钥时，推理使用该密钥。开启鉴权的服务仍必须填写正确密钥。
+
+以下参数在 `rollout_config` 节点中填写：
 
 | 参数 | 默认值 | 说明 |
 |---|---|---|
 | `num_tasks` | `1` | 本次运行的任务数量，必须为正整数 |
 | `start_index` | `0` | 从任务集哪个位置开始，必须为非负整数 |
-| `num_of_sandbox` | 必填 | 推理并发 worker 数；同时用于评分并发上限，实际评分并发不超过任务数 |
+| `works` | 必填 | 推理并发 worker 数；同时用于评分并发上限，实际评分并发不超过任务数 |
 
-例如 `num_tasks=10, start_index=0, num_of_sandbox=2` 表示选择前 10 条任务（`--slice 0:10`），并发上限为 2。`start_index=10` 则选择后面的第 11～20 条。实际数量受数据集剩余任务数限制；没有选中任务或没有有效预测时会报错。
+例如 `num_tasks=10, start_index=0, works=2` 表示选择前 10 条任务（`--slice 0:10`），并发上限为 2。`start_index=10` 则选择后面的第 11～20 条。实际数量受数据集剩余任务数限制；没有选中任务或没有有效预测时会报错。
 
 当实际产物为 1 条任务时，`output_file_path` 仍直接指向 ATIF JSON。多条时，它指向 `manifest.json` 索引，索引中的 `tasks[].output_file_path` 才是每条任务的 ATIF-v1.8 文件路径。索引本身不是 ATIF 文档。更改节点 YAML 后需 reload 才会在平台出现新的输入参数。
 
@@ -103,9 +123,9 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 2. 在 `nodes/` 根目录新增对应的 `YourNode.yaml`
 3. 运行 `./install.sh` 部署并 reload
 
-### EvalBenchmark 的环境与离线验证
+### minisweBenchmark 的环境与离线验证
 
-EvalBenchmark 的 Harbor 校验依赖 Python 3.12+；项目其他 SDK 示例的最低版本仍为 Python 3.10。请在节点实际使用的 `python3` 环境中安装依赖，或将 YAML 的 `python_command` 指向相应解释器：
+minisweBenchmark 的 Harbor 校验依赖 Python 3.12+；项目其他 SDK 示例的最低版本仍为 Python 3.10。请在节点实际使用的 `python3` 环境中安装依赖，或将 YAML 的 `python_command` 指向相应解释器：
 
 ```bash
 python3.12 -m pip install -e . -r nodes/custom_py_script/coding_eval/requirements.txt
@@ -113,7 +133,7 @@ python3.12 -m pip install -e . -r nodes/custom_py_script/coding_eval/requirement
 
 SDK 已固定为 `0.1.15`，提供本节点需要的 `docker-rt --sock/--pid-file` 功能；旧的 `0.1.9` 没有 `docker-rt` 子命令。可用 `python3.12 -m pyromind_sdk.cli docker-rt --help` 检查命令能力，该命令不会启动 daemon。
 
-工具调用依赖固定为 `litellm[mcp]==1.106.6`。该版本即使处理普通 bash function tool，也会导入 MCP handler；仅安装基础 LiteLLM 可能在第一次请求前报 `No module named 'mcp'`。节点会在创建沙箱前导入同一 handler，缺少依赖时立即提示安装本目录的 requirements。对于当前工作区的 uv 环境，使用 `uv pip install --python .venv/bin/python -r nodes/custom_py_script/coding_eval/requirements.txt` 更新依赖；更新的是 EvalBenchmark 使用的解释器，而非模型服务容器。
+工具调用依赖固定为 `litellm[mcp]==1.106.6`。该版本即使处理普通 bash function tool，也会导入 MCP handler；仅安装基础 LiteLLM 可能在第一次请求前报 `No module named 'mcp'`。节点会在创建沙箱前导入同一 handler，缺少依赖时立即提示安装本目录的 requirements。对于当前工作区的 uv 环境，使用 `uv pip install --python .venv/bin/python -r nodes/custom_py_script/coding_eval/requirements.txt` 更新依赖；更新的是 minisweBenchmark 使用的解释器，而非模型服务容器。
 
 在仓库根目录使用已有的推理产物验证转换，不启动模型、Docker 或评分程序。将下列路径和模型名称替换为实际值，预测文件同目录下需有 `<task_id>/<task_id>.traj.json`：
 

@@ -1,13 +1,13 @@
-# EvalBenchmark checklist
+# minisweBenchmark checklist
 
 ## Done
 
 - [x] Remove the copied offload routing and adapter helpers.
-- [x] Rename the custom node to `EvalBenchmark`.
+- [x] Rename the custom node to `minisweBenchmark`.
 - [x] Accept an existing HTTP(S) model endpoint as the node input.
 - [x] Require endpoint in the node form; accept either a connected Inference output or a manually supplied complete HTTP(S) API base URL.
 - [x] Accept the served model name and API key as node inputs.
-- [x] Prepare a Docker CLI and start docker-rt with a separate PyroMind API key, cluster, and log file before prediction.
+- [x] Prepare a Docker CLI and start docker-rt with a separate PyroMind API key, the fixed cluster `us-west-1#pre`, and a log file before prediction.
 - [x] Define `output_file_path` as a path to an ATIF-v1.8 trajectory JSON file; see `ATIF_OUTPUT.md`.
 - [x] Add a Python `subprocess` launcher for the SWE-bench Verified prediction phase.
 - [x] Call the prediction launcher from the `eval_benchmark` node entry.
