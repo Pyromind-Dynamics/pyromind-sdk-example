@@ -1,16 +1,16 @@
-name: EvalBenchmark
+name: minisweBenchmark
 description: Run selected SWE-bench Verified tasks, grade their patches, and return an ATIF-v1.8 file for one task or a manifest of ATIF files for multiple tasks.
-display_name: EvalBenchmark
+display_name: minisweBenchmark
 base_class: PodExecutionNode
 python_code: /workspace/nodes/custom_py_script/coding_eval/eval_benchmark.py
 function_name: eval_benchmark
-python_command: /root/pyromind-sdk-example/.venv/bin/pyromind-node-python
+python_command: /root/pyromind-sdk-example/.venv/bin/python
 parameters:
-  - name: endpoint
+  - name: inference_config
     dtype: STRING
     type: input
     required_type: required
-  - name: model_name
+  - name: rollout_config
     dtype: STRING
     type: input
     required_type: required
@@ -18,30 +18,10 @@ parameters:
     dtype: STRING
     type: input
     required_type: required
-  - name: cluster
-    dtype: STRING
-    type: input
-    required_type: required
-  - name: num_of_sandbox
-    dtype: INT
-    type: input
-    required_type: required
   - name: output_dir
     dtype: STRING
     type: input
     required_type: required
-  - name: api_key
-    dtype: STRING
-    type: input
-    required_type: optional
-  - name: num_tasks
-    dtype: INT
-    type: input
-    required_type: optional
-  - name: start_index
-    dtype: INT
-    type: input
-    required_type: optional
   - name: output_file_path
     dtype: STRING
     type: output

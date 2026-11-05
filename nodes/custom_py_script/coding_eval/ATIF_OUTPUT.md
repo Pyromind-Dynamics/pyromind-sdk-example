@@ -1,6 +1,6 @@
-# EvalBenchmark output contract
+# minisweBenchmark output contract
 
-`EvalBenchmark.yaml` declares one output, `output_file_path` (`STRING`). For one benchmark task, its value must be the path to a JSON file containing **one complete ATIF-v1.8 trajectory object**. The file is the interaction trace for that task, not a plain score or a JSON array. The native `preds.json` produced by `mini-extra swebench` does not satisfy this contract.
+`minisweBenchmark.yaml` declares one output, `output_file_path` (`STRING`). For one benchmark task, its value must be the path to a JSON file containing **one complete ATIF-v1.8 trajectory object**. The file is the interaction trace for that task, not a plain score or a JSON array. The native `preds.json` produced by `mini-extra swebench` does not satisfy this contract.
 
 The contract follows the [Harbor ATIF specification](https://github.com/harbor-framework/harbor/blob/main/rfcs/0001-trajectory-format.md). The required root fields are `schema_version`, `agent`, and `steps`. Set `schema_version` to `ATIF-v1.8`; include `session_id` and `trajectory_id` for traceability. The `agent` object needs `name` and `version`. Each step needs a sequential `step_id` starting at 1, `source` (`system`, `user`, or `agent`), and `message`. Record tool calls and their observations in the corresponding agent steps when they occur.
 

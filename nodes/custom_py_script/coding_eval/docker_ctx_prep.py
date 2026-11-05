@@ -92,7 +92,7 @@ def prepare_docker_context(pyromind_api_key: str, cluster: str = "us-west-1#pre"
 
 
 def stop_docker_context(docker_host: str, log_file: str) -> None:
-    """Stop only this run's daemon; preserve errors in a separate cleanup log."""
+    """Remove this run's sandbox containers and stop its daemon."""
     run_dir = Path(log_file).expanduser().resolve().parent
     state_path = run_dir / "docker-rt-state.json"
     try:
@@ -103,6 +103,7 @@ def stop_docker_context(docker_host: str, log_file: str) -> None:
             return
         if docker_host != f"unix://{state['socket']}":
             raise ValueError("Cleanup socket does not belong to this run")
+        _remove_sandbox_containers(docker_host, run_dir)
         pid_file = Path(state["pid_file"])
         if pid_file.is_file():
             # A malformed/missing PID would make the SDK scan other processes.
@@ -124,6 +125,34 @@ def stop_docker_context(docker_host: str, log_file: str) -> None:
         with (run_dir / "cleanup.log").open("a", encoding="utf-8") as log:
             log.write(f"Cleanup failed: {type(exc).__name__}\n")
         warnings.warn(f"Docker cleanup incomplete; see {run_dir / 'cleanup.log'}", RuntimeWarning)
+
+
+def _remove_sandbox_containers(docker_host: str, run_dir: Path) -> None:
+    """Remove all containers owned by this run's private Docker daemon."""
+    client = None
+    errors = []
+    try:
+        import docker
+
+        client = docker.DockerClient(base_url=docker_host, timeout=30)
+        for container in client.api.containers(all=True):
+            container_id = container.get("Id") or container["id"]
+            try:
+                client.api.remove_container(container_id, force=True, v=True)
+            except Exception as exc:
+                errors.append(type(exc).__name__)
+    except Exception as exc:
+        errors.append(type(exc).__name__)
+    finally:
+        if client is not None:
+            client.close()
+    if errors:
+        with (run_dir / "cleanup.log").open("a", encoding="utf-8") as log:
+            for error in errors:
+                log.write(f"Sandbox container cleanup failed: {error}\n")
+        warnings.warn(
+            f"Sandbox cleanup incomplete; see {run_dir / 'cleanup.log'}", RuntimeWarning
+        )
 
 
 def _pid_uses_socket(pid: int, socket_path: str) -> bool:

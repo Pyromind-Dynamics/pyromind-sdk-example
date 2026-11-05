@@ -1,0 +1,23 @@
+name: inference_config
+description: Bundle the model service endpoint, model name, and optional API key for evaluation.
+display_name: inference_config
+base_class: PodExecutionNode
+python_code: /workspace/nodes/custom_py_script/inference_config.py
+function_name: inference_config
+python_command: /root/pyromind-sdk-example/.venv/bin/python
+parameters:
+  - name: endpoint
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: model_name
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: api_key
+    dtype: STRING
+    type: input
+    required_type: optional
+  - name: inference_config
+    dtype: STRING
+    type: output
