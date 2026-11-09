@@ -9,7 +9,7 @@ from pathlib import Path
 from threading import Lock
 
 from docker_ctx_prep import DOCKER_CLI_PATH, remove_task_sandboxes
-from finish_evaluation import export_evaluation, load_trajectory
+from finish_evaluation import export_evaluation, load_trajectory, task_failure
 from run_harness import grade_batch_predictions
 from sandbox_tracking import write_agent_docker_launcher
 
@@ -17,11 +17,14 @@ from sandbox_tracking import write_agent_docker_launcher
 def grade_task(
     task_id: str, prediction: dict, predictions_path: Path, run_dir: Path, *,
     model_name: str, run_id: str, docker_host: str,
-) -> tuple[dict, dict]:
+) -> tuple[dict | None, dict]:
+    document = None
+    stage = "trajectory"
     try:
         document = load_trajectory(
             predictions_path, task_id, model_name=model_name, run_id=run_id,
         )
+        stage = "grading"
         print(f"[{task_id}] grading started", flush=True)
         benchmarks = grade_batch_predictions(
             predictions_path, {task_id: prediction}, run_dir / "verified" / task_id,
@@ -29,6 +32,10 @@ def grade_task(
         )
         benchmark = benchmarks[task_id]
         print(f"[{task_id}] grading completed: score={benchmark['score']}", flush=True)
+        return document, benchmark
+    except Exception as exc:
+        benchmark = task_failure(task_id, stage, exc)
+        print(f"[{task_id}] {benchmark['stage']} failed: {benchmark['error']}", flush=True)
         return document, benchmark
     finally:
         remove_task_sandboxes(docker_host, run_dir, task_id)
@@ -41,7 +48,7 @@ def run_swebench(
     from minisweagent.run.benchmarks import swebench
 
     pending = {}
-    inference_errors = []
+    benchmarks = {}
     lock = Lock()
     original = swebench.process_instance
 
@@ -72,9 +79,10 @@ def run_swebench(
                     pending[task_id] = future
             except Exception as exc:
                 # The upstream batch CLI logs worker exceptions and continues.
-                # Preserve them so an incomplete run cannot export as success.
+                # Keep the task in the summary even without a prediction file.
                 with lock:
-                    inference_errors.append(exc)
+                    benchmarks[task_id] = task_failure(task_id, "inference", exc)
+                remove_task_sandboxes(docker_host, run_dir, task_id)
                 raise
 
         swebench.process_instance = process_instance
@@ -85,14 +93,13 @@ def run_swebench(
         # Leave the pool open until every inference callback has submitted work;
         # its context waits for all verifiers before the daemon can be cleaned up.
 
-    if inference_errors:
-        raise inference_errors[0]
-    if not pending:
+    if not pending and not benchmarks:
         raise ValueError("No SWE-bench tasks completed; check num_tasks and start_index")
     documents = {}
-    benchmarks = {}
-    for task_id, future in sorted(pending.items()):
-        documents[task_id], benchmarks[task_id] = future.result()
+    for task_id, future in pending.items():
+        document, benchmarks[task_id] = future.result()
+        if document is not None:
+            documents[task_id] = document
     return export_evaluation(
         documents, benchmarks, run_dir, model_name=model_name, run_id=run_id,
     )

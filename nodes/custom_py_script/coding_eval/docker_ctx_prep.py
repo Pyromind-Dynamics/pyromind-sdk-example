@@ -65,6 +65,7 @@ def prepare_docker_context(pyromind_api_key: str, cluster: str = "us-west-1#pre"
     environment["PATH"] = f"{DOCKER_CLI_PATH.parent}{os.pathsep}{environment.get('PATH', '')}"
     environment["DOCKER_RT_SOCK"] = str(socket_path)
     environment["DOCKER_RT_PID_FILE"] = str(pid_path)
+    environment["DOCKER_RT_EXEC_MAX_CONCURRENCY"] = "6"
     environment["DOCKER_CONFIG"] = str(config_path)
     environment["PYROMIND_API_KEY"] = pyromind_api_key.strip()
     environment["PYROMIND_CLUSTER"] = cluster.strip()

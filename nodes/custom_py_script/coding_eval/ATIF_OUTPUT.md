@@ -1,6 +1,6 @@
 # minisweBenchmark output contract
 
-`minisweBenchmark.yaml` declares one output, `output_file_path` (`STRING`). For one benchmark task, its value must be the path to a JSON file containing **one complete ATIF-v1.8 trajectory object**. The file is the interaction trace for that task, not a plain score or a JSON array. The native `preds.json` produced by `mini-extra swebench` does not satisfy this contract.
+`minisweBenchmark.yaml` declares one output, `output_file_path` (`STRING`). For one benchmark task with a valid trace, its value is the path to a JSON file containing **one complete ATIF-v1.8 trajectory object**. If that task has no valid trace, the output points to a manifest describing the failure. The native `preds.json` produced by `mini-extra swebench` does not satisfy this contract.
 
 The contract follows the [Harbor ATIF specification](https://github.com/harbor-framework/harbor/blob/main/rfcs/0001-trajectory-format.md). The required root fields are `schema_version`, `agent`, and `steps`. Set `schema_version` to `ATIF-v1.8`; include `session_id` and `trajectory_id` for traceability. The `agent` object needs `name` and `version`. Each step needs a sequential `step_id` starting at 1, `source` (`system`, `user`, or `agent`), and `message`. Record tool calls and their observations in the corresponding agent steps when they occur.
 
@@ -44,10 +44,12 @@ The index records task IDs, per-task scores, resolved counts and the mean
 score. All task trajectories share a run/session ID and have distinct
 `trajectory_id` values and their own step numbering starting at one.
 
-For one task, the previous output contract is unchanged:
-`output_file_path` points directly to `trajectory.atif.json`. The actual number
-of predictions determines the output shape, including dataset slices that
-contain fewer tasks than requested.
+For one task with a valid trace, `output_file_path` points directly to
+`trajectory.atif.json`, even if grading failed; its benchmark then records the
+failure with a null score. Without a valid trace, the output is `manifest.json`.
+The number of attempted tasks determines the output shape, including tasks
+whose inference failed before saving a prediction. Missing or invalid traces
+have a null `tasks[].output_file_path`; no ATIF events are synthesized.
 
 ## Implemented export
 
@@ -64,7 +66,14 @@ verifier IDs are recorded under `sandbox-containers/<task_id>/`. As soon as that
 task's grading finishes, including unresolved results or grading errors, its
 recorded containers are removed without affecting other tasks. Cleanup failures
 retain their records for a final retry. Trajectories and reports are preserved.
-Both pools finish before final cleanup and daemon shutdown. Final export runs
+Both pools finish before final cleanup and daemon shutdown. Per-task callback,
+trajectory and grading exceptions are collected rather than aborting final
+export. A native trajectory's `info.exception_str` also identifies an inference
+failure that mini-swe-agent caught internally. Valid traces remain exportable
+when grading fails; invalid or absent traces retain only their original files
+and the manifest failure entry. Dataset-loading failures and output I/O errors
+still fail the batch, and interrupts are not converted into task results.
+Final export runs
 after all results are available and returns
 `output_dir/eval-<uuid>/trajectory.atif.json`. Each file is validated with Harbor
 0.25.0's `Trajectory` model and uses exactly `ATIF-v1.8`.
@@ -103,15 +112,23 @@ Report replay requires the original harness run ID and accepts the new online
 `verified/` directory with per-task `summary.json` and `report.json`, older per-task
 online report directories, batch report directories, and PyroDash-flattened reports.
 A compact `benchmark.json` always contains
-`summary` (`total_tasks`, `resolved_tasks`, `mean_score`) and a task-ID-keyed
-`tasks` object whose values contain only `status`, `resolved`, and `score`.
+`summary` (`total_tasks`, `scored_tasks`, `failed_tasks`, `resolved_tasks`,
+`mean_score`), a task-ID-keyed `tasks` object whose values contain only `status`,
+`resolved`, and `score`, and a separate `failed_tasks` object mapping task IDs
+to `stage` and `error`. Failed tasks use `status: "failed"`, null `resolved`
+and null `score`. The mean includes only completed scores, including ordinary
+zero scores. If all tasks fail, `scored_tasks` is zero and `mean_score` is null;
+the summary and failure list are still exported. Manifests carry the same
+summary and failure details. With no failures, the count is zero and the
+failure object is empty.
 This shape is the same for one or multiple tasks. Explicit Docker grading first checks the supplied daemon;
 it never starts a daemon implicitly. Synthetic reports remain synthetic even
 when their structure passes the same validators as real reports.
 
 `atif_export.py --task-id <id>` can export one task from a batch prediction
 file. With a multi-task `benchmark.json`, the same flag selects that task's
-normalized grading result. Missing/invalid traces and incomplete, missing or
-infrastructure-error grading results fail the run rather than fabricating
-partial success or silently omitting tasks. Ordinary unresolved tasks are
-valid results with score zero.
+normalized grading result. The standalone `finish_evaluation.py` and
+`atif_export.py` entry points retain their strict validation: missing/invalid
+traces or incomplete grading reports raise errors. Per-task failure collection
+is implemented in the online `run_swebench.py` pipeline. Ordinary unresolved
+tasks are valid results with score zero.

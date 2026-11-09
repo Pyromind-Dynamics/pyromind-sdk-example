@@ -20,6 +20,20 @@ from sandbox_tracking import container_belongs_to_run, record_container
 DATASET_NAME = "SWE-bench/SWE-bench_Verified"
 
 
+def configure_report_generation() -> None:
+    """Build scores from test reports; sandbox cleanup is tracked separately."""
+    from swebench.harness import reporting
+
+    original = reporting.make_run_report
+
+    @wraps(original)
+    def make_run_report(predictions, full_dataset, run_id, client=None, report_dir="."):
+        # The optional inventory races with other tasks deleting their sandboxes.
+        return original(predictions, full_dataset, run_id, client=None, report_dir=report_dir)
+
+    reporting.make_run_report = make_run_report
+
+
 def configure_container_tracking(
     run_dir: Path, run_id: str, *, task_id: str | None = None,
 ) -> None:
@@ -305,6 +319,7 @@ def main() -> None:
             configure_docker_rt_root_exec()
     finally:
         client.close()
+    configure_report_generation()
     sys.argv = ["swebench.harness.run_evaluation", *sys.argv[1:]]
     runpy.run_module("swebench.harness.run_evaluation", run_name="__main__", alter_sys=True)
 

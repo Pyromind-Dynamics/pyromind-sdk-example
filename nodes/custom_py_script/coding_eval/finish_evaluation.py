@@ -13,11 +13,27 @@ from atif_export import convert_to_atif, read_predictions, write_atif
 from run_harness import grade_batch_predictions, read_grading_result
 
 
+class InferenceError(RuntimeError):
+    """mini-swe-agent saved an inference exception instead of a submission."""
+
+
+def task_failure(task_id: str, stage: str, exc: Exception) -> dict:
+    """Describe an unscored task without turning a runtime error into a zero."""
+    return {
+        "task_id": task_id, "status": "failed", "resolved": None, "score": None,
+        "stage": "inference" if isinstance(exc, InferenceError) else stage,
+        "error": f"{type(exc).__name__}: {exc}",
+    }
+
+
 def load_trajectory(
     predictions_path: Path, task_id: str, *, model_name: str, run_id: str,
 ) -> dict:
     native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
     native = json.loads(native_path.read_text(encoding="utf-8"))
+    info = native["info"]
+    if "exception_str" in info:
+        raise InferenceError(f"{info['exit_status']}: {info['exception_str']}")
     document = convert_to_atif(
         native, task_id=task_id, model_name=model_name, session_id=run_id,
     )
@@ -67,29 +83,39 @@ def export_evaluation(
     documents: dict[str, dict], benchmarks: dict[str, dict], output_dir: Path, *,
     model_name: str, run_id: str,
 ) -> Path:
-    """Write scored trajectories and the compact summary without rerunning grading."""
+    """Export available trajectories and list unscored tasks separately."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    benchmarks = dict(sorted(benchmarks.items()))
     tasks = []
-    single_task = len(documents) == 1
-    for task_id in documents:
-        benchmark = benchmarks[task_id]
-        target = (
-            output_dir / "trajectory.atif.json"
-            if single_task
-            else output_dir / "trajectories" / f"{task_id}.atif.json"
-        )
-        document = documents[task_id]
-        document["final_metrics"]["extra"]["benchmark"] = benchmark
-        output = write_atif(document, target)
+    single_task = len(benchmarks) == 1
+    for task_id, benchmark in benchmarks.items():
+        output = None
+        if task_id in documents:
+            target = (
+                output_dir / "trajectory.atif.json"
+                if single_task
+                else output_dir / "trajectories" / f"{task_id}.atif.json"
+            )
+            document = documents[task_id]
+            document["final_metrics"]["extra"]["benchmark"] = benchmark
+            output = write_atif(document, target)
         tasks.append({
             "task_id": task_id,
-            "output_file_path": str(output),
+            "output_file_path": str(output) if output is not None else None,
             "score": benchmark["score"],
-            "resolved": benchmark.get("resolved"),
+            "resolved": benchmark["resolved"],
         })
+    scored = [benchmark for benchmark in benchmarks.values() if benchmark["status"] == "completed"]
+    failures = {
+        task_id: {"stage": benchmark["stage"], "error": benchmark["error"]}
+        for task_id, benchmark in benchmarks.items() if benchmark["status"] == "failed"
+    }
     summary = {
         "total_tasks": len(tasks),
+        "scored_tasks": len(scored),
+        "failed_tasks": len(failures),
         "resolved_tasks": sum(task["resolved"] is True for task in tasks),
-        "mean_score": sum(task["score"] for task in tasks) / len(tasks),
+        "mean_score": sum(benchmark["score"] for benchmark in scored) / len(scored) if scored else None,
     }
     scores = {}
     for task_id, benchmark in benchmarks.items():
@@ -100,17 +126,17 @@ def export_evaluation(
         }
     (output_dir / "benchmark.json").write_text(
         json.dumps(
-            {"summary": summary, "tasks": scores},
+            {"summary": summary, "tasks": scores, "failed_tasks": failures},
             ensure_ascii=False, indent=2, allow_nan=False,
         ) + "\n",
         encoding="utf-8",
     )
-    if single_task:
-        return output
+    if single_task and tasks[0]["output_file_path"] is not None:
+        return Path(tasks[0]["output_file_path"])
     manifest = {
         "schema_version": "EvalBenchmarkManifest-v1", "trajectory_schema_version": "ATIF-v1.8",
         "session_id": run_id, "benchmark": "SWE-bench Verified", "model_name": model_name,
-        "summary": summary, "tasks": tasks,
+        "summary": summary, "tasks": tasks, "failed_tasks": failures,
     }
     output = output_dir / "manifest.json"
     output.write_text(
