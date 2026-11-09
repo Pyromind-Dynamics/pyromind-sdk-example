@@ -20,7 +20,9 @@ from sandbox_tracking import container_belongs_to_run, record_container
 DATASET_NAME = "SWE-bench/SWE-bench_Verified"
 
 
-def configure_container_tracking(run_dir: Path, run_id: str) -> None:
+def configure_container_tracking(
+    run_dir: Path, run_id: str, *, task_id: str | None = None,
+) -> None:
     """Record verifier IDs as soon as Docker creates them, before startup."""
     from docker.api.container import ContainerApiMixin
 
@@ -34,7 +36,7 @@ def configure_container_tracking(run_dir: Path, run_id: str) -> None:
         if not container_belongs_to_run(name, run_id):
             raise ValueError("Verifier container name does not belong to this run")
         result = original(api, *args, **kwargs)
-        record_container(run_dir, name, result["Id"])
+        record_container(run_dir, name, result["Id"], task_id=task_id)
         return result
 
     ContainerApiMixin.create_container_from_config = create_container
@@ -135,9 +137,34 @@ def _cleanup_task_containers(docker_host: str, task_id: str | list[str], run_id:
                 pass
 
 
+def flatten_harness_output(
+    output_dir: Path, task_ids: list[str], model_directory: str, run_id: str,
+) -> None:
+    """Keep task reports beside the task's other files, including failed attempts."""
+    run_logs = output_dir / "logs" / "run_evaluation" / run_id
+    for task_id in task_ids:
+        source = run_logs / model_directory / task_id
+        if source.is_dir():
+            target = output_dir if len(task_ids) == 1 else output_dir / task_id
+            target.mkdir(parents=True, exist_ok=True)
+            for artifact in source.iterdir():
+                artifact.replace(target / artifact.name)
+            source.rmdir()
+    metadata = run_logs / "run.json"
+    if metadata.is_file():
+        metadata.replace(output_dir / "harness-run.json")
+    summary = output_dir / f"{model_directory}.{run_id}.json"
+    if summary.is_file():
+        summary.replace(output_dir / "summary.json")
+    for directory in (run_logs / model_directory, run_logs, run_logs.parent, run_logs.parent.parent):
+        if directory.is_dir() and not any(directory.iterdir()):
+            directory.rmdir()
+
+
 def grade_batch_predictions(
     predictions_path: Path, predictions: dict[str, dict], output_dir: Path, *,
     run_id: str, docker_host: str, max_workers: int = 1,
+    tracking_dir: Path | None = None,
 ) -> dict[str, dict]:
     """Grade saved predictions, treating whitespace-only patches as empty."""
     if max_workers < 1:
@@ -172,25 +199,31 @@ def grade_batch_predictions(
     ]
     environment = os.environ.copy()
     environment["DOCKER_HOST"] = docker_host
-    environment["PYROMIND_EVAL_RUN_DIR"] = str(output_dir.resolve().parent)
+    environment["PYROMIND_EVAL_RUN_DIR"] = str((tracking_dir or output_dir.parent).resolve())
     environment["PYROMIND_EVAL_RUN_ID"] = run_id
+    environment.pop("PYROMIND_EVAL_TASK_ID", None)
+    if len(task_ids) == 1:
+        environment["PYROMIND_EVAL_TASK_ID"] = task_ids[0]
     log_path = output_dir / "harness.log"
-    with log_path.open("w", encoding="utf-8") as log:
-        with subprocess.Popen(
-            command, env=environment, cwd=output_dir, stdout=log,
-            stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True,
-        ) as process:
-            try:
-                returncode = process.wait(timeout=14400)
-            except BaseException as exc:
-                _terminate_process_group(process)
-                _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
-                if isinstance(exc, subprocess.TimeoutExpired):
-                    raise RuntimeError(f"SWE-bench harness timed out; see {log_path}") from exc
-                raise
-            if returncode:
-                _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
-                raise RuntimeError(f"SWE-bench harness failed; see {log_path}")
+    try:
+        with log_path.open("w", encoding="utf-8") as log:
+            with subprocess.Popen(
+                command, env=environment, cwd=output_dir, stdout=log,
+                stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True,
+            ) as process:
+                try:
+                    returncode = process.wait(timeout=14400)
+                except BaseException as exc:
+                    _terminate_process_group(process)
+                    _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
+                    if isinstance(exc, subprocess.TimeoutExpired):
+                        raise RuntimeError(f"SWE-bench harness timed out; see {log_path}") from exc
+                    raise
+                if returncode:
+                    _cleanup_task_containers(docker_host, task_ids, run_id, output_dir / "cleanup.log")
+                    raise RuntimeError(f"SWE-bench harness failed; see {log_path}")
+    finally:
+        flatten_harness_output(output_dir, task_ids, model_directory, run_id)
     return {
         task_id: read_grading_result(output_dir, task_id, model_directory, run_id)
         for task_id in task_ids
@@ -200,7 +233,13 @@ def grade_batch_predictions(
 def read_grading_result(output_dir: Path, task_id: str, model_directory: str, run_id: str) -> dict:
     for value in (task_id, model_directory, run_id):
         _safe_component(value)
-    report_path = output_dir / f"{model_directory}.{run_id}.json"
+    legacy_name = f"{model_directory}.{run_id}.json"
+    summaries = [
+        output_dir / "summary.json", output_dir / legacy_name,
+        output_dir / task_id / "summary.json", output_dir / task_id / legacy_name,
+    ]
+    report_path = next((path for path in summaries if path.is_file()), summaries[0])
+    output_dir = report_path.parent
     report = json.loads(report_path.read_text(encoding="utf-8"))
     if any(task_id in report.get(key, []) for key in (
         "error_ids", "incomplete_ids", "infra_failure_ids",
@@ -220,13 +259,11 @@ def read_grading_result(output_dir: Path, task_id: str, model_directory: str, ru
     if empty:
         benchmark["reason"] = "empty_patch"
     else:
-        task_report_path = (
-            output_dir / "logs" / "run_evaluation" / run_id
-            / model_directory / task_id / "report.json"
-        )
-        if not task_report_path.is_file():
-            # PyroDash's eval.sh flattens task reports after the verifier exits.
-            task_report_path = output_dir / task_id / "report.json"
+        task_reports = [
+            output_dir / "report.json", output_dir / task_id / "report.json",
+            output_dir / "logs" / "run_evaluation" / run_id / model_directory / task_id / "report.json",
+        ]
+        task_report_path = next((path for path in task_reports if path.is_file()), task_reports[0])
         task_report = json.loads(task_report_path.read_text(encoding="utf-8"))
         result = task_report.get(task_id)
         if not isinstance(result, dict) or result.get("resolved") is not resolved:
@@ -243,7 +280,10 @@ def main() -> None:
     from docker.client import DockerClient
 
     if run_dir := os.environ.get("PYROMIND_EVAL_RUN_DIR"):
-        configure_container_tracking(Path(run_dir), os.environ["PYROMIND_EVAL_RUN_ID"])
+        configure_container_tracking(
+            Path(run_dir), os.environ["PYROMIND_EVAL_RUN_ID"],
+            task_id=os.environ.get("PYROMIND_EVAL_TASK_ID"),
+        )
 
     original_from_env = docker.from_env
     original_client_from_env = DockerClient.from_env

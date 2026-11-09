@@ -10,9 +10,7 @@ from urllib.parse import urlsplit
 from uuid import uuid4
 
 from atif_export import trajectory_model
-from docker_ctx_prep import DOCKER_CLI_PATH, prepare_docker_context, stop_docker_context
-from finish_evaluation import finish_evaluation
-from sandbox_tracking import write_agent_docker_launcher
+from docker_ctx_prep import prepare_docker_context, stop_docker_context
 
 
 def check_model_dependencies() -> None:
@@ -39,27 +37,31 @@ def launch_mini_extra_swebench(
     endpoint: str,
     model_name: str,
     api_key: str,
-    works: int,
+    inference_workers: int,
     output_dir: str,
     *,
     run_id: str,
+    grading_workers: int,
     docker_host: str | None = None,
     slice_spec: str = "0:1",
 ) -> Path:
-    """Run selected SWE-bench Verified tasks and return the native preds.json.
+    """Run and grade SWE-bench Verified tasks; return ATIF or its manifest.
 
-    slice_spec is prepared by the node entry point. works controls
-    concurrent mini-extra workers. The supplied endpoint
+    slice_spec is prepared by the node entry point. Each stage has its own
+    concurrency limit. The supplied endpoint
     must be reachable from the benchmark containers as well as from this process.
     """
     litellm_model = f"openai/{model_name}"
     runs_dir = Path(output_dir).expanduser().resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
-    docker_launcher = write_agent_docker_launcher(runs_dir, run_id, DOCKER_CLI_PATH)
 
     command = [
-        sys.executable, "-m", "minisweagent.run.utilities.mini_extra",
-        "swebench",
+        sys.executable, str(Path(__file__).with_name("run_swebench.py")),
+        "--run-dir", str(runs_dir.parent),
+        "--run-id", run_id,
+        "--model-name", model_name,
+        "--grading-workers", str(grading_workers),
+        "--",
         "-c", "swebench.yaml",
         "-c", f"model.model_name={json.dumps(litellm_model)}",
         "-c", "model.cost_tracking=ignore_errors",
@@ -71,11 +73,10 @@ def launch_mini_extra_swebench(
         "-c", "agent.wall_time_limit_seconds=7000",
         "-c", "agent.step_limit=150",
         "-c", "environment.pull_timeout=7200",
-        "-c", f"environment.executable={json.dumps(str(docker_launcher))}",
         "--subset", "verified",
         "--split", "test",
         "--slice", slice_spec,
-        "-w", str(works),
+        "-w", str(inference_workers),
         "-o", str(runs_dir),
     ]
 
@@ -88,10 +89,10 @@ def launch_mini_extra_swebench(
     environment.pop("FORCE_COLOR", None)
     subprocess.run(command, env=environment, check=True)
 
-    predictions = runs_dir / "preds.json"
-    if not predictions.is_file():
-        raise FileNotFoundError(f"mini-extra finished without {predictions}")
-    return predictions
+    output = runs_dir.parent / "manifest.json"
+    if not output.is_file():
+        output = runs_dir.parent / "trajectory.atif.json"
+    return output
 
 
 def eval_benchmark(
@@ -100,9 +101,12 @@ def eval_benchmark(
     pyromind_api_key: str = "",
     output_dir: str = "",
 ) -> dict:
-    """Keep the prediction launcher, then grade and export the actual trace."""
+    """Run inference and grading concurrently, then export the scored traces."""
     rollout = json.loads(rollout_config)
-    works = rollout["works"]
+    inference_workers = rollout["inference_workers"]
+    grading_workers = rollout["grading_workers"]
+    if inference_workers < 1 or grading_workers < 1:
+        raise ValueError("inference_workers and grading_workers must be positive integers")
     slice_spec = _task_slice(rollout["num_tasks"], rollout["start_index"])
     config = json.loads(inference_config)
     endpoint = config["endpoint"].strip().rstrip("/")
@@ -123,16 +127,12 @@ def eval_benchmark(
     print("docker-rt launched")
 
     try:
-        predictions = launch_mini_extra_swebench(
-            endpoint, model_name, api_key, works, str(runs_dir),
+        output_path = launch_mini_extra_swebench(
+            endpoint, model_name, api_key, inference_workers, str(runs_dir),
             run_id=run_id,
+            grading_workers=grading_workers,
             docker_host=docker_host,
             slice_spec=slice_spec,
-        )
-        output_path = finish_evaluation(
-            predictions, run_dir, model_name=model_name, run_id=run_id,
-            docker_host=docker_host,
-            max_workers=works,
         )
         return {"output_file_path": str(output_path)}
     finally:

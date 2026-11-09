@@ -12,9 +12,10 @@ nodes/
 ├── minisweBenchmark.yaml       # 单条/多条 SWE-bench 评测节点定义
 ├── custom_py_script/
 │   ├── inference_config.py     # 打包 endpoint、model_name、api_key
-│   ├── rollout_config.py       # 打包 works、num_tasks、start_index
+│   ├── rollout_config.py       # 打包做题/评分并发、num_tasks、start_index
 │   └── coding_eval/
 │       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
+│       ├── run_swebench.py     # 任务完成即提交评分，两阶段独立并发
 │       ├── run_harness.py      # 对已生成的预测补丁运行官方评分
 │       ├── finish_evaluation.py # 不调用推理：评分或读取已有报告，再导出 ATIF
 │       ├── atif_export.py      # 原始交互轨迹转换与 Harbor 格式校验
@@ -86,7 +87,7 @@ export PYROMIND_RELOAD_URL="https://pre-api.pyromind.ai/api/v1/nodes/reload?allo
 
 将这个输出连接到 `minisweBenchmark` 的必填 `inference_config` 输入端口。`minisweBenchmark` 的入口 `eval_benchmark()` 读取配置后继续执行推理、评分和 ATIF 导出，保留基本 URL 格式检查。原来直接连接到 `minisweBenchmark.endpoint` 的连线需要改接到 `inference_config.endpoint`：
 
-`rollout_config` 节点集中填写推理并发数和任务范围：`works` 必填，`num_tasks` 默认 `1`，`start_index` 默认 `0`。三个字段打包为 JSON 字符串，通过 `rollout_config` 输出端口连接到 `minisweBenchmark` 的同名必填输入；评测节点不再单独接收这三个字段。
+`rollout_config` 节点集中填写两个阶段的并发数和任务范围：`inference_workers`（做题并发）与 `grading_workers`（评分并发）必填，`num_tasks` 默认 `1`，`start_index` 默认 `0`。这四个字段打包为 JSON 字符串，通过 `rollout_config` 输出端口连接到 `minisweBenchmark` 的同名必填输入。原来的 `works` 已替换，已有工作流需重新填写这两个并发参数。
 
 ```text
 Inference.endpoint → inference_config.endpoint
@@ -94,9 +95,9 @@ inference_config.inference_config → minisweBenchmark.inference_config
 rollout_config.rollout_config → minisweBenchmark.rollout_config
 ```
 
-`pyromind_api_key` 仍在 `minisweBenchmark` 中填写，是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开。集群固定为 `us-west-1#pre`，节点不提供 `cluster` 输入。`minisweBenchmark` 的 `inference_config`、`rollout_config`、`pyromind_api_key`、`output_dir` 均为必填。必填字段的空值检查交由平台处理，`rollout_config.works` 请填写大于零的整数。YAML 中必填输入排在选填输入前。
+`pyromind_api_key` 仍在 `minisweBenchmark` 中填写，是 docker-rt 使用的 PyroMind 平台密钥，与模型端点密钥分开。集群固定为 `us-west-1#pre`，节点不提供 `cluster` 输入。`minisweBenchmark` 的 `inference_config`、`rollout_config`、`pyromind_api_key`、`output_dir` 均为必填。必填字段的空值检查交由平台处理，两个并发参数均填写大于零的整数。YAML 中必填输入排在选填输入前。
 
-节点使用现有 `mini-extra swebench` 推理调用，通过任务数量和起始位置设置 `--slice`，然后用 SWE-bench 官方 harness 对所有补丁评分，并从各任务的实际交互轨迹生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
+节点通过 `run_swebench.py` 调用 mini-swe-agent 原有的 SWE-bench 批处理入口，保留模型配置和通过任务数量、起始位置设置的 `--slice`。每道题保存补丁和轨迹后立即进入独立评分队列，由 SWE-bench 官方 harness 评分，其余题继续执行。全部做题和评分结束后，再汇总成绩并生成、校验 ATIF-v1.8。原始 `preds.json` 只作为中间产物。详细约定见 `custom_py_script/coding_eval/ATIF_OUTPUT.md`。
 
 `endpoint` 填写服务提供的完整 API 基础地址，例如 `https://服务域名/inference/服务ID/v1` 或 `https://服务域名/compatible-mode/v1`。节点仅清理首尾空格和末尾斜杠，检查基本 HTTP(S) URL 格式，不会自动添加 `/v1`，也不限制路径必须以 `/v1` 结尾，推理客户端直接使用此地址。不要填写 `/chat/completions` 等具体接口地址，也不要把密钥放在 URL 查询参数中。
 
@@ -110,9 +111,12 @@ rollout_config.rollout_config → minisweBenchmark.rollout_config
 |---|---|---|
 | `num_tasks` | `1` | 本次运行的任务数量，必须为正整数 |
 | `start_index` | `0` | 从任务集哪个位置开始，必须为非负整数 |
-| `works` | 必填 | 推理并发 worker 数；同时用于评分并发上限，实际评分并发不超过任务数 |
+| `inference_workers` | 必填 | 同时做题的 agent 数 |
+| `grading_workers` | 必填 | 同时执行评分的任务数，与做题并发独立 |
 
-例如 `num_tasks=10, start_index=0, works=2` 表示选择前 10 条任务（`--slice 0:10`），并发上限为 2。`start_index=10` 则选择后面的第 11～20 条。实际数量受数据集剩余任务数限制；没有选中任务或没有有效预测时会报错。
+例如 `num_tasks=10, start_index=0, inference_workers=2, grading_workers=1` 表示选择前 10 条任务（`--slice 0:10`），最多同时做 2 道题、评 1 道题。做题或评分 worker 完成一题后各自领取下一题，两阶段的任务沙箱相互独立，并发上限合计为 3。每道题使用自己的评分环境，不在不同任务间复用。`start_index=10` 则选择第 11～20 条。实际数量受数据集剩余任务数限制；没有选中任务或没有有效预测时会报错。
+
+在线运行保留原始目录分工：`runs/<task_id>/` 保存原始轨迹，`trajectories/` 保存多任务 ATIF，评分文件保存在 `verified/<task_id>/`。只展开评分目录：`summary.json`、`report.json`、`harness.log`、`run_instance.log` 等放在同一层，去掉 harness 原有的 `logs/run_evaluation/run_id/模型名/任务名` 嵌套。已存在的历史运行不作迁移。每道题评分结束后立即尝试删除该题的做题沙箱和评分沙箱，评分未通过或异常退出时也执行清理；原始轨迹与报告保留。其他题继续执行，共享的 docker-rt 服务保持运行。清理失败的容器记录保留，运行结束时再重试。做题异常或评分基础设施错误仍会使节点报错，最终的 `benchmark.json` 和 ATIF 在全部任务成功完成评分后统一导出。
 
 当实际产物为 1 条任务时，`output_file_path` 仍直接指向 ATIF JSON。多条时，它指向 `manifest.json` 索引，索引中的 `tasks[].output_file_path` 才是每条任务的 ATIF-v1.8 文件路径。索引本身不是 ATIF 文档。更改节点 YAML 后需 reload 才会在平台出现新的输入参数。
 
@@ -160,11 +164,11 @@ python3.12 nodes/custom_py_script/coding_eval/finish_evaluation.py \
   /path/to/runs/preds.json \
   --model-name your-served-model \
   --output-dir /path/to/output \
-  --grading-dir /path/to/verified \
+  --grading-dir /path/to/eval-run/verified \
   --grading-run-id original-harness-run-id
 ```
 
-`--grading-run-id` 对应原始报告文件名中的 run ID。支持 harness 的嵌套任务报告，以及 PyroDash 整理后的 `verified/<task_id>/report.json`。
+`--grading-run-id` 填写原始运行的 run ID。在线运行将 `--grading-dir` 指向原来的 `verified/`；程序读取各任务的 `summary.json` 和 `report.json`。同时支持旧版带模型名和 run ID 的汇总文件、深层日志目录、离线批量评分目录，以及 PyroDash 整理后的任务报告。
 
 预测文件可包含多条任务；程序会逐条校验轨迹和报告，并为每条任务单独生成 ATIF。所有任务必须来自同一模型。轨迹缺失、报告缺失或任何任务的基础设施错误会使本次节点报错，原始文件与日志保留；正常测试未通过的任务仍导出，成绩为零。
 
@@ -188,23 +192,37 @@ output_dir/eval-<uuid>/
 ├── docker-rt.log
 ├── docker-rt-state.json       # 本次 daemon 的 socket、PID 文件及状态，不含密钥
 ├── docker-config/            # 本次运行独立的 Docker CLI 配置
-├── sandbox-containers/       # 每个容器一个 <容器名>.cid，记录实际创建的 ID
+├── sandbox-containers/<task_id>/ # 该题做题和评分容器的 <容器名>.cid
 ├── runs/
-│   ├── docker-agent          # 带运行 ID 命名并通过 --cidfile 记录 Agent 容器的入口
 │   ├── preds.json
-│   └── <task_id>/<task_id>.traj.json
-├── verified/                 # harness 日志、汇总报告和任务测试详情
+│   └── <task_id>/
+│       ├── docker-agent      # 记录该题 Agent 容器 ID 的 Docker 入口
+│       └── <task_id>.traj.json
+├── verified/
+│   └── <task_id>/
+│       ├── summary.json      # 该题的 harness 评分汇总
+│       ├── report.json       # 该题测试详情，测试未执行时可能不存在
+│       ├── harness.log
+│       ├── run_instance.log
+│       ├── test_output.txt
+│       ├── harness-run.json  # harness 运行元数据
+│       ├── preds.harness.json
+│       ├── eval.sh
+│       └── patch.diff
 ├── benchmark.json            # 统一的 summary 和 tasks，任务仅含 status/resolved/score
 ├── trajectory.atif.json      # 单任务时 output_file_path 指向这里
-├── trajectories/             # 多任务时每条任务一个 <task_id>.atif.json
+├── trajectories/
+│   └── <task_id>.atif.json    # 多任务时每题的 ATIF
 └── manifest.json             # 多任务时 output_file_path 指向此索引
 ```
 
+任务目录中的文件随执行阶段生成；空补丁或沙箱启动失败时不会产生完整的测试文件。离线 `finish_evaluation.py --docker-host` 的评分文件保存在新输出目录的 `verified/`，同样展开 harness 的深层日志目录。整理过程保留未识别的日志文件，只移除已经清空的目录。
+
 评分默认使用与节点相同的解释器，可通过 `HARNESS_PYTHON` 指定另一个可执行解释器路径。评分子进程使用本次运行的 Docker socket，超时为 4 小时；Docker API 默认超时提高到 300 秒。超时会终止本次 verifier 进程组，并尝试清理名称匹配该任务和 run ID 的评分容器。测试未通过会得到 `score: 0.0`；harness 错误、基础设施失败、轨迹缺失或格式校验失败会使节点报错并保留文件。
 
-每次节点运行创建私有 `/tmp/pyromind-eval-*/docker.sock`、独立 PID 文件及 Docker 配置目录。独立 daemon 不代表远程沙箱列表隔离，因此收尾清理不通过全量容器列表判断归属。Agent 容器名称包含本次 run ID，Docker CLI 在创建后、启动前通过 `--cidfile` 记录 ID；harness 同样在创建评分容器后立即记录 ID。各容器使用独立文件，支持多 worker 并发写入。
+每次节点运行创建私有 `/tmp/pyromind-eval-*/docker.sock`、独立 PID 文件及 Docker 配置目录。独立 daemon 不代表远程沙箱列表隔离，因此按题和收尾清理都不通过全量容器列表判断归属。每道题使用独立的 Docker 入口，Agent 容器名称包含本次 run ID，Docker CLI 在创建后、启动前通过 `--cidfile` 将 ID 记录到 `sandbox-containers/<task_id>/`；harness 同样在创建评分容器后立即记录到该题目录。各容器使用独立文件，支持多 worker 并发写入。
 
-节点在 `finally` 中只读取本次 `sandbox-containers/*.cid`，逐个检查完整 ID 和实际容器名称是否与记录及 run ID 一致，然后尝试删除容器及匿名卷，最后停止自己启动的 daemon。已经删除的容器直接跳过，归属不匹配或记录损坏时保留容器并写入 `cleanup.log`、发出警告。没有清单时不自动扫描删除其他容器，旧运行的遗留沙箱也不会自动接管。节点不接管共享 `/tmp/docker-rt.sock`，不执行全局容器或镜像 prune。没有本次运行的 PID 文件时，不调用 SDK 的进程扫描回退。实际远程沙箱清理效果仍需在真实环境验收。
+每道题在评分函数的 `finally` 中只读取该题的容器记录，逐个检查完整 ID 和实际容器名称是否与记录及 run ID 一致，然后尝试删除容器及匿名卷。删除成功或容器已经不存在时，移除对应 `.cid` 记录；失败时保留记录，写入 `cleanup.log` 并发出警告。所有做题和评分结束后，节点在总入口的 `finally` 中递归读取本次运行剩余的记录再清理，兼容旧版根目录下的 `.cid`，最后停止自己启动的 daemon。没有清单时不自动扫描删除其他容器，旧运行的遗留沙箱也不会自动接管。节点不接管共享 `/tmp/docker-rt.sock`，不执行全局容器或镜像 prune。没有本次运行的 PID 文件时，不调用 SDK 的进程扫描回退。实际远程沙箱清理效果仍需在真实环境验收。
 
 当前仅使用通用评分入口，区域兼容暂不在本次范围内。`PYROMIND_HARNESS_RUNNER` 仍可指定同环境中其他评分入口。真实 Pod 的镜像访问、评分执行及平台工作流尚待验证；当前工作区的解释器路径也需要在部署目标环境中确认。
 

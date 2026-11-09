@@ -129,9 +129,19 @@ def stop_docker_context(docker_host: str, log_file: str) -> None:
         warnings.warn(f"Docker cleanup incomplete; see {run_dir / 'cleanup.log'}", RuntimeWarning)
 
 
-def _remove_sandbox_containers(docker_host: str, run_dir: Path) -> None:
+def remove_task_sandboxes(docker_host: str, run_dir: Path, task_id: str) -> None:
+    """Remove only this completed task's recorded Agent and verifier containers."""
+    _remove_sandbox_containers(docker_host, run_dir, task_id=task_id)
+
+
+def _remove_sandbox_containers(
+    docker_host: str, run_dir: Path, *, task_id: str | None = None,
+) -> None:
     """Remove recorded IDs only after checking their exact run-owned names."""
-    records = list((run_dir / CONTAINER_RECORDS_DIR).glob("*.cid"))
+    records_dir = run_dir / CONTAINER_RECORDS_DIR
+    if task_id is not None:
+        records_dir = records_dir / task_id
+    records = list(records_dir.rglob("*.cid"))
     if not records:
         return
     client = None
@@ -152,15 +162,19 @@ def _remove_sandbox_containers(docker_host: str, run_dir: Path) -> None:
                 if container["Id"] != container_id or container["Name"].lstrip("/") != name:
                     raise ValueError(f"{record.name}: container identity does not match its record")
                 client.api.remove_container(container_id, force=True, v=True)
+                record.unlink(missing_ok=True)
             except docker.errors.NotFound:
-                continue
+                record.unlink(missing_ok=True)
             except Exception as exc:
                 errors.append(f"{type(exc).__name__}: {exc}")
     except Exception as exc:
         errors.append(f"{type(exc).__name__}: {exc}")
     finally:
         if client is not None:
-            client.close()
+            try:
+                client.close()
+            except Exception as exc:
+                errors.append(f"{type(exc).__name__}: {exc}")
     if errors:
         with (run_dir / "cleanup.log").open("a", encoding="utf-8") as log:
             for error in errors:

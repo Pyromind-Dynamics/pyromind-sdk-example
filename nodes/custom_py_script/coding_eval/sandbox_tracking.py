@@ -17,35 +17,44 @@ def container_belongs_to_run(name: str, run_id: str) -> bool:
     ) is not None
 
 
-def record_container(run_dir: Path, name: str, container_id: str) -> None:
+def record_container(
+    run_dir: Path, name: str, container_id: str, *, task_id: str | None = None,
+) -> None:
     records_dir = run_dir / CONTAINER_RECORDS_DIR
+    if task_id is not None:
+        records_dir = records_dir / task_id
     records_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     (records_dir / f"{name}.cid").write_text(container_id + "\n", encoding="utf-8")
 
 
-def write_agent_docker_launcher(runs_dir: Path, run_id: str, docker_cli: Path) -> Path:
+def write_agent_docker_launcher(
+    runs_dir: Path, run_id: str, docker_cli: Path, *, task_id: str,
+) -> Path:
     """Give mini-swe-agent a Docker executable that records each created ID."""
-    launcher = runs_dir / "docker-agent"
+    launcher = runs_dir / task_id / "docker-agent"
+    launcher.parent.mkdir(parents=True, exist_ok=True)
     launcher.write_text(
         f"#!{sys.executable}\n"
         "import sys\n"
         f"sys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\n"
         "from sandbox_tracking import agent_docker_main\n"
-        f"agent_docker_main({str(runs_dir.parent)!r}, {run_id!r}, {str(docker_cli)!r})\n",
+        f"agent_docker_main({str(runs_dir.parent)!r}, {run_id!r}, {str(docker_cli)!r}, {task_id!r})\n",
         encoding="utf-8",
     )
     launcher.chmod(0o700)
     return launcher
 
 
-def agent_docker_main(run_dir: str, run_id: str, docker_cli: str) -> None:
+def agent_docker_main(
+    run_dir: str, run_id: str, docker_cli: str, task_id: str,
+) -> None:
     args = sys.argv[1:]
     if args[0] == "run":
         name_index = args.index("--name") + 1
         original_name = args[name_index]
         name = f"minisweagent-{run_id}-{original_name.removeprefix('minisweagent-')}"
         args[name_index] = name
-        records_dir = Path(run_dir) / CONTAINER_RECORDS_DIR
+        records_dir = Path(run_dir) / CONTAINER_RECORDS_DIR / task_id
         records_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
         # The Docker CLI writes the ID after creation, before starting the container.
         args[1:1] = ["--cidfile", str(records_dir / f"{name}.cid")]

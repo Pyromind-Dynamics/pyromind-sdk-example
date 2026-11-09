@@ -13,6 +13,18 @@ from atif_export import convert_to_atif, read_predictions, write_atif
 from run_harness import grade_batch_predictions, read_grading_result
 
 
+def load_trajectory(
+    predictions_path: Path, task_id: str, *, model_name: str, run_id: str,
+) -> dict:
+    native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
+    native = json.loads(native_path.read_text(encoding="utf-8"))
+    document = convert_to_atif(
+        native, task_id=task_id, model_name=model_name, session_id=run_id,
+    )
+    document["extra"]["native_trajectory_path"] = str(native_path.resolve())
+    return document
+
+
 def finish_evaluation(
     predictions_path: Path, output_dir: Path, *, model_name: str, run_id: str,
     docker_host: str | None = None, grading_dir: Path | None = None,
@@ -27,15 +39,12 @@ def finish_evaluation(
     output_dir = output_dir.resolve()
     predictions = read_predictions(predictions_path)
     # Convert and validate every trace once before starting the verifier.
-    documents = {}
-    for task_id in predictions:
-        native_path = predictions_path.parent / task_id / f"{task_id}.traj.json"
-        native = json.loads(native_path.read_text(encoding="utf-8"))
-        document = convert_to_atif(
-            native, task_id=task_id, model_name=model_name, session_id=run_id,
+    documents = {
+        task_id: load_trajectory(
+            predictions_path, task_id, model_name=model_name, run_id=run_id,
         )
-        document["extra"]["native_trajectory_path"] = str(native_path.resolve())
-        documents[task_id] = document
+        for task_id in predictions
+    }
     if grading_dir is not None:
         benchmarks = {
             task_id: read_grading_result(
@@ -49,9 +58,19 @@ def finish_evaluation(
             predictions_path, predictions, output_dir / "verified",
             run_id=run_id, docker_host=docker_host, max_workers=max_workers,
         )
+    return export_evaluation(
+        documents, benchmarks, output_dir, model_name=model_name, run_id=run_id,
+    )
+
+
+def export_evaluation(
+    documents: dict[str, dict], benchmarks: dict[str, dict], output_dir: Path, *,
+    model_name: str, run_id: str,
+) -> Path:
+    """Write scored trajectories and the compact summary without rerunning grading."""
     tasks = []
-    single_task = len(predictions) == 1
-    for task_id in predictions:
+    single_task = len(documents) == 1
+    for task_id in documents:
         benchmark = benchmarks[task_id]
         target = (
             output_dir / "trajectory.atif.json"

@@ -51,12 +51,25 @@ contain fewer tasks than requested.
 
 ## Implemented export
 
-`eval_benchmark.py` keeps the existing inference invocation, runs the official
-SWE-bench 5.0.2 verifier, and returns
+`eval_benchmark.py` launches `run_swebench.py`, which uses mini-swe-agent's
+existing SWE-bench inference entry point and submits each completed task to an
+independent grading pool. `rollout_config.inference_workers` limits agent
+concurrency; `grading_workers` limits concurrent SWE-bench 5.0.2 verifiers.
+Each task's trace is validated before that task is graded. Online grading
+reports and logs live under `verified/<task_id>/`; native traces stay under `runs/`.
+Harness summaries are named `summary.json`; task reports and test logs are
+flattened into that same directory after grading, including failed attempts.
+Existing historical runs are not moved. Each task's Agent and
+verifier IDs are recorded under `sandbox-containers/<task_id>/`. As soon as that
+task's grading finishes, including unresolved results or grading errors, its
+recorded containers are removed without affecting other tasks. Cleanup failures
+retain their records for a final retry. Trajectories and reports are preserved.
+Both pools finish before final cleanup and daemon shutdown. Final export runs
+after all results are available and returns
 `output_dir/eval-<uuid>/trajectory.atif.json`. Each file is validated with Harbor
 0.25.0's `Trajectory` model and uses exactly `ATIF-v1.8`.
 For multiple tasks the files instead live under
-`output_dir/eval-<uuid>/trajectories/<task_id>.atif.json`, alongside the manifest.
+`output_dir/eval-<uuid>/trajectories/<task_id>.atif.json`; the manifest stays at the run root.
 
 The exporter reads `runs/<instance_id>/<instance_id>.traj.json`. Assistant tool
 calls retain their native IDs; tool results are associated by ID, including
@@ -72,7 +85,8 @@ they can indicate an unknown price. Task success comes from harness results,
 not the agent's exit status; missing/error/infra-failure reports are errors.
 Ordinary unresolved tasks and empty patches produce a real score of zero.
 Before grading, whitespace-only patches are normalized to empty strings in a
-separate `verified/preds.harness.json`; native predictions and nonempty diffs
+separate harness prediction file (`verified/<task_id>/preds.harness.json` for
+online runs, `verified/preds.harness.json` for offline batch grading); native predictions and nonempty diffs
 are preserved. These tasks receive the harness's ordinary empty-patch score.
 
 `atif_export.py` also provides an offline CLI for converting saved artifacts.
@@ -85,8 +99,10 @@ the remaining Pod/region validation requirements.
 invoking inference. It validates the native trace before starting any verifier.
 For multiple predictions every trace is validated before invoking the verifier
 once with all selected task IDs and bounded worker concurrency.
-Report replay requires the original harness run ID and accepts either nested
-or PyroDash-flattened task reports. A compact `benchmark.json` always contains
+Report replay requires the original harness run ID and accepts the new online
+`verified/` directory with per-task `summary.json` and `report.json`, older per-task
+online report directories, batch report directories, and PyroDash-flattened reports.
+A compact `benchmark.json` always contains
 `summary` (`total_tasks`, `resolved_tasks`, `mean_score`) and a task-ID-keyed
 `tasks` object whose values contain only `status`, `resolved`, and `score`.
 This shape is the same for one or multiple tasks. Explicit Docker grading first checks the supplied daemon;

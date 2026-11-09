@@ -38,11 +38,15 @@
 - [x] In the verifier subprocess, detect docker-rt and omit redundant root exec user switching only after confirming the sandbox's default UID/GID are both 0.
 - [x] Use private sockets, PID files and Docker configs; stop the owned daemon in finally and attempt scoped verifier-container cleanup on failure/timeout.
 - [x] Record created Agent and verifier container IDs with run-owned names; final cleanup checks both identities and never deletes from a global container inventory.
+- [x] Split rollout concurrency into inference_workers and grading_workers; queue each completed task for grading while other agents continue, isolate task reports and wait for both stages before cleanup.
+- [x] Track Agent and verifier IDs per task; delete that task's containers after grading, preserve artifacts and retry failed deletions during final run cleanup.
+- [x] Preserve runs/ for native traces and trajectories/ for multi-task ATIF; flatten only verified/<task_id>/ grading reports and logs, preserving legacy report replay.
 - [ ] Validate remote sandbox cleanup and daemon behavior in a real Pod. Regional compatibility is outside the current scope.
 - [ ] Verify one-task execution end to end, then expand to the full benchmark.
 
-The node entry retains the existing prediction call, invokes the verifier, then
-returns a validated `trajectory.atif.json`. The original `preds.json` and
+The node entry uses mini-swe-agent's existing batch inference loop and grades
+completed tasks through a separate worker pool, then exports the scored ATIF
+files and the final summary. The original `preds.json` and
 `<instance_id>/<instance_id>.traj.json` remain as intermediate artifacts. Current
 conversion supports the saved text/chat-completions trace used by the existing
 launcher; unsupported message roles or non-text content fail explicitly. No
