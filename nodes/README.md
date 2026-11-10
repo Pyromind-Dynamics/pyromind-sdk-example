@@ -105,7 +105,7 @@ rollout_config.rollout_config → minisweBenchmark.rollout_config
 
 `inference_config.api_key` 留空时，传入空密钥并覆盖继承环境中的 `OPENAI_API_KEY`。填写了密钥时，推理使用该密钥。开启鉴权的服务仍必须填写正确密钥。
 
-节点启动 docker-rt 时设置 `DOCKER_RT_EXEC_MAX_CONCURRENCY=6`，启用 SDK 的命令执行排队。同一次运行的做题和评分共用最多 6 路 exec，执行结束后释放名额，多余请求等待。这与任务 worker 数、沙箱数量分别计算；不同运行的 docker-rt 不共享该限流器。该设置在启动 daemon 时读取，重新部署后对新运行生效。
+节点启动 docker-rt 时设置 `DOCKER_RT_EXEC_MAX_CONCURRENCY=32`，启用 SDK 的命令执行排队。同一次运行的做题和评分共用最多 32 路 exec，执行结束后释放名额，多余请求等待。这与任务 worker 数、沙箱数量分别计算；不同运行的 docker-rt 不共享该限流器。该设置在启动 daemon 时读取，对新启动的运行生效。
 
 以下参数在 `rollout_config` 节点中填写：
 
