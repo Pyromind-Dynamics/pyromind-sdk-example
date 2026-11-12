@@ -41,12 +41,6 @@
                   "default": 8
                 }
               ],
-              "device": [
-                "STRING",
-                {
-                  "default": ""
-                }
-              ],
               "exist_ok": [
                 "BOOLEAN",
                 {
@@ -100,7 +94,6 @@
           "patience": 20,
           "freeze": "15",
           "workers": 8,
-          "device": "",
           "exist_ok": true,
           "task": "detect",
           "pretrained": true

@@ -10,7 +10,6 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| output_path | STRING | 是 | 输出目录或文件路径 |
 | dataset_config | STRING\|DATASET_CONFIG | 是 | 已组装的数据集配置 YAML 字符串 |
 | training_config | STRING\|TRAINING_CONFIG | 是 | 训练配置 YAML 字符串（`BaseTrainingConfig` 字段） |
 | model_config | STRING\|MODEL_CONFIG | 是 | 模型配置 YAML 字符串 |
@@ -24,14 +23,13 @@
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| model_output_path | STRING | 训练输出模型目录 |
 | early_fusion | BOOLEAN | 本次训练是否启用了 Early Fusion |
 
 ## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelTrainYoloNode/ModelTrainYoloNode.json`](../../workflow/ModelTrainYoloNode/ModelTrainYoloNode.json)。
 
-该文件是模板：提交前需将 `output_path`、`dataset_config`、`training_config` 和 `model_config` 填为目标环境中的有效值。
+提交前，请将 `dataset_config`、`training_config` 和 `model_config` 配置为目标环境中的有效值，并选择该环境支持的 `gpu_count` 与 `gpu_product`。
 
 ## 1.5 运行 Workflow
 

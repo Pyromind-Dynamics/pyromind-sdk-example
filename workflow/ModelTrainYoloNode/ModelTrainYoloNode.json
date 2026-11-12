@@ -16,9 +16,6 @@
         "nodeDefinition": {
           "input": {
             "required": {
-              "output_path": [
-                "STRING"
-              ],
               "dataset_config": [
                 "STRING|DATASET_CONFIG"
               ],
@@ -69,15 +66,12 @@
             }
           },
           "output": [
-            "STRING",
             "BOOLEAN"
           ],
           "output_is_list": [
-            false,
             false
           ],
           "output_name": [
-            "model_output_path",
             "early_fusion"
           ],
           "category": "",
@@ -95,7 +89,6 @@
           "metanode_deleted": false
         },
         "config": {
-          "output_path": "",
           "dataset_config": "",
           "training_config": "",
           "model_config": "",

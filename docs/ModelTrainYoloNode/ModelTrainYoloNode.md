@@ -10,7 +10,6 @@ Runs YOLO detection / segment / classify training with the same shared `dataset_
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| output_path | STRING | Yes | Output directory or file path |
 | dataset_config | STRING\|DATASET_CONFIG | Yes | Assembled dataset configuration YAML string |
 | training_config | STRING\|TRAINING_CONFIG | Yes | Training config YAML string (`BaseTrainingConfig` fields) |
 | model_config | STRING\|MODEL_CONFIG | Yes | Model config YAML string |
@@ -24,14 +23,13 @@ Runs YOLO detection / segment / classify training with the same shared `dataset_
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| model_output_path | STRING | Trained model output directory |
 | early_fusion | BOOLEAN | Whether early fusion was enabled for this training run |
 
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelTrainYoloNode/ModelTrainYoloNode.json`](../../workflow/ModelTrainYoloNode/ModelTrainYoloNode.json) for the full workflow definition.
 
-The file is a template: fill in `output_path`, `dataset_config`, `training_config`, and `model_config` with values valid in the target environment before submitting it.
+Before submitting the workflow, set `dataset_config`, `training_config`, and `model_config` to values valid in the target environment, and choose a supported `gpu_count` and `gpu_product`.
 
 ## 1.5 Running the Workflow
 

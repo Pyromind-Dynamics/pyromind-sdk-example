@@ -14,8 +14,7 @@ Builds `yolo_extra_config` YAML (imgsz, patience, freeze, task, …) for **YOLO 
 | patience | INT | No | Early-stop patience in epochs (0 disables). Default: `20` |
 | freeze | STRING | No | Freeze first N backbone layers (string int or comma-separated indices). Default: `15` |
 | workers | INT | No | DataLoader worker processes. Default: `8` |
-| device | STRING | No | CUDA device id(s), e.g. `0` or `0,1` (empty = auto). Default: empty string |
-| exist_ok | BOOLEAN | No | Allow overwriting an existing `output_path` run directory. Default: true |
+| exist_ok | BOOLEAN | No | Allow reusing an existing training run directory. Default: true |
 | task | STRING | No | YOLO task. Options: `detect`, `segment`, `classify` |
 | pretrained | BOOLEAN | No | Initialize from pretrained weights at `model_config.model_path`. Default: true |
 

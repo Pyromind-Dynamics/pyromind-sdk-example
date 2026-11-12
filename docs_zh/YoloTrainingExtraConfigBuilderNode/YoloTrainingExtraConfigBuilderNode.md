@@ -14,8 +14,7 @@
 | patience | INT | 否 | Early-stop 耐心 epoch 数（0 表示关闭）。默认值：`20` |
 | freeze | STRING | 否 | 冻结骨干前 N 层（整数字符串，或逗号分隔层索引）。默认值：`15` |
 | workers | INT | 否 | DataLoader worker 数。默认值：`8` |
-| device | STRING | 否 | CUDA 设备，如 `0` 或 `0,1`（空表示自动）。默认值：空字符串 |
-| exist_ok | BOOLEAN | 否 | 若 `output_path` 已存在是否允许覆盖。默认值：true |
+| exist_ok | BOOLEAN | 否 | 若训练运行目录已存在，是否允许复用。默认值：true |
 | task | STRING | 否 | YOLO 任务类型。选项：`detect`, `segment`, `classify` |
 | pretrained | BOOLEAN | 否 | 是否用 `model_config.model_path` 的预训练权重初始化。默认值：true |
 
