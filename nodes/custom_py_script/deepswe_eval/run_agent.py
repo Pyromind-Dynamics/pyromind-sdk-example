@@ -94,7 +94,7 @@ def main():
     # HTTP 400 requests cannot be repaired by retrying the same conversation.
     model.abort_exceptions = [*model.abort_exceptions, litellm.exceptions.BadRequestError]
     agent = DefaultAgent(
-        model, environment, step_limit=300, cost_limit=9999,
+        model, environment, step_limit=300, cost_limit=0,
         wall_time_limit_seconds=0, output_path=args.trajectory,
         system_template=(
             "You are a software engineering agent. Use the bash tool to inspect "

@@ -79,3 +79,5 @@
 2026-11-12 按用户要求取消做题总时限：Mini wall_time_limit_seconds=0、宿主机 agent 子进程 timeout=None、Pier agent_timeout_sec=None。任务集文件未修改，评分仍按原任务配置限时；当前做题预算不再等同于标准 3 小时预算。单条命令和单次模型请求继续使用 300 秒。回归检查：项目环境 22 passed、19 skipped；隔离 Pier 环境 40 passed、1 deselected，覆盖三层总时限关闭和评分时限保留。未运行真实远程评测。
 
 2026-11-12 按用户要求设置做题轮数上限 step_limit=300，做题总时限保持关闭；此轮数为自定义运行参数。
+
+2026-11-12 按用户要求关闭 Agent 费用限制，cost_limit 从 9999 改为 0；不能直接省略参数，否则会恢复 Mini 默认的 3 美元上限。300 轮上限保持不变。
