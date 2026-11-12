@@ -10,9 +10,18 @@ nodes/
 ├── InferenceConfig.yaml        # 模型服务配置节点定义
 ├── RolloutConfig.yaml          # 并发与任务选择配置节点定义
 ├── minisweBenchmark.yaml       # 单条/多条 SWE-bench 评测节点定义
+├── deepsweBenchmark.yaml       # DeepSWE 1.1 做题、独立评分与 ATIF 输出
 ├── custom_py_script/
 │   ├── inference_config.py     # 打包 endpoint、model_name、api_key
 │   ├── rollout_config.py       # 打包做题/评分并发、num_tasks、start_index
+│   ├── deepswe_eval/
+│   │   ├── eval_benchmark.py   # DeepSWE 节点入口、任务选择与 ATIF-v1.8 导出
+│   │   ├── run_deepswe.py     # Pier 调度，两阶段独立并发
+│   │   ├── pier_runtime.py    # docker-rt 环境与宿主机 Mini agent 适配
+│   │   ├── run_agent.py       # mini-swe-agent 在已有沙箱上做题
+│   │   ├── setup.sh           # 安装隔离依赖、准备固定版本的任务集
+│   │   ├── requirements.txt   # DeepSWE 独立运行环境依赖
+│   │   └── README.md          # 接线、运行与结果说明
 │   └── coding_eval/
 │       ├── eval_benchmark.py   # 推理 → 评分 → ATIF-v1.8 的节点入口
 │       ├── run_swebench.py     # 任务完成即提交评分，两阶段独立并发
@@ -129,6 +138,14 @@ rollout_config.rollout_config → minisweBenchmark.rollout_config
 1. 在 `custom_py_script/` 下新增 Python 文件并实现入口函数
 2. 在 `nodes/` 根目录新增对应的 `YourNode.yaml`
 3. 运行 `./install.sh` 部署并 reload
+
+### deepsweBenchmark
+
+`deepsweBenchmark` 沿用 `minisweBenchmark` 的输入输出端口。将 `InferenceConfig.yaml` 节点的 `inference_config` 输出和 `RolloutConfig.yaml` 节点的 `rollout_config` 输出连接到同名输入，并填写 `pyromind_api_key`、`output_dir`。输出端口为 `output_file_path`。
+
+首次运行前执行 `bash nodes/custom_py_script/deepswe_eval/setup.sh`，安装独立的 Pier 运行环境并准备任务集。做题仍使用 mini-swe-agent 2.4.6，通过已有模型接口发起 Chat Completions 请求；任务命令在 docker-rt 沙箱中执行。Pier 负责收集已提交的补丁，再在独立、干净的验证沙箱中运行任务测试。`inference_workers` 和 `grading_workers` 分别限制两阶段并发，任务按目录名排序，选择从 `start_index` 开始的 `num_tasks` 条。
+
+节点统一导出 `benchmark.json` 和 `manifest.json`；单任务有有效轨迹时返回 ATIF-v1.8 文件，多任务或无有效轨迹时返回索引。运行错误不记作模型零分。SDK 0.1.15 的 docker-rt 不执行 Docker 断网设置，本适配器会明确记录网络隔离未验证，因此该模式用于本地评测。部署、单任务命令和详细输出说明见 [DeepSWE 使用说明](custom_py_script/deepswe_eval/README.md)。
 
 ### minisweBenchmark 的环境与离线验证
 

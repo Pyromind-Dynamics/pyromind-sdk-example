@@ -1,0 +1,5 @@
+# Install in a separate Python 3.12+ environment, preserving coding_eval dependencies.
+datacurve-pier==0.3.1
+mini-swe-agent==2.4.6
+litellm[mcp]==1.106.6
+docker>=7.0.0

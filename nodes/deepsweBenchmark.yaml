@@ -1,0 +1,27 @@
+name: deepsweBenchmark
+description: Run DeepSWE 1.1 tasks with mini-swe-agent and Pier's separate verifier, returning scored ATIF-v1.8 trajectories or a manifest.
+display_name: deepsweBenchmark
+base_class: PodExecutionNode
+python_code: /workspace/nodes/custom_py_script/deepswe_eval/eval_benchmark.py
+function_name: eval_deepswe_benchmark
+python_command: /root/pyromind-sdk-example/.venv/bin/python
+parameters:
+  - name: inference_config
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: rollout_config
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: pyromind_api_key
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: output_dir
+    dtype: STRING
+    type: input
+    required_type: required
+  - name: output_file_path
+    dtype: STRING
+    type: output
