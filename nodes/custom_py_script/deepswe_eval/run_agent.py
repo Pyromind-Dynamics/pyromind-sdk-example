@@ -4,9 +4,12 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import re
 import shlex
 
+import litellm
 from minisweagent.agents.default import DefaultAgent
+from minisweagent.config import builtin_config_dir, get_config_from_spec
 from minisweagent.environments.docker import DockerEnvironment, DockerEnvironmentConfig
 from minisweagent.models import get_model
 
@@ -30,19 +33,38 @@ def git_output(environment, command: str) -> str:
     return result["output"].rstrip("\r\n")
 
 
+def git_commit(environment) -> str:
+    value = git_output(environment, "git rev-parse --verify HEAD").strip()
+    if not re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", value):
+        raise ValueError(f"Invalid Git commit returned by sandbox: {value!r}")
+    return value
+
+
 def record_submission(environment, path: Path, initial_commit: str | None):
     """Inspect the agent's commits without staging or committing any files."""
-    head = git_output(environment, "git rev-parse --verify HEAD")
+    errors = {}
+    try:
+        head = git_commit(environment)
+    except Exception as exc:
+        head = None
+        errors["submitted_commit"] = str(exc)
     submission = {
         "initial_commit": initial_commit,
         "submitted_commit": head,
-        "has_new_commit": head != initial_commit if initial_commit else None,
-        "worktree_status": git_output(environment, "git --no-optional-locks status --short --untracked-files=all"),
+        "has_new_commit": head != initial_commit if head and initial_commit else None,
     }
-    if initial_commit:
+    commands = {"worktree_status": "git --no-optional-locks status --short --untracked-files=all"}
+    if initial_commit and head:
         refs = f"{shlex.quote(initial_commit)} {shlex.quote(head)} --"
-        submission["committed_files"] = git_output(environment, f"git diff --no-ext-diff --no-textconv --name-status {refs}")
-        submission["diff_stat"] = git_output(environment, f"git diff --no-ext-diff --no-textconv --stat {refs}")
+        commands["committed_files"] = f"git diff --no-ext-diff --no-textconv --name-status {refs}"
+        commands["diff_stat"] = f"git diff --no-ext-diff --no-textconv --stat {refs}"
+    for key, command in commands.items():
+        try:
+            submission[key] = git_output(environment, command)
+        except Exception as exc:
+            errors[key] = str(exc)
+    if errors:
+        submission["diagnostic_errors"] = errors
     path.write_text(json.dumps(submission, ensure_ascii=False, indent=2) + "\n")
     if submission["has_new_commit"] is False:
         logging.getLogger(__name__).warning(
@@ -59,16 +81,22 @@ def main():
     parser.add_argument("--task-id", required=True)
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
+    official = get_config_from_spec(builtin_config_dir / "mini.yaml")
+    task_timeout = config.get("agent_timeouts", {}).get(args.task_id, 10800)
     environment = AttachedEnvironment(args.container)
     model = get_model(config={
+        **official["model"],
         "model_class": "litellm", "model_name": f"openai/{config['model_name']}",
         "cost_tracking": "ignore_errors",
-        "model_kwargs": {"custom_llm_provider": "openai", "api_base": config["endpoint"],
+        "model_kwargs": {**official["model"].get("model_kwargs", {}),
+                         "custom_llm_provider": "openai", "api_base": config["endpoint"],
                          "drop_params": True, "timeout": 300},
     })
+    # HTTP 400 requests cannot be repaired by retrying the same conversation.
+    model.abort_exceptions = [*model.abort_exceptions, litellm.exceptions.BadRequestError]
     agent = DefaultAgent(
-        model, environment, step_limit=150, cost_limit=9999,
-        wall_time_limit_seconds=7000, output_path=args.trajectory,
+        model, environment, step_limit=official["agent"]["step_limit"], cost_limit=9999,
+        wall_time_limit_seconds=task_timeout, output_path=args.trajectory,
         system_template=(
             "You are a software engineering agent. Use the bash tool to inspect "
             "the repository, implement the requested behavior and test your changes. "
@@ -80,18 +108,23 @@ def main():
             "changes; uncommitted work is not collected, and the evaluator will "
             "not commit files for you. If Git identity is unset, use "
             "git -c user.name=mini-swe-agent -c user.email=agent@localhost commit. "
+            "Commit completed, tested changes as you work so they are retained "
+            "if the time limit is reached. "
             "When finished, run exactly: echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT"
         ),
         instance_template="Implement the following task in /app:\n\n{{task}}",
     )
     initial_commit = None
     try:
-        initial_commit = git_output(environment, "git rev-parse --verify HEAD")
+        initial_commit = git_commit(environment)
     except Exception as exc:
         logging.getLogger(__name__).warning("Cannot record initial Git commit: %s", exc)
     info = {}
     try:
         info = agent.run(args.instruction.read_text())
+    except Exception as exc:
+        info = {"exit_status": type(exc).__name__, "exception_str": str(exc)}
+        raise
     finally:
         agent.save(args.trajectory, {"instance_id": args.task_id, "info": info})
         try:

@@ -20,10 +20,6 @@ from trajectory_validation import InferenceError, load_validated_trajectory
 
 
 def select_tasks(tasks_dir: Path, num_tasks: int, start_index: int) -> list[Path]:
-    if type(num_tasks) is not int or num_tasks < 1:
-        raise ValueError("num_tasks must be a positive integer")
-    if type(start_index) is not int or start_index < 0:
-        raise ValueError("start_index must be a nonnegative integer")
     if not tasks_dir.is_dir():
         raise FileNotFoundError(f"DeepSWE tasks not found: {tasks_dir}. Run deepswe_eval/setup.sh first.")
     tasks = sorted(path for path in tasks_dir.iterdir() if path.is_dir() and (path / "task.toml").is_file())
@@ -90,6 +86,7 @@ def export_results(run_dir: Path, task_ids: list[str], model_name: str, run_id: 
         "runtime_kind": provenance["runtime_kind"],
         "network_isolation": "docker-network-none" if provenance["runtime_kind"] == "docker" else "platform-managed-unverified",
         "dataset_revision": provenance.get("dataset_revision"),
+        "network_isolation_required": provenance.get("require_network_isolation", False),
     }
     entries = json.loads((run_dir / "pier-results.json").read_text())
     by_id = {entry["task_id"]: entry for entry in entries}
@@ -181,6 +178,15 @@ def eval_deepswe_benchmark(
     python = runtime_python()
     trajectory_model()
     existing_host = os.environ.get("DEEPSWE_DOCKER_HOST")
+    require_isolation = os.environ.get("DEEPSWE_REQUIRE_NETWORK_ISOLATION", "0") == "1"
+    if require_isolation:
+        if not existing_host:
+            raise RuntimeError("Strict network isolation requires a standard Docker daemon via DEEPSWE_DOCKER_HOST; "
+                               "PyroMind SDK 0.1.15 does not enforce task network isolation.")
+        server = subprocess.run(["/usr/local/bin/docker", "version", "--format", "{{.Server.Version}}"],
+                                env=runner_environment("", existing_host), capture_output=True, text=True, check=True)
+        if "docker-rt" in server.stdout.lower():
+            raise RuntimeError("Strict network isolation cannot use a docker-rt daemon")
     if not existing_host and not pyromind_api_key.strip():
         raise ValueError("pyromind_api_key is required to start docker-rt; CLI users must set PYROMIND_API_KEY")
     run_id = f"deepswe-{uuid4().hex}"
@@ -194,6 +200,9 @@ def eval_deepswe_benchmark(
         "model_name": model_name.removeprefix("openai/"), "runtime_kind": runtime_kind,
         "inference_workers": rollout["inference_workers"], "grading_workers": rollout["grading_workers"],
         "task_paths": [str(path) for path in selected],
+        "agent_timeouts": {path.name: tomllib.loads((path / "task.toml").read_text()).get("agent", {}).get("timeout_sec", 10800)
+                           for path in selected},
+        "require_network_isolation": require_isolation,
         "dataset_revision": revision.stdout.strip() if revision.returncode == 0 else None,
     }
     config_path = run_dir / "run-config.json"

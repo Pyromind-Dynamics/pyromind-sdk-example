@@ -185,6 +185,8 @@ def test_final_output_write_error_aborts_instead_of_counting_twice(tmp_path, mon
 def test_node_never_persists_keys_and_cleans_up_on_runner_error(tmp_path, monkeypatch):
     node = load_node()
     task(tmp_path / "dataset", "one")
+    with (tmp_path / "dataset/one/task.toml").open("a") as config_file:
+        config_file.write('[agent]\ntimeout_sec=321\n')
     monkeypatch.setenv("DEEPSWE_TASKS", str(tmp_path / "dataset"))
     monkeypatch.delenv("DEEPSWE_DOCKER_HOST", raising=False)
     monkeypatch.setenv("MSWEA_API_KEY", "wrong-inherited-key")
@@ -208,6 +210,7 @@ def test_node_never_persists_keys_and_cleans_up_on_runner_error(tmp_path, monkey
         )
     stop.assert_called_once()
     saved = next((tmp_path / "output").glob("*/run-config.json")).read_text()
+    assert json.loads(saved)["agent_timeouts"] == {"one": 321}
     assert "synthetic-model-key" not in saved
     assert "synthetic-platform-key" not in saved
 
@@ -276,7 +279,10 @@ def test_real_mini_agent_owns_submission_without_automatic_staging(tmp_path, mon
         def execute(self, action, cwd=""):
             process = subprocess.run(["bash", "-c", action["command"]], cwd=repo,
                                      text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            result = {"output": process.stdout, "returncode": process.returncode, "exception_info": ""}
+            output = process.stdout
+            if action["command"] == "git rev-parse --verify HEAD":
+                output = " \r\n" + output + "\n"
+            result = {"output": output, "returncode": process.returncode, "exception_info": ""}
             self._check_finished(result)
             return result
     command = "printf 'fixed\\n' > value.txt && printf '\\000build' > compiled-output && cp value.txt value.txt.bak && "
@@ -292,10 +298,14 @@ def test_real_mini_agent_owns_submission_without_automatic_staging(tmp_path, mon
     }}], usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20})
     model = LitellmModel(model_name="openai/synthetic", cost_tracking="ignore_errors",
                          model_kwargs={"mock_response": response, "custom_llm_provider": "openai"})
-    monkeypatch.setattr(run_agent, "get_model", lambda **kwargs: model)
+    def make_model(*, config):
+        model.config.observation_template = config["observation_template"]
+        return model
+    monkeypatch.setattr(run_agent, "get_model", make_model)
     monkeypatch.setattr(run_agent, "AttachedEnvironment", LocalAttached)
     config = tmp_path / "config.json"
-    config.write_text(json.dumps({"model_name": "synthetic", "endpoint": "http://127.0.0.1:1/v1"}))
+    config.write_text(json.dumps({"model_name": "synthetic", "endpoint": "http://127.0.0.1:1/v1",
+                                  "agent_timeouts": {"one": 120}}))
     instruction = tmp_path / "instruction.txt"
     instruction.write_text("Write fixed to value.txt")
     trajectory = tmp_path / "native.json"
@@ -321,6 +331,8 @@ def test_real_mini_agent_owns_submission_without_automatic_staging(tmp_path, mon
     assert submission["committed_files"] == ("A\tvalue.txt" if commit_changes else "")
     saved = json.loads(trajectory.read_text())
     assert saved["info"]["exit_status"] == "Submitted"
+    assert saved["info"]["config"]["agent"]["step_limit"] == 0
+    assert saved["info"]["config"]["agent"]["wall_time_limit_seconds"] == 120
     assert "git diff" in saved["messages"][0]["content"]
     assert "will not commit files for you" in saved["messages"][0]["content"]
     doc = convert_to_atif(saved, task_id="one", model_name="synthetic",
@@ -328,7 +340,130 @@ def test_real_mini_agent_owns_submission_without_automatic_staging(tmp_path, mon
     assert doc["schema_version"] == "ATIF-v1.8"
 
 
-@pytest.mark.parametrize("trace_state", ["valid", "missing", "malformed", "inference_error", "agent_exit_error", "environment_error", "write_error"])
+def test_submission_diagnostics_survive_invalid_commit(tmp_path):
+    agent = load_script("run_agent")
+    environment = Mock()
+    environment.execute.side_effect = [
+        {"returncode": 0, "output": "truncated-commit\n"},
+        {"returncode": 0, "output": " M source.py\n"},
+    ]
+    path = tmp_path / "submission.json"
+    agent.record_submission(environment, path, "a" * 40)
+    result = json.loads(path.read_text())
+    assert result["submitted_commit"] is None
+    assert result["has_new_commit"] is None
+    assert result["worktree_status"] == " M source.py"
+    assert "Invalid Git commit" in result["diagnostic_errors"]["submitted_commit"]
+    assert all("git diff" not in c.args[0]["command"] for c in environment.execute.call_args_list)
+
+
+def test_official_observation_truncation_and_nonretryable_bad_request(tmp_path, monkeypatch):
+    agent = load_script("run_agent")
+    import litellm
+    from minisweagent.models.litellm_model import LitellmModel
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps({"model_name": "synthetic", "endpoint": "http://127.0.0.1:1/v1"}))
+    instruction = tmp_path / "instruction.txt"
+    instruction.write_text("Synthetic output test")
+    trace = tmp_path / "native.json"
+    monkeypatch.setattr(sys, "argv", ["run_agent", "--config", str(config_path), "--instruction", str(instruction),
+                                      "--container", "synthetic", "--trajectory", str(trace), "--task-id", "one"])
+    model = None
+    def make_model(*, config):
+        nonlocal model
+        model = LitellmModel(**{k: v for k, v in config.items() if k != "model_class"})
+        return model
+    monkeypatch.setattr(agent, "get_model", make_model)
+    raw_output = "HEAD:" + "x" * 3_000_000 + ":TAIL"
+    environment = agent.AttachedEnvironment("synthetic")
+    environment.execute = Mock(side_effect=[
+        {"returncode": 0, "output": "a" * 40 + "\n"},
+        {"returncode": 0, "output": raw_output, "exception_info": ""},
+        {"returncode": 0, "output": "a" * 40 + "\n"},
+        {"returncode": 0, "output": ""},
+        {"returncode": 0, "output": ""},
+        {"returncode": 0, "output": ""},
+    ])
+    monkeypatch.setattr(agent, "AttachedEnvironment", lambda _: environment)
+    response = litellm.ModelResponse(model="openai/synthetic", choices=[{"finish_reason": "tool_calls", "message": {
+        "role": "assistant", "content": "Read synthetic output",
+        "tool_calls": [{"id": "call", "type": "function", "function": {"name": "bash", "arguments": '{"command":"synthetic"}'}}],
+    }}], usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20})
+    request_error = litellm.exceptions.BadRequestError(message="Range of input length", model="synthetic", llm_provider="openai")
+    calls = Mock(side_effect=[response, request_error])
+    monkeypatch.setattr(litellm, "completion", calls)
+    with pytest.raises(litellm.exceptions.BadRequestError):
+        agent.main()
+    assert calls.call_count == 2, "Do not retry a deterministic HTTP 400"
+    sent = calls.call_args_list[1].kwargs["messages"]
+    observation = json.loads(next(m["content"] for m in sent if m["role"] == "tool"))
+    assert len(observation["output_head"]) == len(observation["output_tail"]) == 5000
+    assert observation["elided_chars"] == len(raw_output) - 10000
+    assert sum(len(m.get("content") or "") for m in sent) < 20000
+    saved = json.loads(trace.read_text())
+    assert saved["info"]["exception_str"] == str(request_error)
+    assert next(m["extra"]["raw_output"] for m in saved["messages"] if m["role"] == "tool") == raw_output
+
+
+@pytest.mark.parametrize("runtime_kind", ["pyromind", "docker"])
+def test_empty_artifacts_are_uploaded_without_zero_chunk_requests(tmp_path, runtime_kind):
+    pytest.importorskip("pier")
+    runtime = load_script("pier_runtime")
+    from pier.environments.base import ExecResult
+    environment = object.__new__(runtime.DockerRuntimeEnvironment)
+    environment.runtime_kind, environment.container_id = runtime_kind, "synthetic"
+    source, target = tmp_path / "source", tmp_path / "target with spaces"
+    (source / "nested").mkdir(parents=True)
+    (source / "model.patch").touch()
+    (source / "nested/empty.txt").touch()
+    (source / "nested/nonempty.txt").write_text("keep")
+    (source / "empty-dir").mkdir()
+    target.mkdir()
+    (target / "model.patch").write_text("stale contents")
+    async def execute(command):
+        result = subprocess.run(["bash", "-c", command], capture_output=True, text=True)
+        return ExecResult(stdout=result.stdout, stderr=result.stderr, return_code=result.returncode)
+    async def checked(*args):
+        assert args[0] == "cp"
+        path = Path(args[1].removesuffix("/."))
+        destination = Path(args[2].split(":", 1)[1])
+        if runtime_kind == "pyromind":
+            assert not (path.is_file() and path.stat().st_size == 0), "Reproduces zero-chunk API rejection"
+            assert not (path.is_dir() and any(p.is_file() and not p.stat().st_size for p in path.rglob("*")))
+        if path.is_dir():
+            shutil.copytree(path, destination, dirs_exist_ok=True)
+        else:
+            shutil.copy2(path, destination)
+    environment.exec, environment._checked = execute, checked
+    asyncio.run(environment.upload_dir(source, str(target)))
+    assert (target / "model.patch").read_bytes() == b""
+    assert (target / "nested/empty.txt").read_bytes() == b""
+    assert (target / "nested/nonempty.txt").read_text() == "keep"
+    assert (target / "empty-dir").is_dir()
+
+
+@pytest.mark.parametrize("host,server_version", [(None, None), ("unix:///rt.sock", "24.0.0-docker-rt")])
+def test_strict_isolation_rejects_unsupported_platform_before_starting(tmp_path, monkeypatch, host, server_version):
+    node = load_node()
+    task(tmp_path / "dataset", "one")
+    monkeypatch.setenv("DEEPSWE_TASKS", str(tmp_path / "dataset"))
+    monkeypatch.setenv("DEEPSWE_REQUIRE_NETWORK_ISOLATION", "1")
+    if host:
+        monkeypatch.setenv("DEEPSWE_DOCKER_HOST", host)
+    else:
+        monkeypatch.delenv("DEEPSWE_DOCKER_HOST", raising=False)
+    monkeypatch.setattr(node, "runtime_python", lambda: Path(sys.executable))
+    monkeypatch.setattr(node.subprocess, "run", Mock(return_value=Mock(stdout=server_version)))
+    prepare = Mock(side_effect=AssertionError("must not provision a sandbox"))
+    monkeypatch.setattr(node, "prepare_docker_context", prepare)
+    with pytest.raises(RuntimeError, match="network isolation"):
+        node.eval_deepswe_benchmark(
+            json.dumps({"endpoint": "https://service.example/v1", "model_name": "synthetic"}),
+            json.dumps({"inference_workers": 1, "grading_workers": 1}), "synthetic", str(tmp_path / "output"))
+    prepare.assert_not_called()
+
+
+@pytest.mark.parametrize("trace_state", ["valid", "empty_patch", "missing", "malformed", "inference_error", "agent_exit_error", "environment_error", "write_error"])
 def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_path, monkeypatch, trace_state):
     pytest.importorskip("pier")
     runtime = load_script("pier_runtime")
@@ -361,6 +496,8 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
     (path / "tests/test.sh").write_text(
         '#!/bin/bash\nset -eu\nSANDBOX_ROOT="$(cd "$(dirname "$0")/.." && pwd)"\ncd "$SANDBOX_ROOT/app"\n'
         'test "$(cat value.txt)" = base\n'
+        'if [ ! -s "$SANDBOX_ROOT/logs/artifacts/model.patch" ]; then\n'
+        "  echo '{\"reward\":0}' > \"$SANDBOX_ROOT/logs/verifier/reward.json\"\n  exit 0\nfi\n"
         'git apply "$SANDBOX_ROOT/logs/artifacts/model.patch"\n'
         'test "$(cat value.txt)" = fixed\n'
         "echo '{\"reward\":1}' > \"$SANDBOX_ROOT/logs/verifier/reward.json\"\n"
@@ -381,7 +518,8 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
                 shutil.copytree(image, root / "app")
                 roots[container] = root
                 Path(args[args.index("--cidfile") + 1]).write_text(container)
-                assert args[args.index("--network") + 1] == "none"
+                if trace_state != "empty_patch":
+                    assert args[args.index("--network") + 1] == "none"
                 return ExecResult(stdout=container, stderr="", return_code=0)
             if args[0] == "rm":
                 deleted.append(args[-1])
@@ -389,17 +527,24 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
                 return ExecResult(stdout="", stderr="", return_code=0)
             if args[0] == "cp":
                 source, target = args[1:]
+                uploading = any(target.startswith(container + ":") for container in roots)
                 for container, root in roots.items():
                     if source.startswith(container + ":"):
                         source = str(root / source.split(":", 1)[1].lstrip("/"))
                     if target.startswith(container + ":"):
                         target = str(root / target.split(":", 1)[1].lstrip("/"))
                 if Path(source).is_dir():
+                    if trace_state == "empty_patch" and uploading:
+                        assert not any(p.is_file() and p.stat().st_size == 0 for p in Path(source).rglob("*")), "zero-chunk upload"
                     shutil.copytree(source, target, dirs_exist_ok=True)
                 else:
+                    if trace_state == "empty_patch" and uploading:
+                        assert Path(source).stat().st_size > 0, "zero-chunk upload"
                     shutil.copy2(source, target)
                 return ExecResult(stdout="", stderr="", return_code=0)
             assert args[0] == "exec"
+            if args[-2:] == ["id", "-u"]:
+                return ExecResult(stdout="0\n", stderr="", return_code=0)
             container = next(arg for arg in args[1:] if arg in roots)
             root = roots[container]
             command = args[-1]
@@ -420,11 +565,12 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
         async def run(self, instruction, environment, context):
             root = roots[environment.container_id]
             assert not (root / "tests/test.sh").exists(), "Hidden tests must not be uploaded to the agent"
-            result = await environment.exec(
-                "printf 'fixed\\n' > value.txt && git add value.txt && "
-                "git -c user.name=Test -c user.email=test@localhost commit -qm fix"
-            )
-            assert result.return_code == 0
+            if trace_state != "empty_patch":
+                result = await environment.exec(
+                    "printf 'fixed\\n' > value.txt && git add value.txt && "
+                    "git -c user.name=Test -c user.email=test@localhost commit -qm fix"
+                )
+                assert result.return_code == 0
             self.logs_dir.mkdir(parents=True, exist_ok=True)
             data = native("synthetic-task")
             if trace_state == "inference_error":
@@ -445,16 +591,17 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
             task=TaskConfig(path=path), trial_name="synthetic-task", trials_dir=tmp_path / "trials",
             agent=AgentConfig(import_path="deepswe_synthetic_runtime:Agent", model_name="synthetic"),
             environment=EnvironmentConfig(import_path="deepswe_synthetic_runtime:Environment",
-                kwargs={"run_dir": str(tmp_path), "run_id": "test", "runtime_kind": "docker"}),
+                kwargs={"run_dir": str(tmp_path), "run_id": "test",
+                        "runtime_kind": "pyromind" if trace_state == "empty_patch" else "docker"}),
         ))
         trial.inference_slots = asyncio.Semaphore(1)
         trial.grading_slots = asyncio.Semaphore(1)
         trial.run_id = "test"
         result = await trial.run()
         assert trial.inference_slots._value == 1 and trial.grading_slots._value == 1
-        if trace_state == "valid":
+        if trace_state in {"valid", "empty_patch"}:
             assert result.exception_info is None, result.exception_info
-            assert result.verifier_result.rewards["reward"] == 1
+            assert result.verifier_result.rewards["reward"] == (0 if trace_state == "empty_patch" else 1)
             assert (trial.trial_dir / "agent/trajectory.atif.json").is_file()
         else:
             assert result.exception_info is not None
@@ -464,7 +611,7 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
                 trace_state, "trajectory")
         return result, trial.failure_stage
     result, stage = asyncio.run(exercise())
-    expected_containers = 2 if trace_state == "valid" else 0 if trace_state == "environment_error" else 1
+    expected_containers = 2 if trace_state in {"valid", "empty_patch"} else 0 if trace_state == "environment_error" else 1
     assert len(roots) == len(deleted) == expected_containers
     assert (image / "value.txt").read_text() == "base\n"
     assert (tmp_path / "trials/synthetic-task/artifacts/model.patch").is_file() == (trace_state != "environment_error")
@@ -473,10 +620,31 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
     node.export_results(tmp_path, ["synthetic-task"], "synthetic", "test")
     summary = json.loads((tmp_path / "benchmark.json").read_text())["summary"]
     assert summary["total_tasks"] == summary["scored_tasks"] + summary["failed_tasks"] == 1
-    assert summary["scored_tasks"] == (1 if trace_state == "valid" else 0)
-    if trace_state == "valid":
+    assert summary["scored_tasks"] == (1 if trace_state in {"valid", "empty_patch"} else 0)
+    if trace_state in {"valid", "empty_patch"}:
         doc = json.loads((tmp_path / "trajectory.atif.json").read_text())
-        assert doc["final_metrics"]["extra"]["benchmark"]["score"] == 1
+        assert doc["final_metrics"]["extra"]["benchmark"]["score"] == (0 if trace_state == "empty_patch" else 1)
+
+
+def test_host_agent_process_timeout_follows_selected_task(tmp_path, monkeypatch):
+    pytest.importorskip("pier")
+    runtime = load_script("pier_runtime")
+    from pier.environments.base import ExecResult
+    config = tmp_path / "config.json"
+    config.write_text(json.dumps({"agent_timeouts": {"one": 321}}))
+    monkeypatch.setenv("DEEPSWE_RUN_CONFIG", str(config))
+    calls = []
+    async def process(*args, **kwargs):
+        calls.append(kwargs)
+        path = Path(args[args.index("--trajectory") + 1])
+        path.write_text(json.dumps(native("one")))
+        return ExecResult(stdout="", stderr="", return_code=0)
+    monkeypatch.setattr(runtime, "run_process", process)
+    agent = runtime.HostMiniSweAgent(logs_dir=tmp_path / "one/agent", model_name="synthetic")
+    context = types.SimpleNamespace()
+    asyncio.run(agent.run("Synthetic instruction", types.SimpleNamespace(container_id="synthetic"), context))
+    assert calls[0]["timeout"] == 381
+    assert context.n_agent_steps == 1
 
 
 @pytest.mark.parametrize("kind,cpus,memory_mb,expected_cpu,expected_memory", [

@@ -47,6 +47,8 @@ rollout_config.rollout_config ─────┘
 
 程序不再自动执行 `git add -A` 或兜底提交。提示词要求 Agent 检查改动、明确选择必要的源码/测试/资源文件并提交，避免将临时编译产物、缓存和备份文件纳入提交。结束时只读检查 Git 状态，将初始/最终提交、已提交文件列表、diff 统计和未提交文件列表记录到 `trials/<task>/agent/submission.json`；诊断记录失败只写警告，不改变评分。若 Agent 没有提交，程序会警告但不会替它提交，也不会人为标成环境失败；仍由官方 collect hook 和验证器处理。如果 HEAD 相对官方基准没有变化，收集到的就是空补丁。Agent 自己提交的二进制或备份文件仍会进入补丁，程序不按文件类型强行过滤。
 
+模型加载 mini-swe-agent 2.4.6 自带 `mini.yaml` 的 observation/format-error 模板。长工具输出只向模型提供前后各 5000 字符，完整输出仍在原始轨迹的 `messages[].extra.raw_output` 中，不随请求再次发送。固定的 150 轮限制已移除，采用官方默认 `step_limit=0`；运行时限读取所选任务的 `agent.timeout_sec` 并记录在 `run-config.json.agent_timeouts`，当前官方任务均为 10800 秒。Pier 仍执行任务硬超时；宿主机子进程不再固定为 7100 秒。HTTP 400（包括输入长度超限）直接保留错误并结束，不对相同请求反复重试。Agent 提示词要求阶段性提交已经完成的改动，以便达到时限后仍能收集已有提交。
+
 ## 命令行单任务测试
 
 在本机设置 `PYROMIND_API_KEY`（平台密钥）和 `OPENAI_API_KEY`（模型服务密钥）后执行。API key 不作为命令行参数或持久化运行配置保存。
@@ -83,11 +85,22 @@ trials/<task>/verifier/  reward.json、测试日志与报告
 
 `output_file_path` 在单题有有效轨迹时直接返回 ATIF 文件；多题或单题无有效轨迹时返回 `manifest.json`。正常未通过的任务记为 0，仍计入 `scored_tasks`；环境、模型调用、轨迹或验证异常计入 `failed_tasks`，分数为 `null`。同一道任务不会同时计入已评分和失败，`total_tasks = scored_tasks + failed_tasks`。均分只统计有效评分。最终导出复用评分前的 ATIF 并附加评分；最终文件写入失败会像 miniswe 一样报错，不将它追加为已评分任务的失败计数。离线导出旧运行时也先检查轨迹，无效轨迹对应的汇总分数为 `null`；不改写 Pier 原始结果。
 
+PyroMind 的分块上传接口不接受空文件。适配器遇到空文件时，在目标沙箱创建或截断为 0 字节，目录上传也保留其中的空文件；仍由官方验证器决定空补丁的分数，不将上传问题替换成手工评分。提交号去除首尾空白并校验完整性；个别诊断失败时 `submission.json` 仍保存其他字段及 `diagnostic_errors`。
+
 ## 网络与可比性
 
 PyroMind 平台要求 CPU 与内存为每核 2 GiB。适配器按此比例向上分配，保留任务要求的最低 CPU 和内存，例如任务要求 `2 CPU / 8 GiB` 时申请 `4 CPU / 8 GiB`。做题和评分环境都使用此映射。任务集文件保持原样，原始需求与实际分配记录在 `trials/<task>/resources-agent.json`、`resources-verifier.json` 以及导出的 ATIF 元数据中。标准 Docker 模式直接使用任务指定的资源。
 
 标准 Docker 模式对声明断网的任务使用 `--network none`。当前 PyroMind SDK 0.1.15 的 docker-rt 不执行这个网络设置；平台可能施加额外网络策略，但本适配器未验证，因此结果记录 `network_isolation=platform-managed-unverified`，用于本地评测，不等同于官方榜单环境。Agent 提示词及宿主机运行方式也与 Pier 默认的容器内 Agent 有差异。独立验证、官方测试和 collect hook 保留原有流程。
+
+真实批量运行已确认当前 PyroMind 沙箱能访问 GitHub，不能将默认模式当作断网评测。需要严格隔离时设置：
+
+```bash
+export DEEPSWE_REQUIRE_NETWORK_ISOLATION=1
+export DEEPSWE_DOCKER_HOST=unix:///var/run/docker.sock  # 必须是运行中的标准 Docker daemon
+```
+
+严格模式会在创建沙箱前拒绝默认 PyroMind 后端，也会拒绝版本标识为 docker-rt 的外部 daemon；标准 Docker 继续执行 `--network none`，模型请求仍由宿主机发起。当前机器没有运行中的标准 Docker daemon，因此此模式无法在当前机器完成真实评测，需要配置可用 daemon 或平台提供真正的网络策略。本次代码修改没有使 PyroMind 沙箱具备断网能力。是否要求严格隔离会记录在运行配置和结果元数据中。
 
 ## 离线回归检查
 

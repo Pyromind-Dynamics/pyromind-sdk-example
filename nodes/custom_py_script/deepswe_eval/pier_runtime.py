@@ -187,13 +187,33 @@ class DockerRuntimeEnvironment(BaseEnvironment):
         return await self._docker(*args, timeout=seconds + 30)
 
     async def upload_file(self, source_path, target_path):
+        if self.runtime_kind == "pyromind" and Path(source_path).is_file() and Path(source_path).stat().st_size == 0:
+            # docker-rt's chunked upload rejects zero chunks. Preserve the empty
+            # artifact so the official verifier can grade the pristine base.
+            parent = shlex.quote(str(Path(target_path).parent))
+            target = shlex.quote(str(target_path))
+            result = await self.exec(f"mkdir -p {parent} && : > {target}")
+            if result.return_code:
+                raise RuntimeError(f"Cannot create empty artifact: {result.stderr or result.stdout}")
+            return
         await self._checked("cp", str(source_path), f"{self.container_id}:{target_path}")
 
     async def upload_dir(self, source_dir, target_dir):
         result = await self.exec(f"mkdir -p {shlex.quote(str(target_dir))}")
         if result.return_code:
             raise RuntimeError("Cannot create upload directory")
-        await self._checked("cp", f"{Path(source_dir)}/.", f"{self.container_id}:{target_dir}")
+        source = Path(source_dir)
+        if self.runtime_kind == "pyromind" and any(p.is_file() and p.stat().st_size == 0 for p in source.rglob("*")):
+            # Pier uploads the whole artifact directory, including model.patch.
+            # Traverse only directories needing the empty-file workaround.
+            for path in sorted(source.iterdir()):
+                target = str(Path(target_dir) / path.name)
+                if path.is_dir():
+                    await self.upload_dir(path, target)
+                else:
+                    await self.upload_file(path, target)
+        else:
+            await self._checked("cp", f"{source}/.", f"{self.container_id}:{target_dir}")
 
     async def download_file(self, source_path, target_path):
         Path(target_path).parent.mkdir(parents=True, exist_ok=True)
@@ -224,17 +244,21 @@ class HostMiniSweAgent(BaseAgent):
         instruction_path.write_text(instruction)
         native_path = self.logs_dir / "mini-swe-agent.trajectory.json"
         task_id = self.logs_dir.parent.name
+        config = json.loads(Path(os.environ["DEEPSWE_RUN_CONFIG"]).read_text())
+        task_timeout = config.get("agent_timeouts", {}).get(task_id, 10800)
         try:
             result = await run_process(
                 sys.executable, Path(__file__).with_name("run_agent.py"),
                 "--config", os.environ["DEEPSWE_RUN_CONFIG"],
                 "--instruction", instruction_path, "--container", environment.container_id,
                 "--trajectory", native_path, "--task-id", task_id,
-                timeout=7100,
+                timeout=task_timeout + 60,
             )
             (self.logs_dir / "agent-stdout.txt").write_text(result.stdout + result.stderr)
             if result.return_code:
-                raise RuntimeError(f"mini-swe-agent failed; see {self.logs_dir / 'agent-stdout.txt'}")
+                info = json.loads(native_path.read_text()).get("info", {}) if native_path.is_file() else {}
+                detail = info.get("exception_str") or "mini-swe-agent failed"
+                raise RuntimeError(f"{detail}; see {self.logs_dir / 'agent-stdout.txt'}")
         finally:
             if native_path.is_file():
                 native = json.loads(native_path.read_text())
