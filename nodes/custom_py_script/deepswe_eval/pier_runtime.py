@@ -244,15 +244,13 @@ class HostMiniSweAgent(BaseAgent):
         instruction_path.write_text(instruction)
         native_path = self.logs_dir / "mini-swe-agent.trajectory.json"
         task_id = self.logs_dir.parent.name
-        config = json.loads(Path(os.environ["DEEPSWE_RUN_CONFIG"]).read_text())
-        task_timeout = config.get("agent_timeouts", {}).get(task_id, 10800)
         try:
             result = await run_process(
                 sys.executable, Path(__file__).with_name("run_agent.py"),
                 "--config", os.environ["DEEPSWE_RUN_CONFIG"],
                 "--instruction", instruction_path, "--container", environment.container_id,
                 "--trajectory", native_path, "--task-id", task_id,
-                timeout=task_timeout + 60,
+                timeout=None,
             )
             (self.logs_dir / "agent-stdout.txt").write_text(result.stdout + result.stderr)
             if result.return_code:

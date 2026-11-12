@@ -21,6 +21,11 @@ from pier.trial.trial import Trial
 class PipelineTrial(Trial):
     """Validate the trace before releasing inference and starting grading."""
 
+    def __init__(self, config, *, _task=None):
+        super().__init__(config, _task=_task)
+        # None disables Pier's outer agent deadline; verifier limits remain intact.
+        self._execution.agent_timeout_sec = None
+
     async def run(self):
         self._inference_held = False
         self.failure_stage = "environment"
@@ -124,6 +129,7 @@ def main():
             task = Task(task_dir=Path(path))
             if task.has_steps or task.config.verifier.environment_mode.value != "separate":
                 raise ValueError("Expected single-step DeepSWE 1.1 tasks with a separate verifier")
+            task.paths.test_path.read_bytes()
             for directory, environment_config in [
                 (task.paths.environment_dir, task.config.environment),
                 (task.paths.tests_dir, resolve_effective_verifier_env_config(task.config, None)),

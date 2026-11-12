@@ -85,16 +85,30 @@ def test_node_loads_with_existing_configuration_ports():
         assert next(p for p in outputs if p["name"] == name)["dtype"] == "STRING"
 
 
-def test_task_selection_uses_stable_slice_and_rejects_old_verifiers(tmp_path):
+def test_task_selection_uses_stable_slice(tmp_path):
     node = load_node()
     for name in ("c", "a", "b"):
         task(tmp_path, name)
     assert [p.name for p in node.select_tasks(tmp_path, 2, 1)] == ["b", "c"]
-    (tmp_path / "b/task.toml").write_text('[verifier]\nenvironment_mode="shared"\n')
-    with pytest.raises(ValueError, match="separate-verifier"):
-        node.select_tasks(tmp_path, 1, 1)
     with pytest.raises(ValueError, match="No DeepSWE tasks"):
         node.select_tasks(tmp_path, 1, 99)
+
+
+@pytest.mark.parametrize("problem,expected", [("shared", "separate verifier"),
+                                             ("instruction", "instruction.md"), ("test", "test.sh")])
+def test_task_format_errors_are_reported_by_preflight(tmp_path, problem, expected):
+    pytest.importorskip("pier")
+    path = task(tmp_path, "one")
+    if problem == "shared":
+        (path / "task.toml").write_text('[verifier]\nenvironment_mode="shared"\n')
+    else:
+        (path / ("instruction.md" if problem == "instruction" else "tests/test.sh")).unlink()
+    config = tmp_path / "config.json"
+    config.write_text(json.dumps({"task_paths": [str(path)]}))
+    result = subprocess.run([sys.executable, str(SCRIPTS / "run_deepswe.py"),
+                             "--config", str(config), "--check"], capture_output=True, text=True)
+    assert result.returncode != 0
+    assert expected in result.stderr
 
 
 @pytest.mark.parametrize("reward", [-1, None, True, 0.5])
@@ -210,7 +224,7 @@ def test_node_never_persists_keys_and_cleans_up_on_runner_error(tmp_path, monkey
         )
     stop.assert_called_once()
     saved = next((tmp_path / "output").glob("*/run-config.json")).read_text()
-    assert json.loads(saved)["agent_timeouts"] == {"one": 321}
+    assert json.loads(saved)["agent_timeout_sec"] is None
     assert "synthetic-model-key" not in saved
     assert "synthetic-platform-key" not in saved
 
@@ -331,8 +345,8 @@ def test_real_mini_agent_owns_submission_without_automatic_staging(tmp_path, mon
     assert submission["committed_files"] == ("A\tvalue.txt" if commit_changes else "")
     saved = json.loads(trajectory.read_text())
     assert saved["info"]["exit_status"] == "Submitted"
-    assert saved["info"]["config"]["agent"]["step_limit"] == 0
-    assert saved["info"]["config"]["agent"]["wall_time_limit_seconds"] == 120
+    assert saved["info"]["config"]["agent"]["step_limit"] == 300
+    assert saved["info"]["config"]["agent"]["wall_time_limit_seconds"] == 0
     assert "git diff" in saved["messages"][0]["content"]
     assert "will not commit files for you" in saved["messages"][0]["content"]
     doc = convert_to_atif(saved, task_id="one", model_name="synthetic",
@@ -597,6 +611,8 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
         trial.inference_slots = asyncio.Semaphore(1)
         trial.grading_slots = asyncio.Semaphore(1)
         trial.run_id = "test"
+        assert trial._execution.agent_timeout_sec is None
+        assert trial._verifier_timeout_sec == trial._task.config.verifier.timeout_sec
         result = await trial.run()
         assert trial.inference_slots._value == 1 and trial.grading_slots._value == 1
         if trace_state in {"valid", "empty_patch"}:
@@ -626,7 +642,7 @@ def test_pier_collects_patch_and_grades_in_a_pristine_separate_environment(tmp_p
         assert doc["final_metrics"]["extra"]["benchmark"]["score"] == (0 if trace_state == "empty_patch" else 1)
 
 
-def test_host_agent_process_timeout_follows_selected_task(tmp_path, monkeypatch):
+def test_host_agent_process_has_no_total_timeout(tmp_path, monkeypatch):
     pytest.importorskip("pier")
     runtime = load_script("pier_runtime")
     from pier.environments.base import ExecResult
@@ -643,7 +659,7 @@ def test_host_agent_process_timeout_follows_selected_task(tmp_path, monkeypatch)
     agent = runtime.HostMiniSweAgent(logs_dir=tmp_path / "one/agent", model_name="synthetic")
     context = types.SimpleNamespace()
     asyncio.run(agent.run("Synthetic instruction", types.SimpleNamespace(container_id="synthetic"), context))
-    assert calls[0]["timeout"] == 381
+    assert calls[0]["timeout"] is None
     assert context.n_agent_steps == 1
 
 

@@ -7,7 +7,6 @@ from pathlib import Path
 import signal
 import subprocess
 import sys
-import tomllib
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -20,28 +19,17 @@ from trajectory_validation import InferenceError, load_validated_trajectory
 
 
 def select_tasks(tasks_dir: Path, num_tasks: int, start_index: int) -> list[Path]:
-    if not tasks_dir.is_dir():
-        raise FileNotFoundError(f"DeepSWE tasks not found: {tasks_dir}. Run deepswe_eval/setup.sh first.")
     tasks = sorted(path for path in tasks_dir.iterdir() if path.is_dir() and (path / "task.toml").is_file())
     selected = tasks[start_index:start_index + num_tasks]
     if not selected:
         raise ValueError(f"No DeepSWE tasks selected (available={len(tasks)}, start_index={start_index})")
-    for path in selected:
-        config = tomllib.loads((path / "task.toml").read_text())
-        if not (path / "instruction.md").is_file() or not (path / "tests/test.sh").is_file():
-            raise ValueError(f"Incomplete DeepSWE task: {path.name}")
-        if config.get("verifier", {}).get("environment_mode") != "separate":
-            raise ValueError(f"Task {path.name} is not a DeepSWE 1.1 separate-verifier task")
     return selected
 
 
 def runtime_python() -> Path:
     override = os.environ.get("DEEPSWE_PYTHON")
-    executable = (Path(override).expanduser() if override else
-                  Path.home() / ".local/share/uv/tools/datacurve-pier/bin/python")
-    if not executable.is_file():
-        raise RuntimeError("DeepSWE runtime is missing. Run deepswe_eval/setup.sh or set DEEPSWE_PYTHON.")
-    return executable
+    return (Path(override).expanduser() if override else
+            Path.home() / ".local/share/uv/tools/datacurve-pier/bin/python")
 
 
 def runner_environment(api_key: str, docker_host: str | None = None) -> dict:
@@ -170,9 +158,6 @@ def eval_deepswe_benchmark(
     model_name = config["model_name"].strip()
     if not model_name:
         raise ValueError("model_name cannot be empty")
-    for key in ("inference_workers", "grading_workers"):
-        if type(rollout[key]) is not int or rollout[key] < 1:
-            raise ValueError(f"{key} must be a positive integer")
     tasks_dir = Path(os.environ.get("DEEPSWE_TASKS", "/workspace/datasets/deep-swe/tasks")).expanduser().resolve()
     selected = select_tasks(tasks_dir, rollout.get("num_tasks", 1), rollout.get("start_index", 0))
     python = runtime_python()
@@ -200,8 +185,7 @@ def eval_deepswe_benchmark(
         "model_name": model_name.removeprefix("openai/"), "runtime_kind": runtime_kind,
         "inference_workers": rollout["inference_workers"], "grading_workers": rollout["grading_workers"],
         "task_paths": [str(path) for path in selected],
-        "agent_timeouts": {path.name: tomllib.loads((path / "task.toml").read_text()).get("agent", {}).get("timeout_sec", 10800)
-                           for path in selected},
+        "agent_timeout_sec": None,
         "require_network_isolation": require_isolation,
         "dataset_revision": revision.stdout.strip() if revision.returncode == 0 else None,
     }

@@ -21,6 +21,8 @@ bash nodes/custom_py_script/deepswe_eval/setup.sh
   --check --num-tasks 113
 ```
 
+入口只负责按目录名排序、切片选择任务，并拒绝空任务集合；任务完整性及单步骤/独立验证模式集中在上述预检中处理。目录、文件和解释器不存在时直接报告读取或启动错误。任务数量、起始位置和并发数直接使用配置节点的输入，入口不再重复检查整数类型或数值范围。
+
 ## 平台接线
 
 先同步节点文件并调用平台 reload（已有部署脚本为 `nodes/install.sh`）。
@@ -47,7 +49,7 @@ rollout_config.rollout_config ─────┘
 
 程序不再自动执行 `git add -A` 或兜底提交。提示词要求 Agent 检查改动、明确选择必要的源码/测试/资源文件并提交，避免将临时编译产物、缓存和备份文件纳入提交。结束时只读检查 Git 状态，将初始/最终提交、已提交文件列表、diff 统计和未提交文件列表记录到 `trials/<task>/agent/submission.json`；诊断记录失败只写警告，不改变评分。若 Agent 没有提交，程序会警告但不会替它提交，也不会人为标成环境失败；仍由官方 collect hook 和验证器处理。如果 HEAD 相对官方基准没有变化，收集到的就是空补丁。Agent 自己提交的二进制或备份文件仍会进入补丁，程序不按文件类型强行过滤。
 
-模型加载 mini-swe-agent 2.4.6 自带 `mini.yaml` 的 observation/format-error 模板。长工具输出只向模型提供前后各 5000 字符，完整输出仍在原始轨迹的 `messages[].extra.raw_output` 中，不随请求再次发送。固定的 150 轮限制已移除，采用官方默认 `step_limit=0`；运行时限读取所选任务的 `agent.timeout_sec` 并记录在 `run-config.json.agent_timeouts`，当前官方任务均为 10800 秒。Pier 仍执行任务硬超时；宿主机子进程不再固定为 7100 秒。HTTP 400（包括输入长度超限）直接保留错误并结束，不对相同请求反复重试。Agent 提示词要求阶段性提交已经完成的改动，以便达到时限后仍能收集已有提交。
+模型加载 mini-swe-agent 2.4.6 自带 `mini.yaml` 的 observation/format-error 模板。长工具输出只向模型提供前后各 5000 字符，完整输出仍在原始轨迹的 `messages[].extra.raw_output` 中，不随请求再次发送。按用户要求将做题轮数上限设置为 `step_limit=300`（自定义运行参数）；不设置做题总时限：mini-swe-agent 使用 `wall_time_limit_seconds=0`，宿主机子进程使用 `timeout=None`，Pier 外层 agent deadline 也设为 `None`；`run-config.json.agent_timeout_sec` 记录为 `null`。这会覆盖任务集原有的 10800 秒做题预算，不再属于标准 3 小时预算下的评测；评分时限继续遵循任务配置。单条命令和单次模型请求超时均为 300 秒，分别在 `run_agent.py` 的 `AttachedEnvironment` 和 `model_kwargs` 中设置。HTTP 400（包括输入长度超限）直接保留错误并结束，不对相同请求反复重试。Agent 提示词要求阶段性提交已经完成的改动。
 
 ## 命令行单任务测试
 

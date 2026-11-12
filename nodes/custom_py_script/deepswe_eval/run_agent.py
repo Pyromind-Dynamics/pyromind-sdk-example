@@ -82,7 +82,6 @@ def main():
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     official = get_config_from_spec(builtin_config_dir / "mini.yaml")
-    task_timeout = config.get("agent_timeouts", {}).get(args.task_id, 10800)
     environment = AttachedEnvironment(args.container)
     model = get_model(config={
         **official["model"],
@@ -95,8 +94,8 @@ def main():
     # HTTP 400 requests cannot be repaired by retrying the same conversation.
     model.abort_exceptions = [*model.abort_exceptions, litellm.exceptions.BadRequestError]
     agent = DefaultAgent(
-        model, environment, step_limit=official["agent"]["step_limit"], cost_limit=9999,
-        wall_time_limit_seconds=task_timeout, output_path=args.trajectory,
+        model, environment, step_limit=300, cost_limit=9999,
+        wall_time_limit_seconds=0, output_path=args.trajectory,
         system_template=(
             "You are a software engineering agent. Use the bash tool to inspect "
             "the repository, implement the requested behavior and test your changes. "
@@ -108,8 +107,7 @@ def main():
             "changes; uncommitted work is not collected, and the evaluator will "
             "not commit files for you. If Git identity is unset, use "
             "git -c user.name=mini-swe-agent -c user.email=agent@localhost commit. "
-            "Commit completed, tested changes as you work so they are retained "
-            "if the time limit is reached. "
+            "Commit completed, tested changes as you work. "
             "When finished, run exactly: echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT"
         ),
         instance_template="Implement the following task in /app:\n\n{{task}}",
