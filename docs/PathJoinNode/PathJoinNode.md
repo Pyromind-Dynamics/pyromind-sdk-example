@@ -20,7 +20,7 @@ Path joining utility node: concatenates `base_path` and `subpath` into a complet
 
 | Parameter | Data Type | Description |
 |-----------|-----------|-------------|
-| joined_path | STRING | The joined full path. For example, with `base_path=/workspace/` and `subpath=models`, outputs `/workspace/models` |
+| joined_path | PATH\|STRING | The joined full path. For example, with `base_path=/workspace/` and `subpath=models`, outputs `/workspace/models` |
 
 ## 1.4 Workflow JSON Definition
 

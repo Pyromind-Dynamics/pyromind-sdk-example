@@ -36,7 +36,7 @@
             }
           },
           "output": [
-            "STRING"
+            "PATH|STRING"
           ],
           "output_is_list": [
             false

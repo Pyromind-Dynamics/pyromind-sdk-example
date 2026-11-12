@@ -19,22 +19,8 @@
                 {
                   "skip_enum": true,
                   "enum": [
-                    "OpenGVLab/ScaleCUA-Data",
                     "Writer/omniact",
-                    "agibot-world/AgiBotWorld-Alpha-327",
-                    "agibot-world/AgiBotWorld-Alpha-327-Extract",
-                    "agibot-world/AgiBotWorld-Alpha-CtrlWorld-327",
-                    "agibot-world/AgiBotWorld-Alpha-Lerobot-327",
-                    "agibot-world/AgiBotWorld-Alpha-Openpi-327",
-                    "cadene/droid_1.0.1",
-                    "gui-360/gui-excel",
-                    "gui-360/processed_data",
-                    "henryhe0123/PC-Agent-E",
                     "openai/gsm8k",
-                    "ritzzai/GUI-R1",
-                    "xlangai/aguvis-stage1",
-                    "xlangai/aguvis-stage2",
-                    "zonghanHZH/UGround-V1-8k",
                     "pyromind/alpaca-gpt4-llm-demo",
                     "pyromind/geometry-vqa-vlm-demo",
                     "pyromind/self-cognition"
@@ -45,9 +31,9 @@
                 "STRING",
                 {
                   "default": "/workspace/datasets/",
-                  "enum": [
-                    "/workspace/datasets/"
-                  ]
+                  "input_components": {
+                    "type": "folder_select"
+                  }
                 }
               ]
             }

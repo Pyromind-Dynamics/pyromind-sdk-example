@@ -18,13 +18,16 @@
                 "STRING"
               ],
               "dataset_config": [
-                "STRING"
+                "STRING|DATASET_CONFIG"
               ],
               "training_config": [
-                "STRING"
+                "STRING|TRAINING_CONFIG"
               ],
               "model_config": [
-                "STRING"
+                "STRING|MODEL_CONFIG"
+              ],
+              "wandb_config": [
+                "WANDB_CONFIG"
               ],
               "accelerate_config": [
                 "ACCELERATE_CONFIG"
@@ -50,15 +53,12 @@
             },
             "optional": {
               "lora_config": [
-                "STRING"
-              ],
-              "wandb_config": [
-                "WANDB_CONFIG"
+                "STRING|LORA_CONFIG"
               ],
               "thinking_as_input_ratio": [
                 "FLOAT",
                 {
-                  "default": 0
+                  "default": 0.0
                 }
               ]
             }

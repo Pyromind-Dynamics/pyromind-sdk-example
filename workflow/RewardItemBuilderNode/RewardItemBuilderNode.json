@@ -48,7 +48,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|REWARD_ITEM"
           ],
           "output_is_list": [
             false

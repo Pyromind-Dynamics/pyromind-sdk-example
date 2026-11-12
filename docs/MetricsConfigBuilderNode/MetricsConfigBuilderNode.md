@@ -10,7 +10,7 @@ Builds a single metrics config YAML using a built-in evaluation entry (GSM8K, ac
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| entry | STRING | Yes | Python entry path (`module.py:function_name`). Options: `examples/eval_metrics_common.py:compute_gsm8k`, `examples/eval_metrics_common.py:compute_accuracy`, `examples/eval_metrics_common.py:compute_bleu`, `examples/eval_metrics_common.py:compute_rouge_l` |
+| entry | STRING | Yes | Built-in evaluation function name. Options: `compute_gsm8k`, `compute_accuracy`, `compute_bleu`, `compute_rouge_l`. Default: `compute_gsm8k` |
 | name | STRING | Yes | Metric or reward item name |
 ## 1.3 Output
 

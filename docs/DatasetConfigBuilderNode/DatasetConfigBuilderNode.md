@@ -10,8 +10,8 @@ Builds the base `dataset_config` YAML string for SFT/GRPO/DPO training. Combine 
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| train_data_path | STRING | Yes | Training data path |
-| val_data_path | STRING | No | Validation data path. Default: empty string |
+| train_data_path | STRING\|PATH | Yes | Training data path |
+| val_data_path | STRING\|PATH | No | Validation data path. Default: empty string |
 | dataset_kind_config | STRING\|DATASET_KIND_CONFIG | No | Dataset kind config YAML from a Kind Config Builder node. Default: empty string |
 | dataset_extra_config | STRING\|DATASET_EXTRA_CONFIG | No | Dataset extra config YAML from Dataset Extra Config Builder. Default: empty string |
 ## 1.3 Output

@@ -62,7 +62,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|GRPO_EXTRA_CONFIG"
           ],
           "output_is_list": [
             false

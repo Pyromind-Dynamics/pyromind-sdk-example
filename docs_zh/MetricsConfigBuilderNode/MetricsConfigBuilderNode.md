@@ -10,7 +10,7 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| entry | STRING | 是 | Python 入口路径（`module.py:function_name`）。选项：`examples/eval_metrics_common.py:compute_gsm8k`, `examples/eval_metrics_common.py:compute_accuracy`, `examples/eval_metrics_common.py:compute_bleu`, `examples/eval_metrics_common.py:compute_rouge_l` |
+| entry | STRING | 是 | 内置评估函数名称。可选：`compute_gsm8k`、`compute_accuracy`、`compute_bleu`、`compute_rouge_l`。默认值：`compute_gsm8k` |
 | name | STRING | 是 | 指标或 reward item 名称 |
 ## 1.3 输出类型
 

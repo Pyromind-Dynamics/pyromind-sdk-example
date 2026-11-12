@@ -10,7 +10,7 @@ Builds the `model_config` YAML string (model name and type). Use **Lora Config B
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| model_path | STRING | Yes | HuggingFace model name or local path. Default: `Qwen/Qwen3-VL-2B-Instruct` |
+| model_path | STRING | Yes | HuggingFace model name or local path. Default: empty string |
 | model_type | STRING | No | Model architecture type (`auto`, `qwen3vl`, `qwen3.5`). Options: `auto`, `qwen3vl`, `qwen3.5` |
 ## 1.3 Output
 

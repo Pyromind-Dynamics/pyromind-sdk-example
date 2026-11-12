@@ -18,7 +18,7 @@
               "command": [
                 "STRING",
                 {
-                  "default": "echo hello from custom command",
+                  "default": "echo \"hello from custom command\"\necho \"param=[$param]\"",
                   "multiline": true
                 }
               ],

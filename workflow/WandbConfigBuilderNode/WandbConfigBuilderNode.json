@@ -14,8 +14,7 @@
         "nodeType": "WandbConfigBuilderNode",
         "nodeDefinition": {
           "input": {
-            "required": {},
-            "optional": {
+            "required": {
               "wandb_api_key": [
                 "STRING",
                 {
@@ -27,8 +26,10 @@
                 {
                   "default": ""
                 }
-              ],
-              "wandb_run_group": [
+              ]
+            },
+            "optional": {
+              "wandb_name": [
                 "STRING",
                 {
                   "default": ""
@@ -62,7 +63,7 @@
         "config": {
           "wandb_api_key": "",
           "wandb_project": "test-01",
-          "wandb_run_group": "daskdas"
+          "wandb_name": ""
         },
         "definitionMissing": false
       },

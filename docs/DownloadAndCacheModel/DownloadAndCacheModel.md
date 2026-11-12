@@ -4,7 +4,7 @@
 
 ## 1.1 Overview
 
-Downloads a model from a remote repository and caches it locally.
+Downloads a model from HuggingFace or ModelScope and caches it locally. Leave `filename` empty to download the whole repository, or set it to download one file.
 
 ## 1.2 Input
 
@@ -13,6 +13,7 @@ Downloads a model from a remote repository and caches it locally.
 | modelname | STRING | Yes | String value. Default: `Qwen/Qwen2.5-1.5B-Instruct` |
 | cache_dir | STRING | Yes | String value. Default: `/workspace/models/Qwen/Qwen2.5-1.5B-Instruct` |
 | download_source | STRING | Yes | String value. Default: `huggingface` Options: huggingface, modelscope |
+| filename | STRING | No | File to download from the repository; empty downloads the whole repository. Default: empty string |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

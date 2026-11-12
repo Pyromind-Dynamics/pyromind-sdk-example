@@ -16,86 +16,32 @@
           "input": {
             "required": {
               "train_data_path": [
-                "STRING"
+                "STRING|PATH"
               ]
             },
             "optional": {
               "val_data_path": [
-                "STRING",
+                "STRING|PATH",
                 {
                   "default": ""
                 }
               ],
-              "dataloader_kind": [
-                "STRING",
-                {
-                  "default": "vision"
-                }
-              ],
-              "image_field": [
-                "STRING",
-                {
-                  "default": "image_path"
-                }
-              ],
-              "assistant_response_field": [
-                "STRING",
-                {
-                  "default": "gt"
-                }
-              ],
-              "rejected_field": [
-                "STRING",
+              "dataset_kind_config": [
+                "STRING|DATASET_KIND_CONFIG",
                 {
                   "default": ""
                 }
               ],
-              "messages_field": [
-                "STRING",
-                {
-                  "default": "messages"
-                }
-              ],
-              "user_prompt_field": [
-                "STRING",
+              "dataset_extra_config": [
+                "STRING|DATASET_EXTRA_CONFIG",
                 {
                   "default": ""
-                }
-              ],
-              "system_prompt_field": [
-                "STRING",
-                {
-                  "default": ""
-                }
-              ],
-              "sft_collator_entry": [
-                "STRING",
-                {
-                  "default": "train.sft_collator:make_collate_fn"
-                }
-              ],
-              "dpo_collator_entry": [
-                "STRING",
-                {
-                  "default": ""
-                }
-              ],
-              "grpo_collator_entry": [
-                "STRING",
-                {
-                  "default": ""
-                }
-              ],
-              "max_seq_length": [
-                "INT",
-                {
-                  "default": 4096
                 }
               ]
             }
           },
           "output": [
-            "STRING"
+            "STRING|DATASET_CONFIG"
           ],
           "output_is_list": [
             false
@@ -120,17 +66,8 @@
         "config": {
           "train_data_path": "/workspace/datasets/openai/gsm8k/",
           "val_data_path": "",
-          "dataloader_kind": "vision",
-          "image_field": "image_path",
-          "assistant_response_field": "gt",
-          "rejected_field": "",
-          "messages_field": "messages",
-          "user_prompt_field": "",
-          "system_prompt_field": "",
-          "sft_collator_entry": "train.sft_collator:make_collate_fn",
-          "dpo_collator_entry": "",
-          "grpo_collator_entry": "",
-          "max_seq_length": 4096
+          "dataset_kind_config": "",
+          "dataset_extra_config": ""
         },
         "definitionMissing": false
       },

@@ -16,6 +16,7 @@
 | gpu_product | STRING | 是 | 显卡类型。枚举：NVIDIA-H200、NVIDIA-H100-80GB-HBM3（以部署环境实际可用显卡为准） |
 | environment | ENV | 否 | 环境变量 |
 | max_model_len | INT | 否 | 最大模型上下文长度 |
+| startup_probe_max_duration | INT | 否 | 启动探针的最长持续时间（30–86400）。默认值：`1200` |
 
 ## 1.3 输出类型
 
@@ -32,4 +33,5 @@
 ```bash
 export PYROMIND_API_KEY=<your-api-key>
 export PYROMIND_CLUSTER=<your-cluster>
+python -m pyromind_sdk.test_run_workflow_cli workflow/VLLMInference/VLLMInference.json --pretty
 ```

@@ -105,9 +105,17 @@ jobs:
         if: env.RUN_PYROMIND_SMOKE == 'true'
         run: uv run --no-sync python tests/test_node_doc_consistency.py --validate-only
 
-      - name: Run all workflows
+      - name: Run LoadDataset workflow
         if: env.RUN_PYROMIND_SMOKE == 'true'
-        run: uv run --no-sync python tests/test_all_workflows.py
+        run: uv run --no-sync python tests/run_workflow_smoke.py workflow/LoadDataset/LoadDataset.json --timeout 300 --poll-interval 3
+
+      - name: Run LoadImage workflow
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python tests/run_workflow_smoke.py workflow/LoadImage/LoadImage.json --timeout 300 --poll-interval 3
+
+      - name: Run CustomCommandGPUNode workflow and verify result
+        if: env.RUN_PYROMIND_SMOKE == 'true'
+        run: uv run --no-sync python tests/run_workflow_smoke.py workflow/CustomCommandNode/CustomCommandGPUNode.json --timeout 300 --poll-interval 3 --expect-cluster 'cn-east-1#pre' --expect-result 'NVIDIA H20-3e'
 
   notify-success:
     name: Notify Feishu success

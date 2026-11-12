@@ -14,7 +14,7 @@ Receives a dataset directory path, validates its accessibility, and passes the p
 
 | Parameter    | Data Type | Required | Description                                                                                |
 | ------------ | --------- | -------- | ------------------------------------------------------------------------------------------ |
-| source_dir | PATH | Yes | Path to the dataset directory to load. Ensure the path points to an existing dataset directory. Default: `/workspace/datasets/openai/gsm8k` |
+| source_dir | PATH\|STRING | Yes | Path to the dataset directory to load. Ensure the path points to an existing dataset directory. Default: `/workspace/datasets/openai/gsm8k` |
 
 ## 1.3 Output
 

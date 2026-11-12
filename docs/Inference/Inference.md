@@ -15,6 +15,7 @@ Based on the provided parameters, this node starts an inference service that con
 | port | INT | Yes | Inference service port number |
 | gpu_count | INT | Yes | Number of GPUs used by the inference service |
 | gpu_product | STRING | Yes | GPU type. Options: NVIDIA-H200, NVIDIA-H100-80GB-HBM3 (subject to actual GPUs available in the target environment) |
+| startup_probe_max_duration | INT | No | Maximum startup probe duration (30–86400). Default: `1200` |
 
 
 

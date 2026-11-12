@@ -38,6 +38,14 @@
                   ]
                 }
               ]
+            },
+            "optional": {
+              "filename": [
+                "STRING",
+                {
+                  "default": ""
+                }
+              ]
             }
           },
           "output": [
@@ -60,14 +68,15 @@
           "updated_at": "2026-05-07T03:47:03.549461+00:00",
           "version": 1,
           "display_name": "Download Dataset",
-          "description": "Download and cache datasets for RL training. Handles downloading from HuggingFace or ModelScope and caching locally for efficient access.",
+          "description": "Download and cache datasets from HuggingFace or ModelScope. Leave filename empty to download the whole repo; set filename to fetch a single file only.",
           "is_enabled": true,
           "metanode_deleted": false
         },
         "config": {
           "dataset_name": "openai/gsm8k",
           "cache_dir": "/workspace/datasets/openai/gsm8k",
-          "download_source": "huggingface"
+          "download_source": "huggingface",
+          "filename": ""
         },
         "definitionMissing": false
       },

@@ -38,7 +38,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|MODEL_CONFIG"
           ],
           "output_is_list": [
             false

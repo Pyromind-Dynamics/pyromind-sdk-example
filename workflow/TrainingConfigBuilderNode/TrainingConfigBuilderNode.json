@@ -100,7 +100,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|TRAINING_CONFIG"
           ],
           "output_is_list": [
             false

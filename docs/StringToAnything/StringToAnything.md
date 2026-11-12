@@ -12,7 +12,7 @@ Converts a string input into any output type.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| input_string | STRING | Yes | String value. Default: - |
+| input_string | STRING | Yes | Input string. Default: empty string |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

@@ -20,7 +20,7 @@
 
 | 参数 | 数据类型 | 描述 |
 |------|---------|------|
-| joined_path | STRING | 拼接后的完整路径。例如 `base_path=/workspace/`、`subpath=models` 时输出 `/workspace/models` |
+| joined_path | PATH\|STRING | 拼接后的完整路径。例如 `base_path=/workspace/`、`subpath=models` 时输出 `/workspace/models` |
 
 ## 1.4 Workflow JSON 定义
 

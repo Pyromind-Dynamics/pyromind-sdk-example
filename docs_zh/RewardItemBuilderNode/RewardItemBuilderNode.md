@@ -10,7 +10,7 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| entry | STRING | 是 | Python 入口路径（`module.py:function_name`）。选项：`examples/geometry_vqa/reward.py:geometry_vqa_thinking_reward`, `examples/geometry_vqa/reward.py:geometry_vqa_answer_reward` |
+| entry | STRING | 是 | 内置奖励函数名称。可选：`geometry_vqa_thinking_reward`、`geometry_vqa_answer_reward`。默认值：`geometry_vqa_thinking_reward` |
 | name | STRING | 是 | 指标或 reward item 名称 |
 | kwargs | STRING | 否 | 关键字参数字典 YAML（非空时启用 factory 模式）。默认值：空字符串 |
 | weight | FLOAT | 否 | 组合得分中的权重系数。默认值：`1.0` |

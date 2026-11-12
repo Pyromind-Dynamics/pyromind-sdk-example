@@ -11,9 +11,11 @@ Runs YOLO detection / segment / classify training with the same shared `dataset_
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
 | output_path | STRING | Yes | Output directory or file path |
-| dataset_config | STRING|DATASET_CONFIG | Yes | Assembled dataset configuration YAML string |
-| training_config | STRING|TRAINING_CONFIG | Yes | Training config YAML string (`BaseTrainingConfig` fields) |
-| model_config | STRING|MODEL_CONFIG | Yes | Model config YAML string |
+| dataset_config | STRING\|DATASET_CONFIG | Yes | Assembled dataset configuration YAML string |
+| training_config | STRING\|TRAINING_CONFIG | Yes | Training config YAML string (`BaseTrainingConfig` fields) |
+| model_config | STRING\|MODEL_CONFIG | Yes | Model config YAML string |
+| gpu_count | INT | Yes | Number of GPUs to request (1–8). Default: `1` |
+| gpu_product | STRING | Yes | GPU product. Options in this definition: `NVIDIA-H100-NVL`, `NVIDIA-L40S`. Default: `NVIDIA-H100-NVL` |
 | yolo_extra_config | STRING | No | YOLO-only extra training config YAML. Default: empty string |
 | wandb_config | WANDB_CONFIG | No | W&B configuration object. Default: empty string |
 | early_fusion_config | STRING | No | Early-fusion config YAML. Default: empty string |
@@ -28,6 +30,8 @@ Runs YOLO detection / segment / classify training with the same shared `dataset_
 ## 1.4 Workflow JSON Definition
 
 See [`workflow/ModelTrainYoloNode/ModelTrainYoloNode.json`](../../workflow/ModelTrainYoloNode/ModelTrainYoloNode.json) for the full workflow definition.
+
+The file is a template: fill in `output_path`, `dataset_config`, `training_config`, and `model_config` with values valid in the target environment before submitting it.
 
 ## 1.5 Running the Workflow
 

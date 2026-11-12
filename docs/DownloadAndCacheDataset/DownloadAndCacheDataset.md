@@ -8,6 +8,7 @@ Downloads a specified dataset from a remote repository, caches it locally, and o
 
 - **Download source**: supports `huggingface` and `modelscope`
 - **Local cache**: downloads the dataset to the directory specified by `cache_dir`; creates the directory if it does not exist
+- **File selection**: leave `filename` empty to download the whole repository, or set it to download one file
 - **Path output**: returns `dataset_path` for LoadDataset, data preprocessing, or training nodes
 
 ## 1.2 Input
@@ -17,6 +18,7 @@ Downloads a specified dataset from a remote repository, caches it locally, and o
 | dataset_name | STRING | Yes | Dataset name or repository ID. Default: `openai/gsm8k`. Example: `openai/gsm8k` |
 | cache_dir | PATH | Yes | Local cache directory. Default: `/workspace/datasets/openai/gsm8k` |
 | download_source | STRING | Yes | Download source. Default: `huggingface`. Options: `huggingface`, `modelscope` |
+| filename | STRING | No | File to download from the repository; empty downloads the whole repository. Default: empty string |
 
 ## 1.3 Output
 

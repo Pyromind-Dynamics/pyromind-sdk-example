@@ -4,7 +4,7 @@
 
 ## 1.1 功能概述
 
-下载大模型资源
+从 HuggingFace 或 ModelScope 下载并缓存模型。`filename` 留空时下载整个仓库；指定文件名时只下载该文件。
 
 ## 1.2 输入类型
 
@@ -13,6 +13,7 @@
 | modelname | STRING | 是 | 模型资源路径  默认值 : `Qwen/Qwen2.5-1.5B-Instruct` |
 | cache_dir | STRING | 是 | 目标文件夹。  默认值 : `/workspace/models/Qwen/Qwen2.5-1.5B-Instruct` |
 | download_source | STRING | 是 | 下载源。默认值：`huggingface` Options: huggingface, modelscope |
+| filename | STRING | 否 | 要从仓库下载的文件；留空时下载整个仓库。默认值：空字符串 |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |

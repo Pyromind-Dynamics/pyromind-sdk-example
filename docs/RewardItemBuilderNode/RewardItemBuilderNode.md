@@ -10,7 +10,7 @@ Builds a single reward item YAML using a built-in reward entry. Non-empty `kwarg
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| entry | STRING | Yes | Python entry path (`module.py:function_name`). Options: `examples/geometry_vqa/reward.py:geometry_vqa_thinking_reward`, `examples/geometry_vqa/reward.py:geometry_vqa_answer_reward` |
+| entry | STRING | Yes | Built-in reward function name. Options: `geometry_vqa_thinking_reward`, `geometry_vqa_answer_reward`. Default: `geometry_vqa_thinking_reward` |
 | name | STRING | Yes | Metric or reward item name |
 | kwargs | STRING | No | YAML mapping of keyword arguments (non-empty enables factory mode). Default: empty string |
 | weight | FLOAT | No | Weight multiplier in combined score. Default: `1.0` |

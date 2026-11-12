@@ -17,31 +17,31 @@
             "required": {},
             "optional": {
               "reward_item_1": [
-                "STRING",
+                "STRING|REWARD_ITEM",
                 {
                   "default": ""
                 }
               ],
               "reward_item_2": [
-                "STRING",
+                "STRING|REWARD_ITEM",
                 {
                   "default": ""
                 }
               ],
               "reward_item_3": [
-                "STRING",
+                "STRING|REWARD_ITEM",
                 {
                   "default": ""
                 }
               ],
               "reward_item_4": [
-                "STRING",
+                "STRING|REWARD_ITEM",
                 {
                   "default": ""
                 }
               ],
               "reward_item_5": [
-                "STRING",
+                "STRING|REWARD_ITEM",
                 {
                   "default": ""
                 }
@@ -55,7 +55,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|REWARD_CONFIG"
           ],
           "output_is_list": [
             false

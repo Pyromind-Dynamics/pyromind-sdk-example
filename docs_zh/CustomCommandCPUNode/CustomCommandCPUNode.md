@@ -10,9 +10,9 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| command | STRING | 是 | 要执行的 shell 命令。默认值：echo hello from custom command |
-| cpu | INT | 是 | CPU 核数限制（1–64）。默认值：4 |
-| memory | INT | 是 | 内存限制，单位 GiB（1–256）。默认值：32 |
+| command | STRING | 是 | 要执行的 shell 命令。默认值为两行：`echo "hello from custom command"` 和 `echo "param=[$param]"` |
+| cpu | INT | 是 | CPU 核数限制（1–64）。默认值：2 |
+| memory | INT | 是 | 内存限制，单位 GiB（1–256）。默认值：8 |
 | param | STRING | 否 | 传递给 shell 命令的可选参数，命令中通过 `$param` 引用。默认值：param-value |
 
 ## 1.3 输出类型

@@ -14,7 +14,7 @@
 
 | 参数         | 数据类型 | 必填 | 描述                                                           |
 | ------------ | -------- | ---- | -------------------------------------------------------------- |
-| source_dir | PATH | 是 | 需要加载的数据集目录路径。默认值：`/workspace/datasets/openai/gsm8k` |
+| source_dir | PATH\|STRING | 是 | 需要加载的数据集目录路径。默认值：`/workspace/datasets/openai/gsm8k` |
 
 ## 1.3 输出类型
 

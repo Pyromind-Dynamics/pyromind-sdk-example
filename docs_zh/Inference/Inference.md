@@ -15,6 +15,7 @@
 | port | INT | 是 | 推理服务端口号 |
 | gpu_count | INT | 是 | 推理服务使用的显卡个数 |
 | gpu_product | STRING | 是 | 显卡类型。枚举：NVIDIA-H200、NVIDIA-H100-80GB-HBM3（以部署环境实际可用显卡为准） |
+| startup_probe_max_duration | INT | 否 | 启动探针的最长持续时间（30–86400）。默认值：`1200` |
 
 
 

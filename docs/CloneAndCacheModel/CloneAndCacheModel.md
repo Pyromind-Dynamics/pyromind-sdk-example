@@ -10,8 +10,8 @@ Clones a model from pre-stored templates in the pyromind environment into the wo
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| model | STRING | Yes | Model identifier. Select from the dynamic list of available model templates in the pyromind environment (e.g., `Qwen/Qwen3-0.6B`, `Qwen/Qwen3-8B`). The list is loaded from the template directory at runtime. |
-| target_path | STRING | Yes | Target directory in workspace to clone the model into. Default: `/workspace/models/` Options: /workspace/models/ |
+| model | STRING | Yes | Model identifier. Select an available model template in the target environment (for example, `Qwen/Qwen3-0.6B`); suggestions can vary by cluster. |
+| target_path | STRING | Yes | Target directory in the workspace; the UI offers a folder picker. Default: `/workspace/models/` |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

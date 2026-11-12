@@ -33,7 +33,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|DATASET_KIND_CONFIG"
           ],
           "output_is_list": [
             false

@@ -9,7 +9,9 @@ nodes/
 ├── install.sh                  # 部署脚本：复制文件并调用 reload API
 ├── CustomNode.yaml             # 节点定义（示例）
 ├── custom_py_script/
-│   └── custom_node.py          # 自定义节点 Python 实现
+│   ├── custom_node.py          # 自定义节点 Python 实现
+│   ├── file_processor.py       # PythonFileProcessorNode 示例脚本
+│   └── sample_input.json       # 文件处理示例输入
 └── custom_entry/
     ├── custom_metrics.py       # 评估指标插件
     └── custom_rewards.py       # GRPO 奖励函数插件
@@ -34,6 +36,8 @@ export PYROMIND_API_KEY=<your-api-key>
 
 1. 将本目录内容（除 `install.sh` 外）同步到 `/workspace/nodes/`
 2. 调用 `POST /api/v1/nodes/reload` 重新加载节点定义
+
+同步会删除目标目录中本地 `nodes/` 不包含的文件；运行前请确认 `/workspace/nodes/` 中没有需要保留的其他内容。
 
 可通过环境变量覆盖 reload 地址：
 
@@ -81,6 +85,10 @@ def custom_function(name: str = "World") -> dict:
 1. 在 `custom_py_script/` 下新增 Python 文件并实现入口函数
 2. 在 `nodes/` 根目录新增对应的 `YourNode.yaml`
 3. 运行 `./install.sh` 部署并 reload
+
+## Python File Processor 示例
+
+[PythonFileProcessorNode workflow](../workflow/PythonFileProcessorNode/PythonFileProcessorNode.json) 使用 `custom_py_script/file_processor.py` 处理 `custom_py_script/sample_input.json`，将格式化后的 JSON 写入 `/workspace/output.json`。在执行 workflow 的环境中，脚本和输入文件必须位于 `/workspace/nodes/custom_py_script/`。如果只运行这个示例，将这两个文件复制到对应路径即可；上面的 `install.sh` 会同步整个 `nodes/` 目录并重新加载节点。输入输出参数见 [PythonFileProcessorNode 文档](../docs_zh/PythonFileProcessorNode/PythonFileProcessorNode.md)。
 
 ## 自定义评估指标（custom_metrics.py）
 

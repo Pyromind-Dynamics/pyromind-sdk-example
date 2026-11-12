@@ -17,7 +17,7 @@
           "input": {
             "required": {
               "source_dir": [
-                "PATH",
+                "PATH|STRING",
                 {
                   "default": "/workspace/datasets/openai/gsm8k"
                 }

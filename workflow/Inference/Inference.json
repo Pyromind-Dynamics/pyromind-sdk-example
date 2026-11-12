@@ -49,6 +49,14 @@
             "optional": {
               "environment": [
                 "ENV"
+              ],
+              "startup_probe_max_duration": [
+                "INT",
+                {
+                  "default": 1200,
+                  "min": 30,
+                  "max": 86400
+                }
               ]
             }
           },
@@ -81,7 +89,8 @@
           "port": 3000,
           "gpu_count": 1,
           "gpu_product": "NVIDIA-H200",
-          "environment": ""
+          "environment": "",
+          "startup_probe_max_duration": 1200
         },
         "definitionMissing": false
       },

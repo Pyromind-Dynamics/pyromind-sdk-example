@@ -10,8 +10,8 @@ Clone a dataset.
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| dataset | STRING | Yes | Identifier of the official pre-cached dataset to clone, in `org/dataset` format (e.g. `openai/gsm8k`). Must be selected from the platform-supported preset list. Available options: OpenGVLab/ScaleCUA-Data, Writer/omniact, agibot-world/AgiBotWorld-Alpha-327, agibot-world/AgiBotWorld-Alpha-327-Extract, agibot-world/AgiBotWorld-Alpha-CtrlWorld-327, agibot-world/AgiBotWorld-Alpha-Lerobot-327, agibot-world/AgiBotWorld-Alpha-Openpi-327, cadene/droid_1.0.1, gui-360/gui-excel, gui-360/processed_data, henryhe0123/PC-Agent-E, openai/gsm8k, ritzzai/GUI-R1, xlangai/aguvis-stage1, xlangai/aguvis-stage2, zonghanHZH/UGround-V1-8k |
-| target_path | STRING | Yes | Destination directory for the cloned dataset. Default: `/workspace/datasets/` Options: /workspace/datasets/ |
+| dataset | STRING | Yes | Identifier of an available pre-cached dataset, in `org/dataset` format (for example, `openai/gsm8k`). Suggestions can vary by cluster. |
+| target_path | STRING | Yes | Destination directory for the cloned dataset; the UI offers a folder picker. Default: `/workspace/datasets/` |
 ## 1.3 Output
 
 | Parameter | Data Type | Description |

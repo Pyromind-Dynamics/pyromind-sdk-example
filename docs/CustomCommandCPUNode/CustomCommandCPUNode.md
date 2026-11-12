@@ -10,9 +10,9 @@ Run a custom shell command with configurable CPU and memory resources (no GPU). 
 
 | Parameter | Data Type | Required | Description |
 |-----------|-----------|----------|-------------|
-| command | STRING | Yes | Shell command to execute. Default: echo hello from custom command |
-| cpu | INT | Yes | CPU limit in cores (1–64). Default: 4 |
-| memory | INT | Yes | Memory limit in GiB (1–256). Default: 32 |
+| command | STRING | Yes | Shell command to execute. Default: two lines, `echo "hello from custom command"` and `echo "param=[$param]"` |
+| cpu | INT | Yes | CPU limit in cores (1–64). Default: 2 |
+| memory | INT | Yes | Memory limit in GiB (1–256). Default: 8 |
 | param | STRING | No | Optional parameter passed to the shell command and referenced as `$param`. Default: param-value |
 
 ## 1.3 Output

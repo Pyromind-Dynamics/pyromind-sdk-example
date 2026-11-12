@@ -17,29 +17,11 @@
           "input": {
             "required": {
               "image": [
-                [
-                  "image_cache/1.png",
-                  "image_cache/2.png",
-                  "image_cache/20251119223408.jpg",
-                  "image_cache/Unsaved Workflow_1770170020684.png",
-                  "image_cache/Unsaved Workflow_1770274356893.png",
-                  "image_cache/W&B Chart 2025_12_29 15_09_21.png",
-                  "image_cache/action_step1_1.png",
-                  "image_cache/action_step1_1_20251229_092727.png",
-                  "image_cache/action_step1_1_20251229_093147.png",
-                  "image_cache/action_step1_1_20251231_101409.png",
-                  "image_cache/action_step1_1_20260102_135535.png",
-                  "image_cache/action_step1_1_20260102_140249.png",
-                  "image_cache/action_step1_1_20260309_054130.png",
-                  "image_cache/action_step1_1_20260310_030208.png",
-                  "image_cache/action_step1_1_20260310_113020.png",
-                  "image_cache/logo-v5-text.png",
-                  "image_cache/receipt.png",
-                  "image_cache/微信图片_20260129134642_265_35.png"
-                ],
+                "STRING",
                 {
                   "image_upload": true,
-                  "skip_enum": true
+                  "skip_enum": true,
+                  "enum": []
                 }
               ]
             }

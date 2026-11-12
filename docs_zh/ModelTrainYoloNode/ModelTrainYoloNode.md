@@ -11,9 +11,11 @@
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
 | output_path | STRING | 是 | 输出目录或文件路径 |
-| dataset_config | STRING|DATASET_CONFIG | 是 | 已组装的数据集配置 YAML 字符串 |
-| training_config | STRING|TRAINING_CONFIG | 是 | 训练配置 YAML 字符串（`BaseTrainingConfig` 字段） |
-| model_config | STRING|MODEL_CONFIG | 是 | 模型配置 YAML 字符串 |
+| dataset_config | STRING\|DATASET_CONFIG | 是 | 已组装的数据集配置 YAML 字符串 |
+| training_config | STRING\|TRAINING_CONFIG | 是 | 训练配置 YAML 字符串（`BaseTrainingConfig` 字段） |
+| model_config | STRING\|MODEL_CONFIG | 是 | 模型配置 YAML 字符串 |
+| gpu_count | INT | 是 | 申请的 GPU 数量（1–8）。默认值：`1` |
+| gpu_product | STRING | 是 | GPU 型号。此定义中的选项：`NVIDIA-H100-NVL`、`NVIDIA-L40S`。默认值：`NVIDIA-H100-NVL` |
 | yolo_extra_config | STRING | 否 | YOLO 专用额外训练配置 YAML。默认值：空字符串 |
 | wandb_config | WANDB_CONFIG | 否 | W&B 配置对象。默认值：空字符串 |
 | early_fusion_config | STRING | 否 | Early Fusion 配置 YAML。默认值：空字符串 |
@@ -28,6 +30,8 @@
 ## 1.4 Workflow JSON 定义
 
 完整 workflow 定义见 [`workflow/ModelTrainYoloNode/ModelTrainYoloNode.json`](../../workflow/ModelTrainYoloNode/ModelTrainYoloNode.json)。
+
+该文件是模板：提交前需将 `output_path`、`dataset_config`、`training_config` 和 `model_config` 填为目标环境中的有效值。
 
 ## 1.5 运行 Workflow
 

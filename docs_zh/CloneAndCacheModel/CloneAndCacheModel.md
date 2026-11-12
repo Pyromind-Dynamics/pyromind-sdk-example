@@ -10,8 +10,8 @@
 
 | 参数 | 数据类型 | 必填 | 描述 |
 |------|---------|------|------|
-| model | STRING | 是 | 模型标识。从 pyromind 环境中可用的模型模板动态列表中选取（例如 `Qwen/Qwen3-0.6B`、`Qwen/Qwen3-8B`）。列表在运行时从模板目录加载。 |
-| target_path | STRING | 是 | 工作区中克隆模型的目标目录。默认值：`/workspace/models/` Options: /workspace/models/ |
+| model | STRING | 是 | 模型标识。从目标环境的可用模型模板中选择（例如 `Qwen/Qwen3-0.6B`）；建议列表会随集群变化。 |
+| target_path | STRING | 是 | 工作区中克隆模型的目标目录；界面提供文件夹选择器。默认值：`/workspace/models/` |
 ## 1.3 输出类型
 
 | 参数 | 数据类型 | 描述 |

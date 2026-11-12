@@ -56,7 +56,7 @@
             }
           },
           "output": [
-            "STRING"
+            "STRING|DATASET_EXTRA_CONFIG"
           ],
           "output_is_list": [
             false

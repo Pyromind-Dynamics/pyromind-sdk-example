@@ -18,7 +18,10 @@
               "file_path": [
                 "STRING",
                 {
-                  "default": ""
+                  "default": "",
+                  "input_components": {
+                    "type": "file_select"
+                  }
                 }
               ],
               "output_file_path": [
@@ -30,7 +33,10 @@
               "python_script_path": [
                 "STRING",
                 {
-                  "default": ""
+                  "default": "",
+                  "input_components": {
+                    "type": "file_select"
+                  }
                 }
               ],
               "overwrite_output": [
@@ -39,8 +45,7 @@
                   "default": false
                 }
               ]
-            },
-            "optional": {}
+            }
           },
           "output": [
             "STRING"
